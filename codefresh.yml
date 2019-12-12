@@ -18,6 +18,13 @@ indicators:
       - GITHUB_ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}
 
 steps:
+  main_clone:
+    type: git-clone
+    title: Git Clone openbanking-reference-implementation
+    repo: OpenBankingToolkit/openbanking-reference-implementation
+    revision: '${{CF_REVISION}}'
+    stage: prepare
+    git: github-bot
   #  Prepare stage
   set-global-variables:
     image: r.cfcr.io/openbanking/ob-release:latest
