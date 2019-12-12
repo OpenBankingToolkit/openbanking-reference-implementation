@@ -238,7 +238,7 @@ steps:
           - ${{CF_VOLUME}}:/codefresh/volume
         image: r.cfcr.io/openbanking/ob-release:latest
         environment: *global_env
-        command: /codefresh/volume/ob-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/ob-reference-implementation/forgerock-openbanking-gateway/pom.xml
+        command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-gateway/pom.xml
         # Simulate DNS routing multiple hostnames
         networks:
           default:
@@ -260,7 +260,7 @@ steps:
     commands:
       - curl -s https://codecov.io/bash > .codecov
       - chmod +x .codecov
-      - ./.codecov -p /codefresh/volume/ob-reference-implementation
+      - ./.codecov -p /codefresh/volume/openbanking-reference-implementation
 
   # Docker-push stage
   docker-push-latest:
