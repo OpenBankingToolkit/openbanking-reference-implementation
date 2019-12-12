@@ -45,12 +45,12 @@
     <url>http://www.forgerock.org</url>
 
     <properties>
-        <ob-common.version>1.0.38</ob-common.version>
+        <ob-common.version>1.0.52</ob-common.version>
         <ob-jwkms.version>1.1.37</ob-jwkms.version>
-        <ob-analytics.version>1.1.12</ob-analytics.version>
-        <ob-auth.version>1.0.37</ob-auth.version>
-        <ob-directory.version>1.4.19</ob-directory.version>
-        <ob-aspsp.version>1.0.7</ob-aspsp.version>
+        <ob-analytics.version>1.1.21</ob-analytics.version>
+        <ob-auth.version>1.0.45</ob-auth.version>
+        <ob-directory.version>1.4.25</ob-directory.version>
+        <ob-aspsp.version>1.0.19</ob-aspsp.version>
         <ob-clients.version>1.0.1</ob-clients.version>
     </properties>
 
@@ -137,37 +137,37 @@
                 <version>${ob-directory.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.as</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-as-gateway-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.as</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-as-manual-onboarding-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-gateway-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-mock-payment-simulator-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-mock-portal-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-mock-store-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.uk.aspsp.rs.rcs</groupId>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-rcs-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
