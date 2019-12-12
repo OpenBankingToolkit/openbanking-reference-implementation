@@ -21,8 +21,8 @@ As a <user type> I want to <task> so that <goal>.
 _OPTIONAL_
 List of tasks required to implement this story
 
-- [ ] https://github.com/ForgeCloud/ob-reference-implementation/issues/<issueID>
-- [ ] https://github.com/ForgeCloud/ob-reference-implementation/issues/<issueID>
+- [ ] https://github.com/ForgeCloud/openbanking-reference-implementation/issues/<issueID>
+- [ ] https://github.com/ForgeCloud/openbanking-reference-implementation/issues/<issueID>
 
 ### Release Notes
 

@@ -4,7 +4,7 @@ stages:
    - prepare
    - ob-ui
    - ob-analytics
-   - ob-reference-implementation
+   - openbanking-reference-implementation
 
 indicators:
    - environment: &global_env
@@ -84,31 +84,31 @@ steps:
        - ENFORCE_ADMINS=true
    disable-include-administrator-for-ob-reference-implemenation:
       <<: *disable_inc_admin
-      title: "Enable push to master for ob-reference-implementation"
-      stage: ob-reference-implementation
+      title: "Enable push to master for openbanking-reference-implementation"
+      stage: openbanking-reference-implementation
       environment:
        - ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}
        - OWNER=forgecloud
-       - REPO=ob-reference-implementation
+       - REPO=openbanking-reference-implementation
        - ENFORCE_ADMINS=false
    set-ob-reference-implemenation-version:
       title: set ob-analytics package version
       image: r.cfcr.io/openbanking/ob-release:latest
-      stage: ob-reference-implementation
+      stage: openbanking-reference-implementation
       commands:
-         - ./ci/release-mvn-project.sh ob-reference-implementation
+         - ./ci/release-mvn-project.sh openbanking-reference-implementation
       environment:
        - FR_PRIVATE_REPO_USER=${{FR_PRIVATE_REPO_USER}}
        - FR_PRIVATE_REPO_PASSWORD=${{FR_PRIVATE_REPO_PASSWORD}}
        - GITHUB_GPG_KEY_ID=${{GITHUB_GPG_KEY_ID}}
        - GITHUB_GPG_KEY=${{GITHUB_GPG_KEY}}
        - GITHUB_ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}         
-   enable-include-administrator-for-ob-reference-implementation:
+   enable-include-administrator-for-openbanking-reference-implementation:
       <<: *enable_inc_admin
       title: "Disable push to master"
-      stage: ob-reference-implementation
+      stage: openbanking-reference-implementation
       environment:
        - ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}
        - OWNER=forgecloud
-       - REPO=ob-reference-implementation
+       - REPO=openbanking-reference-implementation
        - ENFORCE_ADMINS=true
