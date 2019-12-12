@@ -34,8 +34,8 @@
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-starter-parent</artifactId>
-        <version>1.0.47</version>
-        <relativePath />
+        <version>1.0.52</version>
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <organization>
@@ -43,20 +43,15 @@
         <url>http://www.forgerock.org</url>
     </organization>
     <url>http://www.forgerock.org</url>
-    
-    <scm>
-	    <connection>scm:git:https://$GITHUB_USERNAME:$GITHUB_ACCESS_TOKEN@github.com/ForgeCloud/ob-reference-implementation</connection>
-	    <url>https://github.com/ForgeCloud/ob-reference-implementation</url>
-	    <tag>HEAD</tag>
-    </scm>
 
     <properties>
         <ob-common.version>1.0.38</ob-common.version>
-        <ob-jwkms.version>1.1.16</ob-jwkms.version>
+        <ob-jwkms.version>1.1.37</ob-jwkms.version>
         <ob-analytics.version>1.1.12</ob-analytics.version>
         <ob-auth.version>1.0.37</ob-auth.version>
         <ob-directory.version>1.4.19</ob-directory.version>
         <ob-aspsp.version>1.0.7</ob-aspsp.version>
+        <ob-clients.version>1.0.1</ob-clients.version>
     </properties>
 
     <modules>
@@ -117,9 +112,9 @@
                 <version>${ob-analytics.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.analytics</groupId>
+                <groupId>com.forgerock.openbanking.clients</groupId>
                 <artifactId>forgerock-openbanking-analytics-client</artifactId>
-                <version>${ob-analytics.version}</version>
+                <version>${ob-clients.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking.jwkms</groupId>
@@ -127,9 +122,9 @@
                 <version>${ob-jwkms.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.forgerock.openbanking.jwkms</groupId>
+                <groupId>com.forgerock.openbanking.clients</groupId>
                 <artifactId>forgerock-openbanking-jwkms-client</artifactId>
-                <version>${ob-jwkms.version}</version>
+                <version>${ob-clients.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking</groupId>
@@ -204,34 +199,38 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <scm>
+        <connection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</connection>
+        <developerConnection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</developerConnection>
+        <url>https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-openbankingtoolkit-OpenBankingToolkit</id>
+            <name>OpenBankingToolkit Reference Implementation</name>
+            <url>https://api.bintray.com/maven/openbanking-toolkit/OpenBankingToolKit/openbanking-reference-implementation/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
         </repository>
         <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <id>bintray-openbanking-toolkit-OpenBankingToolKit</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/openbanking-toolkit/OpenBankingToolKit</url>
         </repository>
+
         <repository>
             <id>forgerock-community-releases</id>
             <url>http://maven.forgerock.org:80/repo/community</url>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>fail</checksumPolicy>
-            </releases>
-        </repository>
-        <repository>
-            <id>oss-sonatype</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>fail</checksumPolicy>
@@ -254,17 +253,6 @@
             </snapshots>
             <releases>
                 <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
             </releases>
         </repository>
     </repositories>

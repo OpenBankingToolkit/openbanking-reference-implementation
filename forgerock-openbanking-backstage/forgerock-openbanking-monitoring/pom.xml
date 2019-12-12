@@ -135,7 +135,7 @@
             <artifactId>forgerock-openbanking-auth</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.forgerock.openbanking.jwkms</groupId>
+            <groupId>com.forgerock.openbanking.clients</groupId>
             <artifactId>forgerock-openbanking-jwkms-client</artifactId>
         </dependency>
 
