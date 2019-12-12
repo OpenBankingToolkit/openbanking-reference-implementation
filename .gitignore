@@ -1,0 +1,29 @@
+.idea/*
+!.idea/runConfigurations/*
+node_modules/
+target/
+.mvn/
+logs/
+local-keys/*
+dist/
+node/
+*.iml
+*.tgz
+.DS_Store
+**/.DS_Store
+
+# ForgeRock #
+#############
+set-creds.sh
+local-vm-test.sh
+pom.xml.versionsBackup
+secrets.yml
+*-secret.yml
+requirements.lock
+!forgerock-openbanking-sample/forgerock-openbanking-sample-tpp/src/main/resources/keystore/*
+
+# vscode
+.classpath
+.factorypath
+.project
+.settings/

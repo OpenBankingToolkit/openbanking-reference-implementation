@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-cd /codefresh/volume/open-reference-implementation
+cd /codefresh/volume/openbanking-reference-implementation
 
 echo "Installing certs"
 keytool -import -trustcacerts -noprompt -alias frobca-internal -file keystore/ca/obri-internal-ca.cer     -keystore ${JAVA_HOME}/lib/security/cacerts -storepass changeit
