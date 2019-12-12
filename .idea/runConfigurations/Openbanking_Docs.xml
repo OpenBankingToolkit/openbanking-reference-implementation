@@ -1,0 +1,31 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Openbanking-Docs" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="Dev Portal">
+    <module name="forgerock-openbanking-docs" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.forgerock.openbanking.jwkms.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.forgerock.openbanking.docs.ForgerockOpenbankingDocsApplication" />
+    <option name="ACTIVE_PROFILES" value="native, console-logging" />
+    <option name="VM_PARAMETERS" value=" -Xms128m -Xmx128m -Djavax.net.ssl.trustStore=keystore/truststore.jks" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <additionalParameters>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.cloud.config.uri" />
+        <option name="value" value="http://config.dev-ob.forgerock.financial:8888" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="server.port" />
+        <option name="value" value="8081" />
+      </param>
+    </additionalParameters>
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/forgerock-openbanking-devportal/forgerock-openbanking-docs/pom.xml" goal="asciidoctor:process-asciidoc" />
+    </method>
+  </configuration>
+</component>
