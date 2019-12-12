@@ -1,0 +1,41 @@
+#Server
+server:
+  hostname: service.bank.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "*.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/rs-ui/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+  max-http-header-size: 10000000
+
+#Authentication
+jwt-auth:
+  cookie: true
+  expected-audience-id: "bank"
+  expected-issuer-id: ${am.oidc.issuerid}
+  redirect-uri: "https://bank.${dns.hosts.root}/redirectOpenId"
+
+ob:
+  auth:
+    session:
+      cookie:
+        domains: ${session.cookie.domains}
+    oidc:
+      idp:
+        issuerid: ${jwt-auth.expected-issuer-id}
+      client:
+        client-id: ${jwt-auth.expected-audience-id}
+        redirect-uri: ${jwt-auth.redirect-uri}
+#AM configuration
+am:
+  internal:
+    oidc:
+      client-id: bank
+  realm:
+    auth:
+      oidc:
+        issuerid: ${am.oidc.issuerid}
+

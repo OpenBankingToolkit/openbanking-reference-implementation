@@ -1,0 +1,55 @@
+#Server
+server:
+  hostname: rs.aspsp.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "rs.aspsp.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/rs-api/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+#Spring config
+spring:
+  jackson:
+    date-format: com.forgerock.openbanking.serialiser.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+#Swagger
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+swagger:
+  title: "Payment initiation and Account information APIs Specification"
+  description: "Swagger for Payment initiation and Account information APIs Specification"
+
+#Authentication
+jwt-auth:
+  expected-audience-id: "bank"
+
+# See OBExternalPermissions1Code for valid comma-separated values.
+account-consent.permissions.disabled: # Allows different banks to disable some account consent permissions on their sandbox. e.g. "ReadProducts,ReadTransactionsDetail"
+
+#Metrics config whitelist
+metrics:
+  endpoints:
+    - regex: .*/aisp/account-requests/(.*)
+    - regex: .*/aisp/account-access-consents/(.*)
+    - regex: .*/aisp/accounts/(.*)/.*
+    - regex: .*/aisp/accounts/(.*)
+    - regex: .*/aisp/accounts/(.*)/.*/(.*)
+    - regex: .*/pisp/payments/(.*)
+    - regex: .*/pisp/payment-submissions/(.*)
+    - regex: .*/pisp/file-payment-consents/(.*)/.*
+    - regex: .*/pisp/file-payments/(.*)/.*
+    - regex: .*/pisp/.*-payment-consents/(.*)
+    - regex: .*/pisp/.*-payments/(.*)
+    - regex: .*/cbpii/funds-confirmations-consents/(.*)
+    - regex: .*/cbpii/funds-confirmations/(.*)
+    - regex: .*/callback-urls/(.*)
+    - regex: .*/open-banking/.* # Catch any open-banking URLs that are not matched above so they are not lost - however they will not get id replacement until added here
+    - regex: .*/api/jwk # Needed?

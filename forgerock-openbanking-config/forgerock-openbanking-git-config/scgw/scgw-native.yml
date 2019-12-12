@@ -1,0 +1,14 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+#AM
+am:
+  internal-route: ${am.internal.root}
+
+spring:
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          useInsecureTrustManager: true

@@ -1,0 +1,34 @@
+#Server
+server:
+  hostname: rs-store.aspsp.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "*.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/rs-store/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+rs:
+  data.internal_ids.show: true
+  page:
+    default:
+      transaction:
+        size: 10
+      statement:
+        size: 10
+      standing-order:
+        size: 10
+      schedule-payments:
+        size: 10
+      products:
+        size: 10
+      offers:
+        size: 10
+      direct-debits:
+        size: 10
+      beneficiaries:
+        size: 10
+      balances:
+        size: 10

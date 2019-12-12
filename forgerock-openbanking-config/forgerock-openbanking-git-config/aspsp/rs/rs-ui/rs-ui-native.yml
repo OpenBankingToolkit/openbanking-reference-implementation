@@ -1,0 +1,12 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+jwt-auth:
+  redirect-uri: "https://bank.${dns.hosts.root}:4201/redirectOpenId"
+
+am:
+  realm:
+    auth:
+      oidc:
+        issuerid: ${am.oidc.issuerid}

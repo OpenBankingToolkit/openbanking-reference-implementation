@@ -1,0 +1,156 @@
+[
+  {
+    "date": "2018-05-07T15:13:12+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:13:32+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:13:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  }
+
+,
+  {
+    "date": "2018-05-07T15:16:12+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:16:32+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "500"
+  },
+  {
+    "date": "2018-05-07T15:16:52+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "500"
+  },
+  {
+    "date": "2018-05-07T15:16:22+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  }
+,
+  {
+    "date": "2018-05-07T15:16:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "400"
+  }
+
+
+
+,
+  {
+    "date": "2018-05-07T15:18:12+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:18:32+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:18:52+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:18:22+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  }
+,
+  {
+    "date": "2018-05-07T15:18:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "400"
+  }
+
+
+,
+  {
+    "date": "2018-05-07T15:19:12+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:19:32+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:19:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:19:22+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  }
+,
+  {
+    "date": "2018-05-07T15:19:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "400"
+  }
+
+
+,
+  {
+    "date": "2018-05-07T15:20:12+01:00",
+    "tppId": "bibi",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:20:32+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:20:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  },
+  {
+    "date": "2018-05-07T15:20:22+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "200"
+  }
+,
+  {
+    "date": "2018-05-07T15:20:52+01:00",
+    "tppId": "alice",
+    "endpoint": "jwt/signing",
+    "responseStatus": "400"
+  }
+]

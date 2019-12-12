@@ -1,0 +1,16 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+tpp:
+  root: https://tpp-core.${dns.hosts.root}:8074/open-banking/v1.1
+  clients:
+    - id: shop-ui
+      cors: https://shop.${dns.hosts.root}:8083
+      statusCallback: https://shop.${dns.hosts.root}:8083/rest/shop/statusCallback
+    - id: account-ui
+      cors: https://account.${dns.hosts.root}:4200
+      statusCallback: https://account.${dns.hosts.root}:4200/statusCallback
+    - id: openbankise
+      cors: http://dev.openbankise.com:4200
+      statusCallback: http://pisp.dev.openbankise.com:9093/rest/pisp/statusCallback

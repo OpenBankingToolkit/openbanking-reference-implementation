@@ -1,0 +1,479 @@
+== Quickstart
+This quickstart guide aims to get you exploring OBRI quickly.
+
+=== Getting Started
+==== Becoming a TPP
+
+. Go to link:++https://directory.{{obriDomain}}++[https://directory.{{obriDomain}}]
+. Click `Sign Up`
+. Enter your details and agree to the terms and conditions
+. Click `Sign Up`
+. Log in with you username and password
+
+Refer to <<#_forgerock_directory_registration,ForgeRock Directory registration>> for more information.
+
+==== Registering a Software Statement (Fintech App)
+. Go to the Software Statement tab
+. Click `Create a new software statement`
+. In the general tab update
+  * Name: Postman
+  * Redirect URIs: https://www.google.com
+. Click `Save`
+
+NOTE: There is a bug with the Redirect URI text field that causes it to lose focus after every key press. Just copy and paste `https://www.google.com` in.
+
+==== Downloading Transport Client Certificates
+. Go to the Software Statement tab
+. Click `See More` on your Software Statement
+. Go to the `Transport/Signing/Encryption keys` tab
+. Scroll to the Key's group at the bottom of the page
+. Click the Action button of the key with the type equal to 'Transport'
+. Download the .pem file
+. Download the .key file
+
+==== Setting up postman
+Install the Postman Native App https://www.getpostman.com/apps
+
+===== Automatic setup
+. Open Postman
+. Go to https://postman.ob.forgerock.financial
+On Mac (& Windows?) you can:
+. Click `Run in PostMan`
+. Click `Postman for Mac`
+. Click Open Postman
+. Click the Environment dropdown. The default value in the dropdown will be `No Environment`
+. Select `ForgeRock OBRI prod`
+
+===== Manual setup
+. Open Postman
+. Click import
+. Select the 'Import from a Link' tab
+. Enter the following URL to import the Environment:
+  https://raw.githubusercontent.com/ForgeRock/obri-postman/master/Environment/OpenBanking%20Engineering%20ob.postman_environment.json
+. Click import
+. Select the 'Import from a Link' tab
+. Enter the following URL to import the Collection:
+  https://github.com/ForgeRock/obri-postman/raw/master/Collection/ForgeRock_OBRI_Sample_-_V3.0.json
+. Click the Environment dropdown. The default value in the dropdown will be `No Environment`
+. Select `ForgeRock OBRI prod`
+
+Refer to <<#_setting_up_postman,Setting up Postman>> for more information.
+
+==== Add Certificate to Postman
+
+. In Postman go to Preferences or Settings (dependent on system) -> Certificates
+. Click on 'Add Certificate'
+. Add the domain `*.{{obriDomain}}`
+. Choose your CRT file, which can be a .pem file
+. Choose your Key file, which is your .key file
+. Click 'Add'
+
+Refer to <<#_setup_your_client_certificate,Setup your client certificate>> for more information.
+
+Check you certificates
+
+. In Postman Collections, go to `Setup your environment` -> `Test MATLS` directory
+. Select `JWKMS test MATLS`
+. Click `Send` and expect a `200 OK` response
+. There should also a message in the response saying `Hello {your_id}` and and a single authority called "ROLE_JWKMS_APP"
+. Repeat for each test MATLS call in this directory. There should all return 200 and have an ID and some roles or authorities in the response.
+
+==== Set Up Postman Variables
+Initialise Postman variables by calling the discovery endpoints
+
+. In Postman Collections, go to `Setup environment` -> `Discovery` directory
+. Select `RS discovery`
+. Click `Send` and expect a `200 OK` response
+. Select `AS discovery`
+. Click `Send` and expect a `200 OK` response
+
+Refer to <<#_aspsp_discovery,ASPSP discovery>> for more information.
+
+=== Onboarding
+
+For all of the examples in this section the Postman functions live in `Onboarding your TPP` directory.
+
+Refer to <<#_on_boarding_with_an_aspsp,On-boarding with an ASPSP>> for more information.
+
+==== Check Mutual Authentication Set Up
+. Select `test mtls before on-boarding`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "issuerId": "5b97d919b093467d45a69e59",
+    "authorities": [
+        {
+            "authority": "UNREGISTERED_TPP"
+        }
+    ]
+}
+----
+
+==== Get Current Software Statement
+. Select `Current software statement`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "id": "5b97d919b093467d45a69e59",
+    "name": "Postman",
+    "mode": "TEST",
+    "roles": [
+        "AISP",
+        "PISP",
+        "CBPII",
+        "DATA"
+    ],
+    "status": "ACTIVE",
+    "redirectUris": [
+        "https://www.google.com"
+    ],
+    "applicationId": "5b97d919b093467d09ce7e34"
+}
+----
+
+==== Generating an SSA
+. Select `Generate SSA`
+. Click `Send` and expect JWT token in the response
+
+==== Generating a Registration JWT
+. Select `Generate registration JWT`
+. Click `Send` and expect JWT token in the response
+
+==== Registering the TPP
+. Select `Dynamic Registration`
+. Click `Send` and expect a similar response.
+
+NOTE: There is an expiry time on the JWT so if you don't make request soon enough you may get an expired response.
+
+[source,json]
+----
+{
+    "scopes": [
+        "openid",
+        "payments",
+        "accounts",
+        "fundsconfirmations"
+    ],
+    "scope": "openid payments accounts fundsconfirmations",
+    "redirect_uris": [
+        "https://www.google.com"
+    ],
+    "response_types": [
+        "code id_token"
+    ],
+    "application_type": "web",
+    "client_name": "Postman",
+    "jwks_uri": "https://service.directory.{{obriDomain}}/api/software-statement/5b97d919b093467d45a69e59/application/jwk_uri",
+    "subject_type": "public",
+    "id_token_signed_response_alg": "RS256",
+    "id_token_encrypted_response_alg": "RSA1_5",
+    "id_token_encrypted_response_enc": "A128CBC_HS256",
+    "userinfo_signed_response_alg": "",
+    "userinfo_encrypted_response_alg": "",
+    "request_object_signing_alg": "RS256",
+    "request_object_encryption_alg": "RSA-OAEP-256",
+    "request_object_encryption_enc": "A128CBC-HS256",
+    "token_endpoint_auth_method": "private_key_jwt",
+    "token_endpoint_auth_signing_alg": "RS256",
+    "default_max_age": "1",
+    "software_statement": "…",
+    "client_id": "cfc758aa-166e-42c9-a1a6-f41dc4dca491",
+    "client_secret": "6936f827-3c8a-46ee-a357-e8b61acd43ed",
+    "registration_access_token": "…",
+    "registration_client_uri": "https://as.aspsp.{{obriDomain}}/oauth2/register?client_id=cfc758aa-166e-42c9-a1a6-f41dc4dca491",
+    "client_secret_expires_at": "0"
+}
+----
+
+==== Check TPP Is Registered
+. Select `test mtls before on-boarding`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "issuerId": "cfc758aa-166e-42c9-a1a6-f41dc4dca491",
+    "authorities": [
+        {
+            "authority": "ROLE_AISP"
+        },
+        {
+            "authority": "ROLE_PISP"
+        },
+        {
+            "authority": "ROLE_DATA"
+        },
+        {
+            "authority": "ROLE_CBPII"
+        }
+    ]
+}
+----
+
+=== Accounts
+For all of the examples in this section the Postman functions live in `Accounts flow` directory.
+
+In this section you will:
+
+. Request access to account data as the TPP
+. Authorise access to account data as a user
+. Retrieve account data on behalf of the user as the TPP
+
+Refer to <<#_accessing_psu_accounts,Accessing PSU accounts>> for more information.
+
+==== Generate Client Credential JWT As TPP
+. Select `Generate client assertion JWT`
+. Click `Send` and expect JWT token in the response
+
+==== Generate Access Token As TPP
+. Select `Client credential`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "access_token": "…",
+    "scope": "openid payments accounts",
+    "id_token": "…",
+    "token_type": "Bearer",
+    "expires_in": 86399
+}
+----
+
+==== Request Account Data As TPP
+. Select `create account request`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "Data": {
+        "AccountRequestId": "A435e745b-807c-4587-9466-fee067adf9a3",
+        "Status": "AwaitingAuthorisation",
+        "CreationDateTime": "2018-09-13T08:22:40+00:00",
+        "Permissions": [
+            "ReadAccountsDetail",
+            "ReadBalances",
+            "ReadBeneficiariesDetail",
+            "ReadDirectDebits",
+            "ReadProducts",
+            "ReadStandingOrdersDetail",
+            "ReadTransactionsCredits",
+            "ReadTransactionsDebits",
+            "ReadTransactionsDetail",
+            "ReadOffers",
+            "ReadPAN",
+            "ReadParty",
+            "ReadPartyPSU",
+            "ReadScheduledPaymentsDetail",
+            "ReadStatementsDetail"
+        ],
+        "Risk": {}
+    }
+}
+----
+
+==== Sign Payload For Accepting Account Data Request As TPP
+. Select `Generate request parameter`
+. Click `Send` and expect JWT token in the response
+
+==== Authorise TPP to Accept Account Data Request As User
+For this section we can only partially use Postman
+
+. Select `Hybrid flow`
+. Select `Code` under `Save`
+. Select cURL from the dropdown
+. Copy the URL
+. Put the URL into the browser
+. Log in using your username and password you used when signing up
+. Select `Allow`
+. Select the accounts you want the TPP to have access to
+. You will now be redirected to a URL which looks like `https://www.google.com/#code=5edfe3dd-8ccd-45e3-baed-19d98b49f3da&scope=openid%20accounts&id_token={jwt}&state=10d260bf-a7d9-444a-92d9-7b7a5f088208`. The id_token has been changed to a variable `{jwt}` to reduce verbosity.
+. Copy the `code` variable from the URL fragment which looks like `9b667799-c0dd-4823-b351-7431cd2f9c3d` and save this somewhere for later use. This code is called an *authorisation code*
+
+==== Get Access Token as TPP
+. Select `Exchange Code`
+. Go to the `Body` tab
+. Override the `code` form value with your authorisation code you copied in the previous step.
+. Click send and expect a similar response
+
+[source,json]
+----
+{
+    "access_token": "…",
+    "refresh_token": "…",
+    "scope": "openid accounts",
+    "id_token": "…",
+    "token_type": "Bearer",
+    "expires_in": 86399,
+    "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208"
+}
+----
+
+==== Get Account Data as TPP
+. Select `Account API V3.0` -> `Get accounts`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "Data": {
+        "Account": [
+            {
+                "AccountId": "b44b9b23-2314-4d87-b097-697592bdff8e",
+                "Currency": "GBP",
+                "Nickname": "Household",
+                "AccountType": "Personal",
+                "AccountSubType": "CurrentAccount",
+                "Account": [
+                    {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "88035216110856",
+                        "Name": "benjefferies"
+                    }
+                ]
+            },
+            {
+                "AccountId": "f6d2c0a8-9f08-42dd-ba2a-e3a1cb56864e",
+                "Currency": "GBP",
+                "Nickname": "Bills",
+                "Account": [
+                    {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "63658320150292",
+                        "Name": "benjefferies",
+                        "SecondaryIdentification": "18433461"
+                    }
+                ]
+            }
+        ]
+    },
+    "Links": {
+        "Self": "/accounts"
+    },
+    "Meta": {
+        "TotalPages": 1
+    }
+}
+----
+
+=== Payments
+For all of the examples in this section the Postman functions live in `Payment flows` -> `Payment API V3.0` -> `Domestic Payments` -> `Domestic single payment` directory.
+
+In this section you will:
+
+. Request a domestic payment as the TPP
+. Authorise the payment as a user
+. As a TPP, submit the payment that the PSU previously consented
+
+Refer to <<#_making_a_payment,Making a payment>> for more information.
+
+==== Generate Client Credential JWT As TPP
+. Under `Payment preparation`, 'Select `Generate client credential JWT`
+. Click `Send` and expect JWT token in the response
+
+==== Generate Access Token As TPP
+. Select `Client credential`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "access_token": "…",
+    "scope": "openid payments accounts",
+    "id_token": "…",
+    "token_type": "Bearer",
+    "expires_in": 86399
+}
+----
+
+==== Request A Payment As TPP
+. Select `Create domestic payment consent`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "Data": {
+      "ConsentId": "PDC_7f078033-272d-4196-ad8f-6b1e66531dff",
+      "Status": "AwaitingAuthorisation",
+      …
+    },
+    "Risk": {
+      …
+    }
+}
+----
+
+==== Sign Payload For Accepting Payment Request As TPP
+. Select `Auth & consent` -> `Generate request parameter`
+. Click `Send` and expect JWT token in the response
+
+==== Authorise TPP to Accept Payment Request As User
+For this section we can only partially use Postman
+
+. Select `Hybrid flow`
+. Select `Code` under `Save`
+. Select cURL from the dropdown
+. Copy the URL
+. Put the URL into the browser
+. Log in using your username and password you used when signing up
+. Select `Allow`
+. Select the account you want the payment to come from
+. You will now be redirected to a URL which looks like `https://www.google.com/#code=5edfe3dd-8ccd-45e3-baed-19d98b49f3da&scope=openid%20accounts&id_token={jwt}&state=10d260bf-a7d9-444a-92d9-7b7a5f088208`. The id_token has been changed to a variable `{jwt}` to reduce verbosity.
+. Copy the `code` variable from the URL fragment which looks like `9b667799-c0dd-4823-b351-7431cd2f9c3d` and save this somewhere for later use. This code is called an *authorisation code*
+
+==== Get Access Token as TPP
+. Select `Token exchange` -> `Exchange Code`
+. Go to the `Body` tab
+. Override the `code` form value with your authorisation code you copied in the previous step.
+. Click send and expect a similar response
+
+[source,json]
+----
+{
+    "access_token": "…",
+    "refresh_token": "…",
+    "scope": "openid payments accounts",
+    "id_token": "…",
+    "token_type": "Bearer",
+    "expires_in": 86399,
+    "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208"
+}
+----
+
+==== Submit Payment Using Access token As TPP
+. Select `Data access` -> `Domestic payment`
+. Click `Send` and expect a similar response
+
+[source,json]
+----
+{
+    "Data": {
+        "DomesticPaymentId": "71103d46-8eae-4da0-805c-32164797151b",
+        "ConsentId": "P8606a4da-b351-44b1-8912-70f8e8cfdba4",
+        "Status": "AcceptedSettlementInProcess",
+        ...
+    }
+}
+----
+
+==== Checking Submitted Payment Status
+. Select `Get Domestic Payment`
+. Click `Send` and expect a similar response where the `Status` can be `AcceptedSettlementInProcess` or `AcceptedSettlementCompleted` depending on if it's been processed yet.
+
+[source,json]
+----
+{
+    "Data": {
+        "PaymentSubmissionId": "71103d46-8eae-4da0-805c-32164797151b",
+        "PaymentId": "P8606a4da-b351-44b1-8912-70f8e8cfdba4",
+        "Status": "AcceptedSettlementInProcess",
+        ...
+    }
+}
+----

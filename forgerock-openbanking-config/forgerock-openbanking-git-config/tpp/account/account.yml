@@ -1,0 +1,11 @@
+#Server
+server:
+  ssl:
+    client-auth: WANT
+    client-certs-key-alias: "*.${dns.hosts.root}"
+    enabled: true
+    key-store: file:/opt/openbanking/account-ui/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+  hostname: account.${dns.hosts.root}

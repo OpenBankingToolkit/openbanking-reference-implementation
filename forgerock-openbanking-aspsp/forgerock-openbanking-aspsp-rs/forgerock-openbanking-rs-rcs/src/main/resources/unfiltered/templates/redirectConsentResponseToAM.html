@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: headFragment">
+    <title id="pageTitle">ForgeRock RCS automatic post redirection</title>
+</head>
+<body>
+<form name="myRedirectForm" th:action="${redirect_uri}" method="post">
+    <input th:name="${consent_response_field_name}" type="hidden" th:value="${consent_response}"/>
+    <noscript>
+        <input type="submit" value="Click here to continue"/>
+    </noscript>
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        document.myRedirectForm.submit();
+    });
+</script>
+</body>
+</html>

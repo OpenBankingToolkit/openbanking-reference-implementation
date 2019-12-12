@@ -1,0 +1,587 @@
+== Errors documentation
+
+Errors can be a bit confusing sometimes, despite the fact we spend time to make them as simple as we can.
+The new OB formats, for returning errors, allows us to provide a URI to give further details.
+This section of the docs would serve that purpose and provide further context on any errors you may have hit.
+
+=== OB API errors
+
+[[INVALID_PAGE_NUMBER]]
+* INVALID_PAGE_NUMBER
+
+The page number you send couldn't be parsed as a number.
+
+[[OBRI.AccessToken.Invalid]]
+* OBRI.AccessToken.Invalid
+
+The access token doesn't have the right scopes to access the resource. If that's still obscure, see an access token as a
+door key. Not having the right scope is like not having the right key for opening the door.
+
+[[ACCESS_TOKEN_INVALID_FORMAT]]
+* ACCESS_TOKEN_INVALID_FORMAT
+
+The access token in our OBRI environment are JWTs. Therefore, before even validating an access token, we verify first it's a JWT
+It sounds like in your case, the access token is not a JWT one. Perhaps you appended extra characters by mistake or you truncated it.
+
+[[ACCESS_TOKEN_INVALID]]
+* ACCESS_TOKEN_INVALID
+
+The access token is not valid. The scopes of it looks correct, it's more that it is bind to a TPP and resources that you
+are not allowed to access.
+
+[[ACCESS_TOKEN_INVALID_ACCOUNT_REQUEST]]
+* ACCESS_TOKEN_INVALID_ACCOUNT_REQUEST
+
+The access token is bind with an account request that doesn't exist. You may have deleted the account request already for example.
+
+[[ACCESS_TOKEN_INVALID_PAYMENT_ID]]
+* ACCESS_TOKEN_INVALID_PAYMENT_ID
+
+The access token is bind to a payment ID that doesn't match the resource you are accessing. You may have mixed up access token.
+Double check that the access token is the one you used for this particular payment flow.
+
+[[FINANCIAL_ID_INVALID]]
+* FINANCIAL_ID_INVALID
+
+Each ASPSPs get a dedicated financial ID. This is used so in case a TPP send the request to the wrong ASPSP by mistake,
+at least, the wrong ASPSP is able to detect the error message. If you got this error, it means you send the wrong
+financial ID header and therefore, our ASPSP rejected it.
+
+[[MATLS_TPP_AUTHENTICATION_INVALID_FROM_ACCOUNT_REQUEST]]
+* MATLS_TPP_AUTHENTICATION_INVALID_FROM_ACCOUNT_REQUEST
+
+It sounds like the account request was associated with a different TPP than your transport certificate.
+You may have mixed up transport certificates or account requests.
+
+[[MATLS_TPP_AUTHENTICATION_INVALID_FROM_ACCESS_TOKEN]]
+* MATLS_TPP_AUTHENTICATION_INVALID_FROM_ACCESS_TOKEN
+
+It sounds like the access token was associated with a different TPP than your transport certificate.
+You may have mixed up transport certificates or access token.
+
+[[ACCOUNT_REQUEST_WAITING_PSU_CONSENT]][[ACCOUNT_REQUEST_REJECTED]]
+* ACCOUNT_REQUEST_WAITING_PSU_CONSENT, ACCOUNT_REQUEST_REJECTED
+
+The account request status is incorrect. To be fair, it's a situation most unlikely to happen. This
+is an additional security layer we implemented. We invite you to contact us so we can help you with that issue.
+
+[[ACCOUNT_REQUEST_REVOKED]]
+* ACCOUNT_REQUEST_REVOKED
+
+The account request has been revoked by the PSU from the ASPSP UI.
+
+[[ACCOUNT_REQUEST_EXPIRED]]
+* ACCOUNT_REQUEST_EXPIRED
+
+The account request has expired. In that scenario, start again the consent request flow with the PSU.
+
+[[ACCOUNT_REQUEST_NOT_FOUND]]
+* ACCOUNT_REQUEST_NOT_FOUND
+
+The account request can't be found. You may have deleted the account request already. if you think that's not the case,
+please contact us
+
+[[UNAUTHORISED_ACCOUNT]]
+* UNAUTHORISED_ACCOUNT
+
+The account request is associated with a set of accounts, choose by the user. You are apparently trying to access an account
+that the PSU didn't consented you to access.
+
+[[REQUEST_PARAMETER_PERMISSIONS_NOT_PERMITTED]]
+* REQUEST_PARAMETER_PERMISSIONS_NOT_PERMITTED
+
+You are trying to ask for a specific set of permissions in your account access consent request but some of the permissions
+you requested are not supported on this sandbox. Some ASPSPs do bot support all the available account access data types and therefore
+do not allow a TPP to request permission for something they do not support. To resolve this issue, remove the forbidden
+permissions (listed in the error message) from your account access consent request body to proceed.
+
+[[PERMISSIONS_INVALID]]
+* PERMISSIONS_INVALID
+
+When a PSU consented to share his accounts data, you asked for a specific set of permissions. Like Transactions, balances.
+It sounds like now, you are trying to access a resource that you didn't ask the permissions initially.
+Either you need to ask the PSU to extend his consent for the other permissions, or you may restrict the user experience
+based on what the PSU authorised you to access.
+In any case, the ASPSP is respected the PSU consent and is not going to give you access to this resource.
+
+[[PERMISSIONS_TRANSACTIONS_INVALID]]
+* PERMISSIONS_TRANSACTIONS_INVALID
+
+Having the permissions for an endpoint is sometimes not enough. For example, you can't get the transactions of a PSU if he
+never authorised you to access either the CREDIT or DEBIT transactions.
+This error is thrown when you violated one of those rules, which are in the Open Banking standard.
+
+=== Payments
+
+[[PAYMENT_ALREADY_SUBMITTED]]
+* PAYMENT_ALREADY_SUBMITTED
+
+You are trying to submit the same payment twice. Nice try ;)
+
+[[PAYMENT_FILE_ALREADY_SUBMITTED]]
+* PAYMENT_FILE_ALREADY_SUBMITTED
+
+You have already uploaded a file for this payment consent.
+
+[[PAYMENT_WAITING_PSU_CONSENT]]
+[[PAYMENT_STILL_PENDING]]
+[[PAYMENT_REJECTED]]
+* PAYMENT_WAITING_PSU_CONSENT, PAYMENT_STILL_PENDING, PAYMENT_REJECTED
+
+The payment request status is not okay for submitting a payment.
+
+[[PAYMENT_INVALID_INITIATION]]
+* PAYMENT_INVALID_INITIATION
+
+The payment initiation doesn't match the initial request. When you created the payment, you did send the payment details.
+When you submit the payment, you also send the payment details again, as security check.
+Apparently, you did not send the same payment details. Have you change the price just for testing?
+
+
+[[PAYMENT_INVALID_RISK]]
+* PAYMENT_INVALID_RISK
+
+The payment risk doesn't match the initial request. When you created the payment, you did send the payment risk.
+When you submit the payment, you also send the payment risk again, as security check.
+Apparently, you did not send the same payment risk.
+
+[[PAYMENT_SUBMISSION_NOT_FOUND]]
+* PAYMENT_SUBMISSION_NOT_FOUND
+
+The payment submission can't be found. You may have deleted the account submission first by mistake.
+
+[[PAYMENT_ID_NOT_FOUND]]
+* PAYMENT_ID_NOT_FOUND
+
+Payment ID specified in the request is unknown. You may have used a payment ID from a different ASPSP.
+
+[[PAYMENT_CONSENT_BEHIND_SUBMISSION_NOT_FOUND]]
+* PAYMENT_CONSENT_BEHIND_SUBMISSION_NOT_FOUND
+
+You are trying to submit a payment but the consent for this payment cannot be found. Please check the Consent Id you have provided matches an actual authorised consent.
+
+[[PAYMENT_INVALID_EXCHANGE_RATE_TYPE]]
+* PAYMENT_INVALID_EXCHANGE_RATE_TYPE
+
+The 'Exchange Rate Type' you provided in the consent for an international payment is not one of the supported values in this version of the payments API.
+Please submit a valid rate type, for example: ACTUAL, INDICATIVE, AGREED.
+
+[[PAYMENT_INVALID_EXCHANGE_RATE]]
+* PAYMENT_INVALID_EXCHANGE_RATE
+
+They exchange rate information you provided in the payment consent for this exchange rate type is not valid. Please check the payment specifications.
+For example, some Exchange Rate Types do not support a specified exchange rate or a contract identifier in the consent.
+
+[[PAYMENT_SUBMISSION_ALREADY_EXISTS]]
+* PAYMENT_SUBMISSION_ALREADY_EXISTS
+
+You are trying to submit the same payment submission twice.
+
+
+=== Funds confirmation
+
+[[FUNDS_CONFIRMATION_STILL_PENDING]]
+* FUNDS_CONFIRMATION_STILL_PENDING
+
+You have submitted a funds confirmation request for a PSU but they have not authorised the consent for this action yet.
+Please wait until the PSU has authorised the funds confirmation consent.
+
+[[FUNDS_CONFIRMATION_REJECTED]]
+* FUNDS_CONFIRMATION_REJECTED
+
+You have submitted a funds confirmation request for a PSU but the consent has been rejected. This may be because it has been revoked
+or because the authorisation failed.
+
+[[FUNDS_CONFIRMATION_EXPIRED]]
+* FUNDS_CONFIRMATION_EXPIRED
+
+You have submitted a funds confirmation request for a PSU but the consent has expired. Please check the 'Expiration Date Time' on the Funds Confirmation consent.
+
+=== TPP registration
+
+[[TPP_REGISTRATION_ALREADY_REGISTERED]]
+* TPP_REGISTRATION_ALREADY_REGISTERED
+
+Your TPP is already registered to this ASPSP. You don't need to register again. If you loose your client ID for a reason,
+you can always use the GET method to retrieve it.
+
+[[TPP_REGISTRATION_UNKNOWN_TRANSPORT_CERTIFICATE]]
+* TPP_REGISTRATION_UNKNOWN_TRANSPORT_CERTIFICATE
+
+We don't recognise your transport certificate. The CA that issued this certificate is not supported by us.
+More likely you have used the wrong one, verify it comes from the right directory.
+
+[[TPP_REGISTRATION_TRANSPORT_CERTIFICATE_NOT_MATCHING_SSA]]
+* TPP_REGISTRATION_TRANSPORT_CERTIFICATE_NOT_MATCHING_SSA
+
+The SSA you presented is bind with another TPP than your transport certificate. What this mean is that you either using
+the SSA from a different TPP or your transport certificate is not the right one.
+
+[[TPP_REGISTRATION_REQUEST_JWT_INVALID]]
+* TPP_REGISTRATION_REQUEST_JWT_INVALID
+
+The registration request JWT is invalid for some reason.
+
+[[TPP_REGISTRATION_REQUEST_NOT_MATCHING_SSA]]
+* TPP_REGISTRATION_REQUEST_NOT_MATCHING_SSA
+
+We verify the registration request, and in particular if it is consistent with the SSA you provided.
+Some of those rules can seems a bit over complicated, keep in mind that Open Banking is re-using the OAuth2 dynamic registration
+and for those reason, it may complicated things.
+
+[[TPP_REGISTRATION_REQUEST_INVALID_FORMAT]]
+* TPP_REGISTRATION_REQUEST_INVALID_FORMAT
+
+The registration request you send is not a JWT. The first things we do before validating it is parsing it and verifying
+the signature. Apparently, we haven't reach the first step of parsing it correctly.
+
+[[TPP_REGISTRATION_NOT_REGISTERED]]
+* TPP_REGISTRATION_NOT_REGISTERED
+
+Your TPP is not registered yet with this ASPSP. The process is to get a software statement registered in a directory,
+like the ForgeRock directory, and then to on-boarding with all the banks you want to use.
+In this particular, what you need to do is to on-boarding with our ASPSP.
+
+[[TPP_REGISTRATION_OIDC_CLIENT_REGISTRATION_ISSUE]]
+* TPP_REGISTRATION_OIDC_CLIENT_REGISTRATION_ISSUE
+
+We failed to register your OIDC client. This usually mean a violation of the OIDC standard. Make sure your request
+is compliant of the OIDC dynamic client registration and OAuth2 dynamic client registration.
+
+[[TPP_REGISTRATION_SSA_INVALID]]
+* TPP_REGISTRATION_SSA_INVALID
+
+The SSA you have attached to your registration request JWT is not valid. It could be for example expired or signed by a non-trusted directory.
+
+[[TPP_REGISTRATION_SSA_INVALID_FORMAT]]
+* TPP_REGISTRATION_SSA_INVALID_FORMAT
+
+The SSA should be a JWT format.
+
+== File payment
+
+[[REQUEST_FILE_INCORRECT_FILE_HASH]]
+* REQUEST_FILE_INCORRECT_FILE_HASH
+
+You have uploaded a file for a file payment consent but the file has an incorrect hash value so may be corrupted or modified. The SHA256 hash of the file you upload must match the hash provided on the file payment consent.
+
+[[REQUEST_FILE_WRONG_NUMBER_OF_TRANSACTIONS]]
+* REQUEST_FILE_WRONG_NUMBER_OF_TRANSACTIONS
+
+You have uploaded a file for a file payment consent but the file does not have the expected number of transactions present in it.
+The number of transactions in the uploaded file must match the number specified in the file payment consent.
+
+[[REQUEST_FILE_INCORRECT_CONTROL_SUM]]
+* REQUEST_FILE_INCORRECT_CONTROL_SUM
+
+You have uploaded a file for a file payment consent but the file does not have the expected control sum value.
+The total value of the transactions (ignoring currency) in the uploaded file must match the control sum value specified in the file payment consent.
+
+[[REQUEST_FILE_EMPTY]]
+* REQUEST_FILE_EMPTY
+
+You have uploaded an empty file.
+
+[[REQUEST_FILE_XML_INVALID]]
+* REQUEST_FILE_XML_INVALID
+
+The have specified a 'File Type' with an XML format but the XML file provided is not valid. Please check the file content matches the specified File Type.
+
+[[REQUEST_FILE_JSON_INVALID]]
+* REQUEST_FILE_JSON_INVALID
+
+The have specified a 'File Type' with an XJSONML format but the JSON file provided is not valid. Please check the file content matches the specified File Type.
+
+[[FILE_PAYMENT_REPORT_NOT_READY]]
+* FILE_PAYMENT_REPORT_NOT_READY
+
+You have requested a file payment report file but the file payment is not yet authorised and accepted. A report can only be generated for a file payemnt that
+has been authorised by the PSU and has had a File Payment Submission created for it (i.e. Accepted in Progress or Accepted Settled).
+
+
+== Generic REST errors
+
+The REST layer of our application has some sanity check. All the errors above are generic REST errors, meaning
+you request haven't reached our Open Banking layer underneath.
+
+[[REQUEST_FIELD_INVALID]]
+* REQUEST_FIELD_INVALID
+
+One of the field is not valid. Verify with the swagger API the format expected
+
+[[REQUEST_OBJECT_INVALID]]
+* REQUEST_OBJECT_INVALID
+
+The object received in the body generally, is not in the expected format.
+
+[[REQUEST_PARAMETER_JWT_INVALID]]
+* REQUEST_PARAMETER_JWT_INVALID
+
+The request parameter JWT is invalid. The error should give you more details on the reason behind.
+
+[[REQUEST_PARAMETER_JWT_FORMAT_INVALID]]
+* REQUEST_PARAMETER_JWT_FORMAT_INVALID
+
+The request parameter format should be a JWT (JWE or JWS). Please verify the format of your request parameter.
+
+[[REQUEST_PARAMETER_CLAIM_MANDATORY]]
+* REQUEST_PARAMETER_CLAIM_MANDATORY
+
+Some claims are mandatory (see OB standard and OIDC standard). The error details should give you the claim we expect to be
+mandatory.
+
+[[REQUEST_PARAMETER_QUERY_PARAM_DIFF_CLAIM]]
+* REQUEST_PARAMETER_QUERY_PARAM_DIFF_CLAIM
+
+Query parameters are not signed but JWT claims are. The standard OB and OIDC are requesting that some claims to be repeated
+in the query parameter. For security reason, those values should match, otherwise you get this error.
+
+[[REQUEST_PARAMETER_MISSING]]
+* REQUEST_PARAMETER_MISSING
+
+One of the mandatory request parameter is missing.
+
+[[REQUEST_BINDING_FAILED]]
+* REQUEST_BINDING_FAILED
+
+The request binding failed, which is the operation of matching your request with the according endpoint.
+This is usually link to the path variables not been correct for example.
+
+[[REQUEST_ARGUMENT_TYPE_MISMATCH]]
+* REQUEST_ARGUMENT_TYPE_MISMATCH
+
+The type of one of the argument is not valid. Verify with the swagger API you are sending the right type of object.
+
+[[REQUEST_METHOD_NOT_SUPPORTED]]
+* REQUEST_METHOD_NOT_SUPPORTED
+
+The request method is not the one expected.
+
+[[REQUEST_MEDIA_TYPE_NOT_SUPPORTED]]
+* REQUEST_MEDIA_TYPE_NOT_SUPPORTED
+
+The request media type is not the one expected.
+
+[[REQUEST_MEDIA_TYPE_NOT_ACCEPTABLE]]
+* REQUEST_MEDIA_TYPE_NOT_ACCEPTABLE
+
+
+The request media type is not acceptable from our server backend.
+
+HTTP also has the dedicated “Accept” header – which is used to specify media types the
+client recognizes and can accept. Simply put, the server will send back a resource representation
+using one of the media types the client requested.
+However, if there is no common type that both sides can work with, our server will throw this error.
+
+
+[[REQUEST_MESSAGE_NOT_READABLE]]
+* REQUEST_MESSAGE_NOT_READABLE
+
+The body is not in a readable format, which usually mean your json object is malformed.
+
+[[REQUEST_PATH_VARIABLE_MISSING]]
+* REQUEST_PATH_VARIABLE_MISSING
+
+One of the request path is missing. Verify with the swagger of the endpoint you want to use, which path variable
+you must defined.
+
+[[REQUEST_MISSING_HEADER]]
+* REQUEST_MISSING_HEADER
+
+The request is missing a mandatory header.
+
+[[REQUEST_MISSING_COOKIE]]
+* REQUEST_MISSING_COOKIE
+
+The request is expecting to receive a cookie, which apparently is missing.
+
+[[REQUEST_MISSING_ARGUMENT]]
+* REQUEST_MISSING_ARGUMENT
+
+One of the mandatory argument is missing.
+
+[[REQUEST_INVALID_HEADER]]
+* REQUEST_INVALID_HEADER
+
+The header from the request is invalid. Please verify the format.
+
+[[REQUEST_UNDEFINED_ERROR_YET]]
+* REQUEST_UNDEFINED_ERROR_YET
+
+The list of errors can be quite long and we don't pretend catching them all nicely. If you hit that error,
+please contact us and we will add it to the list of known errors.
+
+[[SERVER_ERROR]]
+* SERVER_ERROR
+
+Something bad happened in our side. Most of the time, it's due to a new kind of errors that we don't handle properly.
+Unfortunately, instead of returning a proper error, you got this 500. Contact us with the details of your request
+and we will try to sort out this 500 for the future users hitting the same problem.
+
+=== Data endpoints error
+
+[[DATA_INVALID_REQUEST]]
+* DATA_INVALID_REQUEST
+
+The financial DATA you send is not in the expected format. We adopted the Open Banking standard format.
+You can use the export endpoint to get a template of what's format we expect.
+If you still think it's not working but the format is valid. Please contact us and we will investigate the issue.
+
+=== ForgeRock internal errors
+
+We used the same OB format of errors for our internal system. Therefore the list above is more for internal purposes.
+We are not expected you would received one of those error using our ASPSP.
+
+==== ForgeRock TPP: ID Token errors
+
+[[ID_TOKEN_INVALID_FORMAT]] [[ID_TOKEN_INVALID]]
+* ID_TOKEN_INVALID_FORMAT, ID_TOKEN_INVALID
+
+The format of the ID token is invalid. This error is designed for our sample TPP.
+
+==== ForgeRock RCS
+
+[[RCS_CONSENT_REQUEST_FORMAT]]
+* RCS_CONSENT_REQUEST_FORMAT
+
+The RCS consent request format is invalid. We expect to received a JWT
+
+[[RCS_CONSENT_REQUEST_INVALID]]
+* RCS_CONSENT_REQUEST_INVALID
+
+The RCS consent JWT is invalid. The signature or the consent of it is not valid.
+
+[[RCS_CONSENT_RESPONSE_FAILURE]]
+* RCS_CONSENT_RESPONSE_FAILURE
+
+The RCS consent response failed. We couldn't generate the JWT response
+
+[[RCS_CONSENT_REQUEST_UNKNOWN_ACCOUNT_REQUEST]]
+* RCS_CONSENT_REQUEST_UNKNOWN_ACCOUNT_REQUEST
+
+The account request behind the RCS consent request doesn't exist.
+
+[[RCS_CONSENT_REQUEST_INVALID_CONSENT]]
+* RCS_CONSENT_REQUEST_INVALID_CONSENT
+
+The RCS consent request does not match the account or payment consent.
+This usually means that the RCS request and Consent were created with different TPP client IDs or that the TPP in the RCS request was not found.
+
+[[RCS_CONSENT_REQUEST_DEBTOR_ACCOUNT_NOT_FOUND]]
+* RCS_CONSENT_REQUEST_DEBTOR_ACCOUNT_NOT_FOUND
+
+The TPP specified a debtor account in the payment consent but it is not one the the PSU's accounts.
+Please check the debtor account on consent is correct.
+
+[[RCS_CONSENT_REQUEST_INVALID_ACCOUNT_REQUEST]] [[RCS_CONSENT_REQUEST_INVALID_PAYMENT_REQUEST]]
+* RCS_CONSENT_REQUEST_INVALID_ACCOUNT_REQUEST, RCS_CONSENT_REQUEST_INVALID_PAYMENT_REQUEST
+
+Security issue. It's basically happening when AISP/PISP are mixing up requests.
+
+[[RCS_CONSENT_REQUEST_NOT_FOUND_TPP]]
+* RCS_CONSENT_REQUEST_NOT_FOUND_TPP
+
+The TPP specified on the RCS request was not found and may have been deleted. Please check the client ID on the request.
+
+[[RCS_CONSENT_REQUEST_INVALID_FUNDS_CONFIRMATION_REQUEST]]
+* RCS_CONSENT_REQUEST_INVALID_FUNDS_CONFIRMATION_REQUEST
+
+The RCS request for Funds confirmation was not valid.
+This usually means that the TPP specified a debtor account in the funds confirmation consent that is not one the the PSU's accounts. Please check the debtor account on Consent is correct.
+
+[[RCS_CONSENT_DECISIONS_FORMAT]]
+* RCS_CONSENT_DECISIONS_FORMAT
+
+We failed to parse the JWT submitted for the consent decision. Please check that the submitted request body is valid JSON.
+
+[[RCS_CONSENT_DECISION_EMPTY]]
+* RCS_CONSENT_DECISION_EMPTY
+
+The consent decision received is empty.
+
+[[RCS_CONSENT_DECISION_INVALID_USER]]
+* RCS_CONSENT_DECISION_INVALID_USER
+
+It's a security issue. It's basically happening when a user A received the consent and a user B is trying to submit the response.
+
+[[RCS_CONSENT_DECISION_INVALID_ACCOUNT]]
+* RCS_CONSENT_DECISION_INVALID_ACCOUNT
+
+The user is trying to give consent for an account he doesn't own. It can only happen if the user is modifying the
+forms data.
+
+
+==== Access Token endpoint errors
+
+[[ACCESS_TOKEN_CLIENT_ASSERTION_FORMAT_INVALID]]
+* ACCESS_TOKEN_CLIENT_ASSERTION_FORMAT_INVALID
+
+The client assertion needs to be a JWS. Verify that your assertion complies to the JWS standard.
+
+[[ACCESS_TOKEN_NO_CREDENTIAL]]
+* ACCESS_TOKEN_NO_CREDENTIAL
+
+You need to authenticate your TPP when using the access token endpoint. The way you need to authenticate is defined by the
+authentication method you choose during the registration.
+
+[[ACCESS_TOKEN_WRONG_AUTH_METHOD]]
+* ACCESS_TOKEN_WRONG_AUTH_METHOD
+
+You are trying to authenticate your TPP using the wrong method. You may wonder why it is expecting another auth method that what
+you have in mind? The one it is expecting is the one you choose during the registration of your TPP.
+You may need to re-onboard if you want to choose a different authentication method.
+
+[[ACCESS_TOKEN_CREDENTIAL_NOT_MATCHING_CLIENT_CERTS]]
+* ACCESS_TOKEN_CREDENTIAL_NOT_MATCHING_CLIENT_CERTS
+
+The access token endpoint is protected by MATLS (where the A stands for Authentication) and is also expecting some sort
+credential, depending of your authentication method. As you can tell, you are authenticating twice, once with your
+transport certificate, and once via the authentication method. If you end up with that error, it means those two methods
+are not matching the same identity. A common issue is to have the wrong transport certificate setup.
+
+==== Manual onboarding
+
+[[MANUAL_ONBOARDING_SOFTWARE_STATEMENT_ALREADY_ONBOARD]]
+* MANUAL_ONBOARDING_SOFTWARE_STATEMENT_ALREADY_ONBOARD
+
+The SSA you are using is linked to a software statement. This software statement has already been onboard.
+You may be using the wrong SSA from the wrong software statement.
+
+[[MANUAL_ONBOARDING_APPLICATION_NOT_FOUND]]
+* MANUAL_ONBOARDING_APPLICATION_NOT_FOUND
+
+The application you are trying to reach doesn't exist.
+
+[[MANUAL_ONBOARDING_TPP_NOT_FOUND]]
+* MANUAL_ONBOARDING_TPP_NOT_FOUND
+
+The TPP you are trying to reach doesn't exist
+
+==== Headless Auth
+
+[[HEAD_LESS_AUTH_RCS_URI_INCORRECT]][[HEAD_LESS_AUTH_TPP_URI_INCORRECT]][[HEAD_LESS_AUTH_TPP_URI_NO_CODE]]
+* HEAD_LESS_AUTH_RCS_URI_INCORRECT, HEAD_LESS_AUTH_TPP_URI_INCORRECT, HEAD_LESS_AUTH_TPP_URI_NO_CODE
+
+The redirection is using the 'location' header, which is supposed to be a URL.
+
+[[HEAD_LESS_AUTH_AS_ERROR_RECEIVED]]
+* HEAD_LESS_AUTH_AS_ERROR_RECEIVED
+
+The AS has returned an error during the redirection. As it's headless, we are returning you those errors via this error type.
+
+[[HEAD_LESS_AUTH_EXCHANGE_CODE_BODY_ERROR]]
+* HEAD_LESS_AUTH_EXCHANGE_CODE_BODY_ERROR
+
+The headless feature didn't manage to encode the code response for a reason.
+
+==== Session token
+
+[[SESSION_TOKEN_INVALID_FORMAT]]
+* SESSION_TOKEN_INVALID_FORMAT
+
+The session token format is incorrect. The format expected is a JWE.
+
+[[SESSION_TOKEN_EXPIRED]]
+* SESSION_TOKEN_EXPIRED
+
+The session token has expired. Re-authenticate should solve this problem. If this problem persist, try to delete your cookies.

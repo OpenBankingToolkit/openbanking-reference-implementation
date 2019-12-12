@@ -1,0 +1,6 @@
+rs:
+  data.internal_ids.show: true
+
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks

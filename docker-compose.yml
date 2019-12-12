@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+    - "27017:27017"
+    volumes:
+    - ./mongo/:/docker-entrypoint-initdb.d/:ro
+    - ~/mongo:/data/db  # Persist mongo data to $HOME/mongo

@@ -1,0 +1,62 @@
+#Server
+server:
+  hostname: jwkms.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "jwkms.${dns.hosts.root}"
+    jwk-key-store: file:/opt/openbanking/jwkms/jwksstore.pfx
+    jwk-key-store-password: changeit
+    key-store: file:/opt/openbanking/jwkms/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+#JKWMS configuration
+jwkms:
+  tan: openbanking.org.uk
+  certificate:
+    ou: forgerock.financial
+    o: ForgeRock
+    l: Bristol
+    st: Avon
+    c: UK
+  jwkMsId: jwkms
+  app-auth-header: X-APP
+  rotationScheduler: "0 0 1 * * *"
+  keysCleanup: "0 0 1 * * *"
+  transport:
+    algorithm: PS256
+  signing:
+    algorithm: PS256
+  encryption:
+    algorithm: RSA-OAEP-256
+  encryptionMethod: A128CBC_HS256
+  ExpirationWindowInMillis: 7200
+  rotation:
+    transport: 7776000000
+    keys: 7776000000
+  internalCAAlias: obri-internal-ca
+  defaultCAAlias: obri-external-ca
+  forgerock-applications:
+    - name: aspsp
+      group: as.aspsp.${dns.hosts.root}, rs.aspsp.${dns.hosts.root}, rcs.aspsp.${dns.hosts.root}, simulator.rs.${dns.hosts.root}, service.bank.${dns.hosts.root}, rs-store.aspsp.${dns.hosts.root}
+
+#backup file of the jwkms DB
+backupKeysFile: classpath:db-backup/keys.json
+
+#Metrics configuration
+metrics:
+  endpoints:
+    - regex: /api/application/forgerock-app/(.*)/.*
+    - regex: /api/application/(.*)/jwk_uri
+    - regex: /api/application/(.*)/key/(.*)
+    - regex: /api/application/(.*)/.*
+    - regex: /api/application/(.*)
+    - regex: /api/crypto/.*
+    - regex: /mtls/test
+
+#Swagger config
+swagger:
+  title: "JWK Management Services APIs Specification"
+  description: "Swagger for JWK management services APIs Specification"

@@ -1,0 +1,10 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+jwt-auth:
+  expected-issuer-id: "https://am.${dns.hosts.root}/oauth2/realms/root/realms/auth"
+  redirect-uri: "https://register.${dns.hosts.root}:4204/redirectOpenId"
+
+manual-onboarding:
+  aspspManualOnboardingEndpoint: https://matls.as.aspsp.${dns.hosts.root}:8074/open-banking/manual-onboarding/registerApplication/

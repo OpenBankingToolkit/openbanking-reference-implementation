@@ -1,0 +1,59 @@
+#Server
+server:
+  hostname: admin.${dns.hosts.root}
+  ssl:
+      client-auth: WANT
+      client-certs-key-alias: "admin.${dns.hosts.root}"
+      enabled: true
+      key-alias: "${server.ssl.client-certs-key-alias}"
+      key-store: file:/opt/openbanking/admin/config/keystore.jks
+      key-password: changeit
+      key-store-password: changeit
+
+#Security management profile
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+#Spring boot admin config
+spring:
+  boot:
+    admin:
+      notify:
+        slack:
+          enabled: true
+          username: "Spring Boot Admin - ${env.name} -"
+          message: "*${env.name}* - *#{instance.registration.name}* (#{instance.id}) is *#{event.statusInfo.status}*"
+        mail:
+          enabled: false
+          to: openbanking-support@forgerock.com
+          from: obri.monitoring@gmail.com
+          subject: "${env.name} - #{application.name} (#{application.id}) is #{to.status}"
+          host: smtp.gmail.com
+          port: 587
+          username: obri.monitoring@gmail.com
+          password: VQv3yi8rxsnz
+          properties:
+            mail:
+              smtp:
+                ssl:
+                  enable: true
+      ui:
+        publicUrl: "https://${server.hostname}:${scgw.port}"
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: obri.monitoring@gmail.com
+    password: VQv3yi8rxsnz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

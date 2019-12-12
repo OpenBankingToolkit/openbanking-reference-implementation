@@ -1,0 +1,24 @@
+{
+  "sub": "https://test",
+  "aud": "12345",
+  "iss": "555",
+  "txn": "5cf5ddc8-69e9-4d91-84df-b7256921392c",
+  "toe": 1544523900,
+  "iat": 1544523900,
+  "jti": "1d14a9d4-c117-466b-840d-e50316cdc721",
+  "events": {
+    "urn:uk:org:openbanking:events:resource-update": {
+      "subject": {
+        "http://openbanking.org.uk/rid": "123",
+        "subject_type": "http://openbanking.org.uk/rid_http://openbanking.org.uk/rty",
+        "http://openbanking.org.uk/rlk": [
+          {
+            "link": "http://localhost/v3.0/domestic-payments/123",
+            "version": "v3.0"
+          }
+        ],
+        "http://openbanking.org.uk/rty": "domestic-payment"
+      }
+    }
+  }
+}

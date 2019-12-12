@@ -1,0 +1,10 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+spring:
+  boot:
+    admin:
+      notify:
+        slack:
+          webhook-url: https://hooks.slack.com/services/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

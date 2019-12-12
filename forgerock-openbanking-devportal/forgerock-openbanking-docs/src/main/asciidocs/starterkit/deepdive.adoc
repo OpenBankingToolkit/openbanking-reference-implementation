@@ -1,0 +1,881 @@
+== Deep Dive
+This goes into detail about OBRI, from registering an account to consuming the financial data.
+
+=== Acronyms
+Here's a useful link that explain some of the acronyms in this document https://www.openbanking.org.uk/about-us/glossary/.
+
+Here's a few that don't appear in the open banking glossary or can be simplified for the purpose of this document.
+
+* OBRI -> Open Banking Reference Implementation
+* ASPSP -> A Bank
+
+=== Setting up Postman
+
+Postman is the most well-known API development environment. Naturally, as Open Banking is all about APIs, this is the tool
+we will use for introducing you to Open Banking.
+
+If you don't have it installed in your laptop yet, now is a good time to do so. https://www.getpostman.com/apps
+
+NOTE: If you used Postman in the past, you may have used the chrome extension of it. Postman recently recommended to move to the native application instead.
+if that's your case, please un-install the chrome extension and download the native application instead.
+
+Once you got it installed, we've got what we called some shared collections for you. Collections are an executable description of an API, ready to play.
+The way we share it with you is via the Postman collections API market place, and here is our web-page hosted by Postman: https://postman.ob.forgerock.financial
+
+Already on this web-page, you can discover the APIs and get a good idea of what to do to consume the APIs. You will now load this collections into
+your native postman application. For that, on the top right of the page, you got a button "Run in Postman".
+When you click on it, your native Postman will import automatically our collection.
+
+NOTE: We notice the import to the Postman collection only work if you got Postman already opened. Unfortunately a bug in the Postman application itself.
+Please make sure you open it before clicking on "Run in Postman"
+
+Once you got it import, you should see our collection on the left menu in Postman. You will notice that it also imported what is called "Environment".
+An environment is Postman is where are stored all the variables required for running the collections.
+
+Postman definition of environment:
+
+NOTE: While working with APIs, you often need different setups for your local machine, the development server, or the production API.
+Environments let you customise requests using variables so you can easily switch between different setups without changing your requests.
+
+For us, this is where we will store the different endpoints and static values related to our ASPSP. This way, as Open Banking is a standard,
+the collection is what would match the closest to the standard and the environment variables would be the specificity of our ASPSP.
+This should allow you to re-use the collection for another ASPSP if you like, with minimal efforts.
+
+The way you imported this collection allow Postman to keep it in sync with our shared collection. That means if we do a change in the collection,
+your Postman application will automatically receive the changes and apply them.
+
+In this guide, each time we would want to reference a specific folder of the collection or a specific request,
+we will use our postman web-site to do a reference to the corresponding part. It's expected that you will do the correlation with the
+imported collection in your native Postman application.
+
+
+=== ForgeRock Directory registration
+
+A directory is a central entity in charge of repository all the different actors of the system. In other words, this is where
+every TPP and ASPSP needs to register and they will be listed there.
+The directory is important as this is how the TPPs and ASPSPs are going to trust each others. The directory will play the role
+of authority and this is why it is also in charge of providing the different certificates for each party.
+One other main feature of the directory, is to provide what we call a SSA, for Software Statement Assertion.
+We personally prefer to see it as your financial passport: it contains all the information related to your application and is issued by an
+authority. It is not possible to make a fake one.
+
+There is currently two directories available today:
+
+* one is provided by OBIE, which requires FCA regulation to access it
+* our ForgeRock directory, design for sandboxes and therefore, without FCA requirement
+
+NOTE: ForgeRock has decided to implement their own directory to simplify the developer journey. It's important to understand that the OBIE
+directory will ask you to be FCA regulated, which can takes several months to achieve and maybe for some of you, this is not even on the table.
+The ForgeRock directory solves this problem by providing access to anyone. The ASPSPs trusting this directory are limited today, only ours, and even
+in the future, we expect to only see sandbox ASPSPs trusting it.
+Our directory is therefore complementary of the OBIE directory, each of them having a different purpose.
+
+In this starter kit, we will use link:++https://directory.{{obriDomain}}++/[the ForgeRock directory]. What you need to do:
+
+. Register in the directory
+. Login in the directory
+
+That's it, you are now a TPP according to the ForgeRock directory.
+
+There is two concepts here to understand:
+
+* Organisation: an organisation will have been generated for you. This will be your fintech company.
+* Software statement: as a company, you can register more than one fintech product. In the Open Banking directory world, we call this
+software statement.
+
+For the moment, you haven't got any software statement registered. Start by creating a new one, that you will name "Postman".
+
+As soon as you click on "Create a new software statement", you will redirected to the software statement view, which contains 4 tabs:
+
+* General: global information about your software statement.
+* Keys: as we said earlier, the directory is in charge of issuing certificate, so keys. This tab will offer you a way to get your keys
+* Software Statement Assertion: this is where you will get your financial password
+* on Boarding: an handy view we created to see the different ASPSPs and check if you are on-boarding with them yet or not
+
+In the general tab, we are going to enter the name "Postman" and add a new the redirect uri called : `https://www.google.com`
+We will explain at the on-boarding, the role of this redirect uri.
+
+In the keys tab, we will download our transport key. For that, go at the end of the page from the key tab, and click the "actions" button
+of your active transport key. You will be offer to download it in different format. For Postman, we are interested by:
+
+. public certificate as `.pem`
+. private certificate as `.key`
+
+Once you download this key, store them is a folder you can point easily later, something like `~/openbanking/forgerock/postman/`.
+
+For the starter kit, this is all you will need to do. You can obviously explore the other view.
+
+
+=== Setup your client certificate
+
+Once you've got your transport certificate, more commonly called client certificate, you will need to set it up properly for
+each SSL connection you do with any ASPSP.
+This configuration will be dependent of the language you use for building your used for building your application.
+Some general advice would be to setup this transport certificate for any external connection outside your application domain.
+
+NOTE: Setting up a client certificate is what is called mTLS, for Mutual TLS. Meaning that both party will present a certificate.
+In Open Banking, it's one step further, it's called MATLS, for Mutual Authentication TLS. This means the client certificate you are going to use
+is going to be used to authenticate you as well: mTLS is about verifying you got a valid certificate, MATLS is about verify it's valid and that you
+are allowed, as Alice, to access this particular resource.
+
+For this starter kit, as we use Postman, we would configure it to use the certificate. The way postman works is that you need
+to configure the client certificate for each domain you will connect. A bit painful process for us as we got 4 domains that requires this configuration.
+
+CAUTION: Because of a postman bug around the certificate configuration, you even have to configure a 5th one. https://github.com/postmanlabs/postman-app-support/issues/4707
+
+To help you with this task, probably the most boring one of this starter kit, we created same dedicated endpoints to help you testing your MATLS setup that you can find here:
+https://postman.ob.forgerock.financial/#4500f039-fefc-447a-91f7-c0da79452008[Test MATLS]
+
+Before setting up your client certificate, let's call the first one to see a typical answer when you are not authenticated:
+
+Call the request https://postman.ob.forgerock.financial/#e5fd241f-e815-42a2-8240-0c00a7b475ea[GET JWKMS test MATLS].
+The response would be:
+
+[source,json]
+----
+{
+  "message": "Hello anonymous!",
+  "authorities": [
+    "ROLE_ANONYMOUS"
+  ]
+}
+----
+
+The role of this endpoint is authenticating you and returning you the identification it did. it is very handy to only test the authentication.
+
+Let's now setup the client certificate for this endpoint:
+. Download the latest version of Postman (7.9+)
+. Go in `Postman preferences -> Certificates`
+. click on 'Add Certificate'
+. Copy the domain `*.{{obriDomain}}`
+. Choose your `CRT` file, which can be a `.pem` file
+. Choose your Key file, which is your `.key` file
+. Enter the Passphrase. If our case, if you used the ForgeRock directory, you would not need to enter one.
+. click 'Add'
+
+Your client certificate should be setup properly. For testing this, go back to the collection and try the same request you did earlier one.
+The result should now be:
+[source,json]
+----
+{
+  "message": "Hello X!",
+  "authorities": [
+    "ROLE_JWKMS_APP"
+  ]
+}
+----
+
+You can try all the different `test matls` endpoints. They should know all identify you from your client certificate.
+
+=== ASPSP discovery
+
+The discovery endpoint is, as the name suggest, a way to discover the configuration of an ASPSP. The idea here is that instead of hard coding in your
+system the configuration for each ASPSP, you will load this dynamically.
+This is important that you get this right in your TPP implementation as ASPSP are allowed to changed their configuration if they need to. Therefore,
+ as a TPP, you need to be able to reload the new configuration and adapt your API call accordingly.
+
+This is exactly how we did it for the Postman collection: instead of hardcoding the endpoints and different configurations, we load them dynamically
+into the environment variables.
+For doing so, all you need to do is calling the discovery endpoints.
+There is two discovery endpoints, that you can find in the folder https://postman.ob.forgerock.financial/#5c94c092-99f5-4dbc-a8d6-1ef0a586859e[Examples -> Setup environment] of the collection.
+
+* the RS discovery endpoint
+* the AS discovery endpoint
+
+The RS discovery will be about the Open Banking resource APIs endpoints. It will tell you where and which resources you can get from this ASPSP.
+The AS discovery is about the OpenID provider settings. This one is a standard that you can find here: https://openid.net/specs/openid-connect-discovery-1_0.html[OpenID discovery]
+
+All you need to do to load those discovery configuration, is to call them. Their setup in such a way that they will load the result into the environment variable.
+
+NOTE: if you are curious to know how this is done in Postman, we followed the recommendation of this http://blog.getpostman.com/2014/01/27/extracting-data-from-responses-and-chaining-requests/[article].
+
+Once you have called those two endpoints, you are now ready to on-boarding your TPP in the ForgeRock ASPSP.
+
+=== On-boarding with an ASPSP
+
+Every applications would need to do what we call the on-boarding with each ASPSP.
+See it as a registration of the applications into the market place. Like a ios developer would register their iPhone app in the appstore, you need to register
+your fintech application in the ASPSP... except there is a multiple number of ASPSPS and you have to do it for each of them.
+Fortunately, this process can be automatise, as manual on-boarding with each banks could be quite time consuming. This process is called
+the dynamic registration. Banks may support only manual on-boarding or automatic on-boarding.
+
+In ForgeRock, we support dynamic registration. The manual on-boarding is not specified by the Open Banking specification, it would be unique for each bank.
+In this documentation, we will only describe how works the dynamic registration, which is described by the Open Banking standard
+https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1078034771/Dynamic+Client+Registration+-+v3.2[here]
+
+Lets start the on-boarding via our example 1 in our collection: https://postman.ob.forgerock.financial/#daec68f5-941e-4199-91ed-0f433cbdf65c[Example 1: Onboarding]
+
+==== testing your current status
+
+The first request should be familiar to you, it's the `test matls` for the RS. We choose to start by this one as it gives you your current TPP status.
+If you got your client certificate setup properly, the response of this request should be:
+
+The result should now be:
+
+[source,json]
+----
+{
+    "issuerId": "X",
+    "authorities": [
+        {
+            "authority": "UNREGISTERED_TPP"
+        }
+    ]
+}
+----
+
+This means that the ASPSP acknowledge you are a referenced TPP, but not yet registered to it. This is good, as we are indeed in process to do the onboarding.
+
+==== Current software statement
+
+The next request is made do the directory. As you are using your client certificate to call the directory, it is able to know which software statement you are.
+This call, will retrieve the information you have entered in the general view in the directory.
+
+We need to do so in Postman as the name software statement ID is important for the later requests.
+
+After you call this request, the software_statement_id will be stored into your environment, and ready to use for the future requests.
+
+The result of this request should look like:
+
+[source,json]
+----
+{
+    "id": "X",
+    "name": "Postman",
+    "mode": "TEST",
+    "roles": [
+        "PISP",
+        "AISP"
+    ],
+    "status": "ACTIVE",
+    "redirectUris": [],
+    "applicationId": "Y"
+}
+----
+
+
+==== Generate an SSA
+
+You will need to present your financial passport, called a https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1078034771/Dynamic+Client+Registration+-+v3.2#DynamicClientRegistration-v3.2-SoftwareStatement[Software Statement Assertion (SSA)], to the bank. This request, also made to the directory, will allow you to
+generate one and load it into the environment variable.
+
+The result of this request should look like:
+
+[source,jwt]
+----
+eyJraWQiOiI0ZjgxOTJhMi1hZTc0LTQ2ZWMtYTU5MC0zMjAwODNhNDA3ZmYiLCJhbGciOiJSUzI1NiJ9.eyJvcmdfandrc19lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2FyZV9tb2RlIjoiVEVTVCIsInNvZnR3YXJlX3JlZGlyZWN0X3VyaXMiOltdLCJvcmdfc3RhdHVzIjoiQWN0aXZlIiwic29mdHdhcmVfY2xpZW50X25hbWUiOiJQb3N0bWFuIiwic29mdHdhcmVfY2xpZW50X2lkIjoiNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwIiwiaXNzIjoiRm9yZ2VSb2NrIiwic29mdHdhcmVfandrc19lbmRwb2ludCI6Imh0dHBzOlwvXC9zZXJ2aWNlLmRpcmVjdG9yeS5vYi5mb3JnZXJvY2suZmluYW5jaWFsXC9hcGlcL3NvZnR3YXJlLXN0YXRlbWVudFwvNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwXC9hcHBsaWNhdGlvblwvandrX3VyaSIsInNvZnR3YXJlX2lkIjoiNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwIiwib3JnX2NvbnRhY3RzIjpbXSwib2JfcmVnaXN0cnlfdG9zIjoiaHR0cHM6XC9cL2RpcmVjdG9yeS5vYi5mb3JnZXJvY2suZmluYW5jaWFsXC90b3NcLyIsIm9yZ19pZCI6IjViMDU5YTgxYjA5MzQ2NWYwZWU4NTcxNCIsInNvZnR3YXJlX2p3a3NfcmV2b2tlZF9lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2FyZV9yb2xlcyI6WyJQSVNQIiwiQUlTUCJdLCJleHAiOjE1MzY4MzMwMjEsIm9yZ19uYW1lIjoiUXVlbnRpbiIsIm9yZ19qd2tzX3Jldm9rZWRfZW5kcG9pbnQiOiJUT0RPIiwiaWF0IjoxNTM2MjI4MjIxLCJqdGkiOiI1MTgxNDg0NS01ZTgwLTQwYTEtYjZjMS0yNTlkNjJiZWM3M2QifQ.S3_COc0sNzdixrvhkkpwh4w-nXbGf48lLvQBebiHBsq1dpnljHkru-F3fY8TYyrmAk4Ipdqn5tkEw0gBCA1zKv8MrTsLlfvWYyUiJ24XFbwOwoZYWZtwNJZ0MYiOrBpI3WwMyZDFA0BvA1g_n5o-Cj8lc6Bur9Dskm8e7UYyuoHUKF5XGoQJRJnrKY1RlRjxoTZCDez8eGtum1d44MxHFNeEN2DMgsLGBWw31KsJnE9IyQkO-wzjDyrC8xjM6SqaimeXmzFb8VK9xSmtaDtxOJgTIVgPuhviFJMt-haas_V8iOU5kFA3tkc9Sq1pwxz1hRjsObYIPiiftBF07_H3YQ
+----
+
+NOTE: this SSA is signed by the directory. It's a way for the ASPSPs to verify the authenticity of the SSA
+
+==== Generate a registration JWT
+
+It could feel confusing but you will generate another JWT. This time, it will be signed by you. You will send in it, all the settings
+you would like for your fintech application.
+
+here is an example of request, which is the one used in the started kit:
+
+[source,json]
+----
+{
+  "exp": {exp},
+  "scope": "openid accounts payments",
+  "redirect_uris": [
+    "https://www.google.com"
+  ],
+  "grant_types": [
+    "authorization_code",
+    "refresh_token",
+    "client_credentials"
+  ],
+  "response_types": [
+    "code id_token"
+  ],
+  "software_statement": "{SSA_JWT}",
+  "token_endpoint_auth_method": "private_key_jwt",
+  "token_endpoint_auth_signing_alg": "RS256",
+  "id_token_signed_response_alg": "RS256",
+  "request_object_signing_alg": "RS256",
+  "request_object_encryption_alg": "RSA-OAEP-256",
+  "request_object_encryption_enc": "A128CBC-HS256"
+}
+----
+
+We can see that we are specifying the redirect uri, the authentication method for example. For signing this registration JWT, you will call
+a service called the JWKMS. This has been developed to offer you an easy way to sign JWTs, which is Postman friendly.
+The JWKMS service is only compatible if you use the ForgeRock directory. What this means is that once you are ready to test on a production ASPSP,
+which means you would use the OBIE directory for that as you need to be FCA regulated, the JWKMS won't work anymore.
+
+WARNING: You understand that the JWKMS is just a facility to help you in your development journey against sandbox. This is fine for this starter kit
+and any event around the sandbox, but if you plan to use the ASPSP in the production environment, you need to get prepared and
+implement your own JWKMS.
+Our JWKMS is a good source of inspiration, look at the features it offers and match the same for your own implementation
+
+Once you called the request, you will get a JWT, similar to:
+
+
+[source,jwt]
+----
+eyJraWQiOiIwNzIyMjMwYy0zMjMyLTQ3MjUtODY0Yy01Njg4NDQ5YmM3ZjYiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl9lbmRwb2ludF9hdXRoX3NpZ25pbmdfYWxnIjoiUlMyNTYiLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2FsZyI6IlJTQS1PQUVQLTI1NiIsImdyYW50X3R5cGVzIjpbImF1dGhvcml6YXRpb25fY29kZSIsInJlZnJlc2hfdG9rZW4iLCJjbGllbnRfY3JlZGVudGlhbHMiXSwiaXNzIjoiNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwIiwicmVkaXJlY3RfdXJpcyI6WyJodHRwczpcL1wvd3d3Lmdvb2dsZS5jb20iXSwidG9rZW5fZW5kcG9pbnRfYXV0aF9tZXRob2QiOiJwcml2YXRlX2tleV9qd3QiLCJzb2Z0d2FyZV9zdGF0ZW1lbnQiOiJleUpyYVdRaU9pSTBaamd4T1RKaE1pMWhaVGMwTFRRMlpXTXRZVFU1TUMwek1qQXdPRE5oTkRBM1ptWWlMQ0poYkdjaU9pSlNVekkxTmlKOS5leUp2Y21kZmFuZHJjMTlsYm1Sd2IybHVkQ0k2SWxSUFJFOGlMQ0p6YjJaMGQyRnlaVjl0YjJSbElqb2lWRVZUVkNJc0luTnZablIzWVhKbFgzSmxaR2x5WldOMFgzVnlhWE1pT2x0ZExDSnZjbWRmYzNSaGRIVnpJam9pUVdOMGFYWmxJaXdpYzI5bWRIZGhjbVZmWTJ4cFpXNTBYMjVoYldVaU9pSlFiM04wYldGdUlpd2ljMjltZEhkaGNtVmZZMnhwWlc1MFgybGtJam9pTldJM1l6VmlNRE5pTURrek5EWXdZalZqTWpZNFpEa3dJaXdpYVhOeklqb2lSbTl5WjJWU2IyTnJJaXdpYzI5bWRIZGhjbVZmYW5kcmMxOWxibVJ3YjJsdWRDSTZJbWgwZEhCek9sd3ZYQzl6WlhKMmFXTmxMbVJwY21WamRHOXllUzV2WWk1bWIzSm5aWEp2WTJzdVptbHVZVzVqYVdGc1hDOWhjR2xjTDNOdlpuUjNZWEpsTFhOMFlYUmxiV1Z1ZEZ3dk5XSTNZelZpTUROaU1Ea3pORFl3WWpWak1qWTRaRGt3WEM5aGNIQnNhV05oZEdsdmJsd3ZhbmRyWDNWeWFTSXNJbk52Wm5SM1lYSmxYMmxrSWpvaU5XSTNZelZpTUROaU1Ea3pORFl3WWpWak1qWTRaRGt3SWl3aWIzSm5YMk52Ym5SaFkzUnpJanBiWFN3aWIySmZjbVZuYVhOMGNubGZkRzl6SWpvaWFIUjBjSE02WEM5Y0wyUnBjbVZqZEc5eWVTNXZZaTVtYjNKblpYSnZZMnN1Wm1sdVlXNWphV0ZzWEM5MGIzTmNMeUlzSW05eVoxOXBaQ0k2SWpWaU1EVTVZVGd4WWpBNU16UTJOV1l3WldVNE5UY3hOQ0lzSW5OdlpuUjNZWEpsWDJwM2EzTmZjbVYyYjJ0bFpGOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXliMnhsY3lJNld5SlFTVk5RSWl3aVFVbFRVQ0pkTENKbGVIQWlPakUxTXpZNE16TXdNakVzSW05eVoxOXVZVzFsSWpvaVVYVmxiblJwYmlJc0ltOXlaMTlxZDJ0elgzSmxkbTlyWldSZlpXNWtjRzlwYm5RaU9pSlVUMFJQSWl3aWFXRjBJam94TlRNMk1qSTRNakl4TENKcWRHa2lPaUkxTVRneE5EZzBOUzAxWlRnd0xUUXdZVEV0WWpaak1TMHlOVGxrTmpKaVpXTTNNMlFpZlEuUzNfQ09jMHNOemRpeHJ2aGtrcHdoNHctblhiR2Y0OGxMdlFCZWJpSEJzcTFkcG5sakhrcnUtRjNmWThUWXlybUFrNElwZHFuNXRrRXcwZ0JDQTF6S3Y4TXJUc0xsZnZXWXlVaUoyNFhGYndPd29aWVdadHdOSlowTVlpT3JCcEkzV3dNeVpERkEwQnZBMWdfbjVvLUNqOGxjNkJ1cjlEc2ttOGU3VVl5dW9IVUtGNVhHb1FKUkpucktZMVJsUmp4b1RaQ0RlejhlR3R1bTFkNDRNeEhGTmVFTjJETWdzTEdCV3czMUtzSm5FOUl5UWtPLXd6akR5ckM4eGpNNlNxYWltZVhtekZiOFZLOXhTbXRhRHR4T0pnVElWZ1B1aHZpRkpNdC1oYWFzX1Y4aU9VNWtGQTN0a2M5U3ExcHd4ejFoUmpzT2JZSVBpaWZ0QkYwN19IM1lRIiwic2NvcGUiOiJvcGVuaWQgYWNjb3VudHMgcGF5bWVudHMiLCJyZXF1ZXN0X29iamVjdF9zaWduaW5nX2FsZyI6IlJTMjU2IiwiZXhwIjoxNTM2MjMwNDkzLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2VuYyI6IkExMjhDQkMtSFMyNTYiLCJpYXQiOjE1MzYyMzAxOTQsImp0aSI6ImJjMzlmZWVjLTgyM2ItNGFkNi1iZDE4LWNjOTE0Y2FjNmZjZCIsInJlc3BvbnNlX3R5cGVzIjpbImNvZGUgaWRfdG9rZW4iXSwiaWRfdG9rZW5fc2lnbmVkX3Jlc3BvbnNlX2FsZyI6IlJTMjU2In0.sWXipgu-IvyDGJborbTmxMv4JgXLTf_ivb-onS-ADou7DyfYphhLWyotqaV_SCofUIp6oIku5kmq5oxz0NwqVPKcQuJfawy7NX8J8mYFNA2WISXGVeEFlcn5Am7KMc32RCORlpJt7g6RKGmWucPxGPQs8cpva2B1rLUAeOK8azD2L9ziQEDxgXU090w6yYRE6uOBq_P4YvYXty73tVK87m7qP5ejA6KSNEkLdxSzCH4Jc9LpCB6k6qFPxPT8TpTZ201wAcaMncuneNzlkFy7ekuWkCaFgnlEm6xtjIjiNCN8MrlImcBY8LatUlgRJZjym23sfyDZLy2THB3-Su9zZw
+----
+
+
+Some questions you may have around this registration request:
+
+
+[quote]
+Why do we have to include a JWT, the SSA, inside our request JWT ?!
+
+It's important to insist that the SSA is signed by the directory, and by encapsulating the SSA, you associate your request to a particular SSA.
+Because your registration request is signed, no one would be able to substitute the SSA to it. It's a proof to the ASPSP that this registration request
+is only valid with this particular SSA
+
+[quote]
+Why do we set the scope? Is it not defined by our role: AISP and PISP contains in the SSA already?
+
+Indeed, it's a duplication of information. This is for technical reason, as Open Banking is based on OIDC, which expects the scopes to be defined.
+
+[quote]
+Can I choose a different `token_endpoint_auth_method`?
+
+The short answer is yes, you can. The long answer: it all depends on what the ASPSP says in its AS discovery endpoint. If you go back to the AS discovery result, you will notice that it
+specifies the authentication method supported:
+
+[source,json]
+----
+    "token_endpoint_auth_methods_supported": [
+        "client_secret_post",
+        "private_key_jwt",
+        "client_secret_basic",
+        "tls_client_auth"
+    ],
+----
+
+You can only choose an authentication method listed here. ForgeRock currently support three, so you have a choice with our ASPSP.
+However, Open Banking strongly recommend to use:
+
+ * `tls_client_auth`
+ * `private_key_jwt`
+
+
+This is why in this started kit, we will show you how to use one of the recommended one, `private_key_jwt`.
+
+[quote]
+Why defining the redirect uris again, if it is in the SSA?
+
+The SSA specifies actually the whitelist of redirect uris you can use. You therefore need to specify in the registration request which
+redirect uris your fintech app is going to use.
+
+
+==== Dynamic registration
+
+This is now the time to actually call the ASPSP to register. You now got all you need for registering.
+All you need to do is calling this request, which will send the registration request JWT previously generated.
+The response you will get should look like:
+
+[source,json]
+----
+{
+    "scopes": [
+        "openid",
+        "payments",
+        "accounts"
+    ],
+    "scope": "openid payments accounts",
+    "redirect_uris": [
+        "https://www.google.com"
+    ],
+    "response_types": [
+        "code id_token"
+    ],
+    "application_type": "web",
+    "client_name": "Postman",
+    "jwks_uri": "https://service.directory.{{obriDomain}}/api/software-statement/5b7c5b03b093460b5c268d90/application/jwk_uri",
+    "subject_type": "public",
+    "id_token_signed_response_alg": "RS256",
+    "id_token_encrypted_response_alg": "RSA1_5",
+    "id_token_encrypted_response_enc": "A128CBC_HS256",
+    "userinfo_signed_response_alg": "",
+    "userinfo_encrypted_response_alg": "",
+    "request_object_signing_alg": "RS256",
+    "request_object_encryption_alg": "RSA-OAEP-256",
+    "request_object_encryption_enc": "A128CBC-HS256",
+    "token_endpoint_auth_method": "private_key_jwt",
+    "token_endpoint_auth_signing_alg": "RS256",
+    "default_max_age": "1",
+    "software_statement": "eyJraWQiOiI0ZjgxOTJhMi1hZTc0LTQ2ZWMtYTU5MC0zMjAwODNhNDA3ZmYiLCJhbGciOiJSUzI1NiJ9.eyJvcmdfandrc19lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2FyZV9tb2RlIjoiVEVTVCIsInNvZnR3YXJlX3JlZGlyZWN0X3VyaXMiOltdLCJvcmdfc3RhdHVzIjoiQWN0aXZlIiwic29mdHdhcmVfY2xpZW50X25hbWUiOiJQb3N0bWFuIiwic29mdHdhcmVfY2xpZW50X2lkIjoiNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwIiwiaXNzIjoiRm9yZ2VSb2NrIiwic29mdHdhcmVfandrc19lbmRwb2ludCI6Imh0dHBzOlwvXC9zZXJ2aWNlLmRpcmVjdG9yeS5vYi5mb3JnZXJvY2suZmluYW5jaWFsXC9hcGlcL3NvZnR3YXJlLXN0YXRlbWVudFwvNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwXC9hcHBsaWNhdGlvblwvandrX3VyaSIsInNvZnR3YXJlX2lkIjoiNWI3YzViMDNiMDkzNDYwYjVjMjY4ZDkwIiwib3JnX2NvbnRhY3RzIjpbXSwib2JfcmVnaXN0cnlfdG9zIjoiaHR0cHM6XC9cL2RpcmVjdG9yeS5vYi5mb3JnZXJvY2suZmluYW5jaWFsXC90b3NcLyIsIm9yZ19pZCI6IjViMDU5YTgxYjA5MzQ2NWYwZWU4NTcxNCIsInNvZnR3YXJlX2p3a3NfcmV2b2tlZF9lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2FyZV9yb2xlcyI6WyJQSVNQIiwiQUlTUCJdLCJleHAiOjE1MzY4MzMwMjEsIm9yZ19uYW1lIjoiUXVlbnRpbiIsIm9yZ19qd2tzX3Jldm9rZWRfZW5kcG9pbnQiOiJUT0RPIiwiaWF0IjoxNTM2MjI4MjIxLCJqdGkiOiI1MTgxNDg0NS01ZTgwLTQwYTEtYjZjMS0yNTlkNjJiZWM3M2QifQ.S3_COc0sNzdixrvhkkpwh4w-nXbGf48lLvQBebiHBsq1dpnljHkru-F3fY8TYyrmAk4Ipdqn5tkEw0gBCA1zKv8MrTsLlfvWYyUiJ24XFbwOwoZYWZtwNJZ0MYiOrBpI3WwMyZDFA0BvA1g_n5o-Cj8lc6Bur9Dskm8e7UYyuoHUKF5XGoQJRJnrKY1RlRjxoTZCDez8eGtum1d44MxHFNeEN2DMgsLGBWw31KsJnE9IyQkO-wzjDyrC8xjM6SqaimeXmzFb8VK9xSmtaDtxOJgTIVgPuhviFJMt-haas_V8iOU5kFA3tkc9Sq1pwxz1hRjsObYIPiiftBF07_H3YQ",
+    "client_id": "95fe8eaa-44ab-4ec1-b7ec-3e7f94823225",
+    "client_secret": "63712025-224b-491a-a806-ae6e885c4f75",
+    "registration_access_token": "eyJ0eXAiOiJKV1QiLCJ6aXAiOiJOT05FIiwia2lkIjoiRm9sN0lwZEtlTFptekt0Q0VnaTFMRGhTSXpNPSIsImFsZyI6IkVTMjU2In0.eyJzdWIiOiI5NWZlOGVhYS00NGFiLTRlYzEtYjdlYy0zZTdmOTQ4MjMyMjUiLCJhdWRpdFRyYWNraW5nSWQiOiI4YTI0NzIxZC1kYjlhLTQ3NTQtYTY4ZC0yMTA0MzkyYmViODgiLCJpc3MiOiJudWxsOi8vbnVsbC9vYXV0aDIvb3BlbmJhbmtpbmciLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiIzY2E1YmM2MC0wMzJjLTQ1MWYtODg5Yy1lZThlMzQzY2JlNDgiLCJhdWQiOiI5NWZlOGVhYS00NGFiLTRlYzEtYjdlYy0zZTdmOTQ4MjMyMjUiLCJuYmYiOjE1MzYyMzAzNzUsInNjb3BlIjpbXSwiYXV0aF90aW1lIjoxNTM2MjMwMzc1LCJyZWFsbSI6Ii9vcGVuYmFua2luZyIsImV4cCI6MTUzNjMxNjc3NSwiaWF0IjoxNTM2MjMwMzc1LCJleHBpcmVzX2luIjo4NjQwMCwianRpIjoiOGI4YTYzNmQtNGZiMS00ZjJhLThlMTUtYTdkYWQ5YzBmZTIyIn0.zxrcsRFQ0t0A7i0x1Sxi59p1OHmKkhV2yrqX2qHxEnk0LTfYx1bWt_2Dq8IcMzLZ6eERyFb6L35wfrsovR89zw",
+    "registration_client_uri": "https://as.aspsp.{{obriDomain}}/oauth2/register?client_id=95fe8eaa-44ab-4ec1-b7ec-3e7f94823225",
+    "client_secret_expires_at": "0"
+}
+----
+
+Our collection is configured to store those values into the environment variable, like the client_id.
+
+==== testing your current status
+
+The last one is a sanity check, by calling the first request we did: testing your current status.
+As you are now registered, the response would be different:
+
+[source,json]
+----
+{
+    "issuerId": "X",
+    "authorities": [
+        {
+            "authority": "AISP"
+        },
+        {
+            "authority": "PISP"
+        }
+    ]
+}
+----
+
+This indicate to you that the ASPSP is aware that you are a TPP, but on top of that, you are already register with it and got
+the authority to use the Account (AISP) and Payment (PISP) APIs
+
+==== Optional: unregister your TPP
+
+This is obviously not required. This request is here in case you want to test the on-boarding again. This is not a standard APIs,
+it's a convenient endpoint we provided to you so you can test the on-boarding multiple time.
+
+=== Making a payment
+
+For making a payment, you will need to be on-board first. Assuming you did follow the start kit in the order, that should be the case.
+
+==== Generate a client credential JWT
+
+We saw earlier in the registration that the authentication method we choose is `private_key_jwt`. What this means is that
+for authenticating our fintech app, we will use a JWT that we sign. This JWT is commonly named `client assertion JWT`.
+
+NOTE: this authentication is part of the standard, you can find the specification of it https://tools.ietf.org/html/rfc7523#page-5[here]
+
+Once again, we are going to use the JWKMS to generate this JWT. You should get a response like:
+
+[source,jwt]
+----
+eyJraWQiOiIwNzIyMjMwYy0zMjMyLTQ3MjUtODY0Yy01Njg4NDQ5YmM3ZjYiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI5NWZlOGVhYS00NGFiLTRlYzEtYjdlYy0zZTdmOTQ4MjMyMjUiLCJhdWQiOiJodHRwczpcL1wvbWF0bHMuYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbFwvb2F1dGgyXC9vcGVuYmFua2luZyIsImlzcyI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImV4cCI6MTUzNjIzMjExNywiaWF0IjoxNTM2MjMxODE3LCJqdGkiOiI3MWNkMTc3Yy04NzljLTQ4YTItYmUwOC1iNGFiZWU3MDZjOGYifQ.hG8vo_4DIF_UUaz8XbDRXPIXCy0nmDjBmFFCLYvb2p4wjKJ2f5WIovwTfcgSm30lCgtyWGsMTttpb9tOO2e1KTYCpAkXoqeQGAEO0ptRg55fVL9fkepgcfoguhhXKlGh2iYuGSy_vrqDGXeASDO7-PZt4SSph4X4lF12rFXvazC7XqPBlOGoGsdXTL2UfsDOqe4VqXkUBj6zIuiTz_lOjRIaYr2sdtlNrhw3Mnc5-i2SB2gU1h2RTrJEABxYoNL8qDpIL_BRRZbXius5ErdVcyOMZX6GmLsKE7Kl7FodvjkKs_cyKdlRbuwSyO_votTgiP6zIAk-O9BMCfmd7jwV_A
+----
+
+This is stored, onced again, in the environment variables for you, so we can use it later on.
+
+==== Client credential
+
+Now it's time to get an access token via the client credential JWT. Using the client assertion we previously generated,
+we will get an access token with the right privileges. You will get the following answer:
+
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJ6aXAiOiJOT05FIiwia2lkIjoiRm9sN0lwZEtlTFptekt0Q0VnaTFMRGhTSXpNPSIsImFsZyI6IkVTMjU2In0.eyJzdWIiOiI5NWZlOGVhYS00NGFiLTRlYzEtYjdlYy0zZTdmOTQ4MjMyMjUiLCJhdWRpdFRyYWNraW5nSWQiOiI5ZDhhOWIyMi0xNTczLTQ0YWEtOTA1MS04ODVkZjlhNGNiMTAiLCJpc3MiOiJodHRwczovL21hdGxzLmFzLmFzcHNwLm9iLmZvcmdlcm9jay5maW5hbmNpYWwvb2F1dGgyL29wZW5iYW5raW5nIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiMzQyM2ViMjgtOGFkOC00ZTQ0LWFjNTItMmQ2MWEwYmM5ODcxIiwiYXVkIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwibmJmIjoxNTM2MjMxOTUwLCJncmFudF90eXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwic2NvcGUiOlsib3BlbmlkIiwicGF5bWVudHMiLCJhY2NvdW50cyJdLCJhdXRoX3RpbWUiOjE1MzYyMzE5NTAsInJlYWxtIjoiL29wZW5iYW5raW5nIiwiZXhwIjoxNTM2MzE4MzUwLCJpYXQiOjE1MzYyMzE5NTAsImV4cGlyZXNfaW4iOjg2NDAwLCJqdGkiOiIzMDNkMGU3Zi05OGU1LTQ1MTAtYTdjNi0wMTNmMzJhNzlkZWUifQ.LPX9R0tSFxfIcfN-0xwMvZJTv4TGZ3IC13AhNhUKWT5zZJhUAwk50spqjGY-W08LttVQ7zMxVcUa4ywjuM7p8A",
+    "scope": "openid payments accounts",
+    "id_token": "eyJ0eXAiOiJKV1QiLCJraWQiOiJiL082T3ZWdjEreStXZ3JINVVpOVdUaW9MdDA9IiwiYWxnIjoiUlMyNTYifQ.eyJhdF9oYXNoIjoiVWVBTHJDOG9NaTlaNEJVWENlYWV2dyIsInN1YiI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImF1ZGl0VHJhY2tpbmdJZCI6IjA5MDFlY2FmLWEwMDgtNDU3Mi04ZDg0LTMwYmRmYzQ1NGMxNi00MjQxMzA5IiwiaXNzIjoiaHR0cHM6Ly9tYXRscy5hcy5hc3BzcC5vYi5mb3JnZXJvY2suZmluYW5jaWFsL29hdXRoMi9vcGVuYmFua2luZyIsInRva2VuTmFtZSI6ImlkX3Rva2VuIiwiYXVkIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwiYXpwIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwiYXV0aF90aW1lIjoxNTM2MjMxOTUwLCJyZWFsbSI6Ii9vcGVuYmFua2luZyIsImV4cCI6MTUzNjMxODM1MCwidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE1MzYyMzE5NTB9.l0zh4jnjoRdDwLFRNGRM8CZX_OpciN5bQd2AnDNvrkYAAHwS2ikc-H8EvWOO2tgNOt8Sc5pN4VKKRDYfMCvNIqrTMl25Y9923SS3D5R3BCGbbZTYdkBb-MGm-KsDPnumhrATDvNAbzKoBbhJYylb8-5G9wdTutZelK8vGSS8zsI7v0Vr_3mXkqKE72rIa8IlT_tVziwqGrMjhBAaORKJnlhUyHXpHa2Sn6-9cS5St6xfG-A_kSHdP3Y8rTCRsYnVuFP8ga00cWTNSCmonpsggMFSr234sxgsz5E1MRmgt9LxrYDo5x6GH-5pmcMqMMQ-sDPERgWh2wXwpDg4HSz84A",
+    "token_type": "Bearer",
+    "expires_in": 86399
+}
+----
+
+Only the access token interest us here. it's important that this access token doesn't have the user consent in it. You can see access token as keys.
+This key gives you the right to create a payment initiation, but it doesn't give you the right of making the final payment.
+For that, we would need another access token, with more privileges, and in particular, that contains the consent approval of the user.
+
+==== Create a payment request
+
+Once you got an access token via the client credential flow, you can submit a payment request. In the body of the request, you will specify the payment information:
+
+[source,json]
+----
+{
+  "Data": {
+    "Initiation": {
+      "InstructionIdentification": "ACME412",
+      "EndToEndIdentification": "FRESCO.21302.GFX.20",
+      "InstructedAmount": {
+        "Amount": "165.88",
+        "Currency": "GBP"
+      },
+      "CreditorAccount": {
+        "SchemeName": "SortCodeAccountNumber",
+        "Identification": "08080021325698",
+        "Name": "ACME Inc",
+        "SecondaryIdentification": "0002"
+      },
+      "RemittanceInformation": {
+        "Reference": "FRESCO-101",
+        "Unstructured": "Internal ops code 5120101"
+      }
+    }
+  },
+  "Risk": {
+    "PaymentContextCode": "EcommerceGoods",
+    "MerchantCategoryCode": "5967",
+    "MerchantCustomerIdentification": "053598653254",
+    "DeliveryAddress": {
+      "AddressLine": [
+        "Flat 7",
+        "Acacia Lodge"
+      ],
+      "StreetName": "Acacia Avenue",
+      "BuildingNumber": "27",
+      "PostCode": "GU31 2ZZ",
+      "TownName": "Sparsholt",
+      "CountySubDivision": [
+        "Wessex"
+      ],
+      "Country": "UK"
+    }
+  }
+}
+----
+
+You can notice that in that case, we request a payment of 165.88 GBP.
+Send this request to the ASPSP, as a response, you will get:
+
+[source,json]
+----
+{
+    "Data": {
+        "PaymentId": "P6be6ac06-6871-41e7-b740-c527e7940557",
+        "Status": "AcceptedTechnicalValidation",
+        "CreationDateTime": "2018-09-06T11:08:42+00:00",
+        "Initiation": {
+            "InstructionIdentification": "ACME412",
+            "EndToEndIdentification": "FRESCO.21302.GFX.20",
+            "InstructedAmount": {
+                "Amount": "165.88",
+                "Currency": "GBP"
+            },
+            "CreditorAccount": {
+                "SchemeName": "SortCodeAccountNumber",
+                "Identification": "08080021325698",
+                "Name": "ACME Inc",
+                "SecondaryIdentification": "0002"
+            },
+            "RemittanceInformation": {
+                "Unstructured": "Internal ops code 5120101",
+                "Reference": "FRESCO-101"
+            }
+        }
+    },
+    "Risk": {
+        "PaymentContextCode": "EcommerceGoods",
+        "MerchantCategoryCode": "5967",
+        "MerchantCustomerIdentification": "053598653254",
+        "DeliveryAddress": {
+            "AddressLine": [
+                "Flat 7",
+                "Acacia Lodge"
+            ],
+            "StreetName": "Acacia Avenue",
+            "BuildingNumber": "27",
+            "PostCode": "GU31 2ZZ",
+            "TownName": "Sparsholt",
+            "Country": "UK"
+        }
+    }
+}
+----
+
+The ASPSP is re-playing the body of your request, but if you look closely, it will also add a new field called `PaymentId`.
+This ID is a reference to your payment request. You will use it in the future requests to refer to it. This is how you will make aware
+the ASPSP that you are expecting the PSU consent for this particular payment request.
+
+==== Generating a request parameter
+
+At this stage, you are ready to ask the PSU his consent. For doing so, you are going to use a redirection mechanism.
+The idea is that you will ask your user to access a specific uri that you have built for him. This uri redirects to the
+ASPSP and will contains some parameters, packaged as what we call, a request parameter.
+An analogy would be, you send the user to your trusted friend ASPSP with a sealed letter. This way your ASPSP friend,
+receiving the letter from the user, can make sure the user hasn't modify the letter because it is still sealed.
+The mechanism for sealing the request parameter is by signing a JWT. You should be familiar with the concept now.
+
+For doing so, you are going to use the JWKMS. You are going to send it the following JSON that you want to be signed:
+
+[source,json]
+----
+{
+  "aud": "{AS_ISSUER_ID}",
+  "scope": "openid accounts payments",
+  "iss": "{CLIENT_ID}",
+  "claims": {
+    "id_token": {
+      "acr": {
+        "value": "urn:openbanking:psd2:sca",
+        "essential": true
+      },
+      "openbanking_intent_id": {
+        "value": "{PaymentId}",
+        "essential": true
+      }
+    },
+    "userinfo": {
+      "openbanking_intent_id": {
+        "value": "{PaymentId}",
+        "essential": true
+      }
+    }
+  },
+  "response_type": "code id_token",
+  "redirect_uri": "{CLIENT_REDIRECT_URI}",
+  "state": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
+  "exp": {exp},
+  "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
+  "client_id": "{CLIENT_ID}"
+}
+----
+
+NOTE: the variables will be replaces at execution time.
+
+You can see that in our request parameter, we specify the payment ID. Signing doesn't mean the PSU can't read the request parameter,
+but it means it can't alter the request parameter without breaking the signature. This way, we make sure a hacker can't modify this value.
+
+
+Once you send this request, you will get a JWT like:
+
+[source,jwt]
+----
+eyJraWQiOiIwNzIyMjMwYy0zMjMyLTQ3MjUtODY0Yy01Njg4NDQ5YmM3ZjYiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczpcL1wvbWF0bHMuYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbFwvb2F1dGgyXC9vcGVuYmFua2luZyIsInNjb3BlIjoib3BlbmlkIGFjY291bnRzIHBheW1lbnRzIiwiaXNzIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwiY2xhaW1zIjp7ImlkX3Rva2VuIjp7ImFjciI6eyJ2YWx1ZSI6InVybjpvcGVuYmFua2luZzpwc2QyOnNjYSIsImVzc2VudGlhbCI6dHJ1ZX0sIm9wZW5iYW5raW5nX2ludGVudF9pZCI6eyJ2YWx1ZSI6IlA2YmU2YWMwNi02ODcxLTQxZTctYjc0MC1jNTI3ZTc5NDA1NTciLCJlc3NlbnRpYWwiOnRydWV9fSwidXNlcmluZm8iOnsib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoiUDZiZTZhYzA2LTY4NzEtNDFlNy1iNzQwLWM1MjdlNzk0MDU1NyIsImVzc2VudGlhbCI6dHJ1ZX19fSwicmVzcG9uc2VfdHlwZSI6ImNvZGUgaWRfdG9rZW4iLCJyZWRpcmVjdF91cmkiOiJodHRwczpcL1wvd3d3Lmdvb2dsZS5jb20iLCJzdGF0ZSI6IjEwZDI2MGJmLWE3ZDktNDQ0YS05MmQ5LTdiN2E1ZjA4ODIwOCIsImV4cCI6MTUzNjIzMjc0OCwibm9uY2UiOiIxMGQyNjBiZi1hN2Q5LTQ0NGEtOTJkOS03YjdhNWYwODgyMDgiLCJpYXQiOjE1MzYyMzI0NDgsImNsaWVudF9pZCI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImp0aSI6ImM5ZmJjOTNiLTkwMTQtNDU2NC1hMTRjLTEyYzZjZTEzNDQzMCJ9.TfV8a3rvuROcWT8hGcUs9rXUreE2wgYmsyuSmzvmaDcfCfyBQ9C8FahO5TDH2RN4Rr7ROJ0dpvj87iAg6_auRz5sLN62L5OqIb42QAW1vGzOa6w4dwErc7zeWCJiSOHskSizW31lTD7w3-C9ra9fzvyvL8r2Y7RXaBMyD-iDlJFFdn9vWfYfU8GOl_GSsJwsGaeevfP62RzgH8R9FW86Rws-TbprgcKBu5cXVZ3RzLNbPGNl_hi2bOpWQ5pLhOejHpFCNvubSTmqC0KW9RsN4HE1wa23sQ1DzsXxqWW8DEfQlAHOcpfGIs5YVuEVCrnPHssZt9sQb5A-7eMa4o_rlw
+----
+
+==== Hybrid flow
+
+With the request parameter, you are now ready to redirect the user to the ASPSP with this message. Unfortunately, our love for Postman has to stop here for a moment:
+
+We can't use postman for initiating the hybrid flow. What is important is that Postman is like your fintech application so far, and the hybrid flow
+has to happen between the PSU and the ASPSP. You can't be in the middle! This is one of the core concept of Open Banking: the authentication and the consent
+is happening only between the PSU and the ASPSP, the TPP is not considered as a trusted party here that could handle this part of the flow.
+
+NOTE: the flow where the TPP is doing the authentication and consent is what we commonly name screen scraping. This is one of the battle
+of Open Banking, to improve the security and the trust between each party.
+
+Even if Postman wouldn't be able to initiate this flow directly, we use a trick to at least build the redirect uri that the PSU needs to follow.
+What we want to do is to build the request but not execute it.
+The way to do that in postman is not to click on `send`, but to:
+
+. go to `Code` in the top right, under `Send`
+. select `cURL`
+
+You can now visualise the uri where the use needs to go. In our case, that looks like `\https://matls.as.aspsp.{{obriDomain}}/oauth2/realms/root/realms/openbanking/authorize?response_type=code%20id_token&client_id=95fe8eaa-44ab-4ec1-b7ec-3e7f94823225&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&scope=openid%20payments%20accounts&redirect_uri=https://www.google.com&request=eyJraWQiOiIwNzIyMjMwYy0zMjMyLTQ3MjUtODY0Yy01Njg4NDQ5YmM3ZjYiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczpcL1wvbWF0bHMuYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbFwvb2F1dGgyXC9vcGVuYmFua2luZyIsInNjb3BlIjoib3BlbmlkIGFjY291bnRzIHBheW1lbnRzIiwiaXNzIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwiY2xhaW1zIjp7ImlkX3Rva2VuIjp7ImFjciI6eyJ2YWx1ZSI6InVybjpvcGVuYmFua2luZzpwc2QyOnNjYSIsImVzc2VudGlhbCI6dHJ1ZX0sIm9wZW5iYW5raW5nX2ludGVudF9pZCI6eyJ2YWx1ZSI6IlA2YmU2YWMwNi02ODcxLTQxZTctYjc0MC1jNTI3ZTc5NDA1NTciLCJlc3NlbnRpYWwiOnRydWV9fSwidXNlcmluZm8iOnsib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoiUDZiZTZhYzA2LTY4NzEtNDFlNy1iNzQwLWM1MjdlNzk0MDU1NyIsImVzc2VudGlhbCI6dHJ1ZX19fSwicmVzcG9uc2VfdHlwZSI6ImNvZGUgaWRfdG9rZW4iLCJyZWRpcmVjdF91cmkiOiJodHRwczpcL1wvd3d3Lmdvb2dsZS5jb20iLCJzdGF0ZSI6IjEwZDI2MGJmLWE3ZDktNDQ0YS05MmQ5LTdiN2E1ZjA4ODIwOCIsImV4cCI6MTUzNjIzMjc0OCwibm9uY2UiOiIxMGQyNjBiZi1hN2Q5LTQ0NGEtOTJkOS03YjdhNWYwODgyMDgiLCJpYXQiOjE1MzYyMzI0NDgsImNsaWVudF9pZCI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImp0aSI6ImM5ZmJjOTNiLTkwMTQtNDU2NC1hMTRjLTEyYzZjZTEzNDQzMCJ9.TfV8a3rvuROcWT8hGcUs9rXUreE2wgYmsyuSmzvmaDcfCfyBQ9C8FahO5TDH2RN4Rr7ROJ0dpvj87iAg6_auRz5sLN62L5OqIb42QAW1vGzOa6w4dwErc7zeWCJiSOHskSizW31lTD7w3-C9ra9fzvyvL8r2Y7RXaBMyD-iDlJFFdn9vWfYfU8GOl_GSsJwsGaeevfP62RzgH8R9FW86Rws-TbprgcKBu5cXVZ3RzLNbPGNl_hi2bOpWQ5pLhOejHpFCNvubSTmqC0KW9RsN4HE1wa23sQ1DzsXxqWW8DEfQlAHOcpfGIs5YVuEVCrnPHssZt9sQb5A-7eMa4o_rlw`
+
+. Copy it
+. Past it in your favorite web browser (... _chrome_ ... ;) )
+
+You now start the flow, not as a Fintech app, but as the PSU.
+
+. You will be redirected to the login page of your bank, if you are not authenticated already
+. You will get the consent page, asking you to approve the payment from the Fintech application.
+
+NOTE: the payment and the Fintech application name is displayed. Those information comes from the on-boarding and the payment request you did earlier on.
+
+You will be redirected to your redirect uri, which was google in this starter kit. This is a way for this ASPSP this time, to redirect
+the PSU back to you.
+
+You should be redirected to an uri like:
+
+`\https://www.google.com/#code=f6184952-1c36-450c-b33d-9fc4af738b83&scope=openid%20payments%20accounts&id_token=eyJ0eXAiOiJKV1QiLCJraWQiOiJiL082T3ZWdjEreStXZ3JINVVpOVdUaW9MdDA9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJkZW1vIiwiYXVkaXRUcmFja2luZ0lkIjoiMDkwMWVjYWYtYTAwOC00NTcyLThkODQtMzBiZGZjNDU0YzE2LTQyNDU0NzEiLCJpc3MiOiJodHRwczovL21hdGxzLmFzLmFzcHNwLm9iLmZvcmdlcm9jay5maW5hbmNpYWwvb2F1dGgyL29wZW5iYW5raW5nIiwidG9rZW5OYW1lIjoiaWRfdG9rZW4iLCJub25jZSI6IjEwZDI2MGJmLWE3ZDktNDQ0YS05MmQ5LTdiN2E1ZjA4ODIwOCIsImFjciI6InVybjpvcGVuYmFua2luZzpwc2QyOnNjYSIsImF1ZCI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImNfaGFzaCI6InpfdnJJNWduRmFsbTZHUzdicHpwaEEiLCJvcGVuYmFua2luZ19pbnRlbnRfaWQiOiJQNmJlNmFjMDYtNjg3MS00MWU3LWI3NDAtYzUyN2U3OTQwNTU3Iiwic19oYXNoIjoiWE5TdVJac0pVb1pjdjdZOTBoNFpfUSIsImF6cCI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImF1dGhfdGltZSI6MTUzNjIzMzcxOSwicmVhbG0iOiIvb3BlbmJhbmtpbmciLCJleHAiOjE1MzYzMjAxMjMsInRva2VuVHlwZSI6IkpXVFRva2VuIiwiaWF0IjoxNTM2MjMzNzIzfQ.QTbH8zuysp2Im0ZYH4m9G6Ee-rET-HHxILUgHrUqABNJqXW7t03crsaMMAj5V8ADZQNb7jUY4DLMYYRPpWKI5bzaXIbHU-_4IYpvWD7sFbbv0vAgyA6AaEDyH_DuiHHmbSSoh6KMLZvA31ZVRG3lyHYPFzFSLMlMtQHmWgeCBIh9nlTincPxXNsujzUMX6keiY0QuSHKzNym59S1GsD0yOz2Ru7pjMrjnerlWRPTiih8YsErDloXQvKf5vpEX2F9CB07H3Ty8bV_GbeQVFkGpjT2gKTtQuHqZwJ-jq_sGk1XavLrqy_VVP6aN8pDplggzYdJlM7BpuhwEseQGjoEZQ&state=10d260bf-a7d9-444a-92d9-7b7a5f088208`
+
+Let's take a few minutes to introspect what you just received:
+
+The information is not in the GET parameter, they are in the fragment. You can tell that by the fact it's after a `#`.
+This is for security reason, specify by the OIDC specification, that the fragment is the way to send back information.
+Fragment means it's not send to the back-end server. In other world, google never received the fragment and is not aware of its existence.
+
+The fragment is only accessible by the client side, java-script in our case. This doesn't mean you have to continue the flow in
+the client side, you obviously need to send it back to the backend.
+
+For doing so, you will need to do a POST to an endpoint of your choice.
+
+In this starter kit, this is not a problem as we will manually copy paste the value received and we are only interested to the code.
+
+==== Exchange code
+
+What you need to do now is sending this code to the ASPSP, so you could get the access token behind it:
+
+. Copy the code, in the example, it's `f6184952-1c36-450c-b33d-9fc4af738b83`
+. go back to postman, on the request called `Exchange code`
+. in the body find the field for `code` and replace the value by the one you received from the ASPSP  `f6184952-1c36-450c-b33d-9fc4af738b83`
+. send the request
+
+As a response, you should get:
+
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJ6aXAiOiJOT05FIiwia2lkIjoiRm9sN0lwZEtlTFptekt0Q0VnaTFMRGhTSXpNPSIsImFsZyI6IkVTMjU2In0.eyJzdWIiOiJkZW1vIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiZTc0OWI1OTQtMWQwZi00ZWM3LWE4ZmEtZjNiOWI4MDFhNjY0IiwiaXNzIjoiaHR0cHM6Ly9tYXRscy5hcy5hc3BzcC5vYi5mb3JnZXJvY2suZmluYW5jaWFsL29hdXRoMi9vcGVuYmFua2luZyIsInRva2VuTmFtZSI6ImFjY2Vzc190b2tlbiIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJhdXRoR3JhbnRJZCI6ImMwY2UyMWE4LTI5YTMtNGIzNC05OTI2LWM4MGYxMzRiMjRlYiIsIm5vbmNlIjoiMTBkMjYwYmYtYTdkOS00NDRhLTkyZDktN2I3YTVmMDg4MjA4IiwiYXVkIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwibmJmIjoxNTM2MjM0MjMzLCJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwic2NvcGUiOlsib3BlbmlkIiwicGF5bWVudHMiLCJhY2NvdW50cyJdLCJhdXRoX3RpbWUiOjE1MzYyMzM3MTkwMDAsImNsYWltcyI6IntcImlkX3Rva2VuXCI6e1wiYWNyXCI6e1widmFsdWVcIjpcInVybjpvcGVuYmFua2luZzpwc2QyOnNjYVwiLFwiZXNzZW50aWFsXCI6dHJ1ZX0sXCJvcGVuYmFua2luZ19pbnRlbnRfaWRcIjp7XCJ2YWx1ZVwiOlwiUDZiZTZhYzA2LTY4NzEtNDFlNy1iNzQwLWM1MjdlNzk0MDU1N1wiLFwiZXNzZW50aWFsXCI6dHJ1ZX19LFwidXNlcmluZm9cIjp7XCJvcGVuYmFua2luZ19pbnRlbnRfaWRcIjp7XCJ2YWx1ZVwiOlwiUDZiZTZhYzA2LTY4NzEtNDFlNy1iNzQwLWM1MjdlNzk0MDU1N1wiLFwiZXNzZW50aWFsXCI6dHJ1ZX19fSIsInJlYWxtIjoiL29wZW5iYW5raW5nIiwiZXhwIjoxNTM2MzIwNjMzLCJpYXQiOjE1MzYyMzQyMzMsImV4cGlyZXNfaW4iOjg2NDAwLCJqdGkiOiIzNjgwNTA4Mi03MmZjLTQ3ODUtODkxNi1kMWE1NWE4MDBhMGQifQ.3m87XyduzbRVoA7vCfZbUbnjuf3nEuy6OSRK_No179OtVpNZlpatBgZ4NpWKsh1ksQ06Vq3yKElyXz5bfrxm6A",
+    "refresh_token": "eyJ0eXAiOiJKV1QiLCJ6aXAiOiJOT05FIiwia2lkIjoiRm9sN0lwZEtlTFptekt0Q0VnaTFMRGhTSXpNPSIsImFsZyI6IkVTMjU2In0.eyJzdWIiOiJkZW1vIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiYTlmNzAwMzQtYmQzOS00MDc0LTk3M2EtYzZmNWQyYWZkYjRmIiwiaXNzIjoiaHR0cHM6Ly9tYXRscy5hcy5hc3BzcC5vYi5mb3JnZXJvY2suZmluYW5jaWFsL29hdXRoMi9vcGVuYmFua2luZyIsInRva2VuTmFtZSI6InJlZnJlc2hfdG9rZW4iLCJhdXRoTW9kdWxlcyI6IkRhdGFTdG9yZSIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJhdXRoR3JhbnRJZCI6ImMwY2UyMWE4LTI5YTMtNGIzNC05OTI2LWM4MGYxMzRiMjRlYiIsImF1ZCI6Ijk1ZmU4ZWFhLTQ0YWItNGVjMS1iN2VjLTNlN2Y5NDgyMzIyNSIsImFjciI6InVybjpvcGVuYmFua2luZzpwc2QyOnNjYSIsIm5iZiI6MTUzNjIzNDIzMywib3BzIjoiMDY0NjAxMjctMjc2Yy00MmRlLWIyODUtZDkxNWNiMGJmMTMwIiwiZ3JhbnRfdHlwZSI6ImF1dGhvcml6YXRpb25fY29kZSIsInNjb3BlIjpbIm9wZW5pZCIsInBheW1lbnRzIiwiYWNjb3VudHMiXSwiYXV0aF90aW1lIjoxNTM2MjMzNzE5MDAwLCJjbGFpbXMiOiJ7XCJpZF90b2tlblwiOntcImFjclwiOntcInZhbHVlXCI6XCJ1cm46b3BlbmJhbmtpbmc6cHNkMjpzY2FcIixcImVzc2VudGlhbFwiOnRydWV9LFwib3BlbmJhbmtpbmdfaW50ZW50X2lkXCI6e1widmFsdWVcIjpcIlA2YmU2YWMwNi02ODcxLTQxZTctYjc0MC1jNTI3ZTc5NDA1NTdcIixcImVzc2VudGlhbFwiOnRydWV9fSxcInVzZXJpbmZvXCI6e1wib3BlbmJhbmtpbmdfaW50ZW50X2lkXCI6e1widmFsdWVcIjpcIlA2YmU2YWMwNi02ODcxLTQxZTctYjc0MC1jNTI3ZTc5NDA1NTdcIixcImVzc2VudGlhbFwiOnRydWV9fX0iLCJyZWFsbSI6Ii9vcGVuYmFua2luZyIsImV4cCI6MTU0NDAxMDIzMywiaWF0IjoxNTM2MjM0MjMzLCJleHBpcmVzX2luIjo3Nzc2MDAwLCJqdGkiOiI2NTI3N2MyOS01ZmYyLTRmZjUtODk5Ny05Njk4NjQwOWE4NWEifQ.XuJfrjFxulrT-SDcyCzzIVn86g7b4K4WClk4dOr6KU_wB8R1i1S51Lp5rhNGVSfZU_drLfcBZDNnbg0ujR8eXQ",
+    "scope": "openid payments accounts",
+    "id_token": "eyJ0eXAiOiJKV1QiLCJraWQiOiJiL082T3ZWdjEreStXZ3JINVVpOVdUaW9MdDA9IiwiYWxnIjoiUlMyNTYifQ.eyJhdF9oYXNoIjoiN0MxdFpobXdNcVVfOHRhOElpR3VpZyIsInN1YiI6ImRlbW8iLCJhdWRpdFRyYWNraW5nSWQiOiIwOTAxZWNhZi1hMDA4LTQ1NzItOGQ4NC0zMGJkZmM0NTRjMTYtNDI0NjY0MSIsImlzcyI6Imh0dHBzOi8vbWF0bHMuYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbC9vYXV0aDIvb3BlbmJhbmtpbmciLCJ0b2tlbk5hbWUiOiJpZF90b2tlbiIsIm5vbmNlIjoiMTBkMjYwYmYtYTdkOS00NDRhLTkyZDktN2I3YTVmMDg4MjA4IiwiYWNyIjoidXJuOm9wZW5iYW5raW5nOnBzZDI6c2NhIiwiYXVkIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwiY19oYXNoIjoiSzVuWG02MHZWYVJZMGsxU0FVQ3RCdyIsIm9wZW5iYW5raW5nX2ludGVudF9pZCI6IlA2YmU2YWMwNi02ODcxLTQxZTctYjc0MC1jNTI3ZTc5NDA1NTciLCJvcmcuZm9yZ2Vyb2NrLm9wZW5pZGNvbm5lY3Qub3BzIjoiMDY0NjAxMjctMjc2Yy00MmRlLWIyODUtZDkxNWNiMGJmMTMwIiwiYXpwIjoiOTVmZThlYWEtNDRhYi00ZWMxLWI3ZWMtM2U3Zjk0ODIzMjI1IiwiYXV0aF90aW1lIjoxNTM2MjMzNzE5MDAwLCJyZWFsbSI6Ii9vcGVuYmFua2luZyIsImV4cCI6MTUzNjMyMDYzMywidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE1MzYyMzQyMzN9.SJrYpmqDxvGR1Qb4XOWc0MGip3nsuoCfSFqRru4aFHR0sby6PHHciirpfwgUVDS5_UDoqTUeRFYFuxPzZGETMAWdhsLpTU0AVmWqbQqawigpm5C7s3KttGB6a3X_jO-DCoKesr2BOnSnyqMqMfNK6Dj8AWDwrI5LJiQ5oyB1aX4qncrAVNXNtFy4hZ2Kyjuc2dpcK_jIvMs1jjFkLjQSZCv8Yd0M3rRg9j-K1_05-lqd3nuLoL9dvdw1Iwy0ZGlf2a-xi9PpyfiGWQiJDJRDniFWIs644XUL2K3Cbtbo5i8ZfdJnP3Y1O0betumjuYAeYkJH0cpHFaDs1LCRyAWUKw",
+    "token_type": "Bearer",
+    "expires_in": 86399,
+    "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208"
+}
+----
+
+Once you got this access token, you can now submit the payment and get paid!
+
+NOTE: if you received a `JWT expired`, it's due to the fact you took time between the first request of the `make payment` example and the exchange code
+Indeed, the exchange code is also using the client assertion JWT, which may have expired since. Trick: call the first request again, it will issue a
+client assertion JWT.
+
+==== Post Payment submission
+
+With this access token, you did most of the work. All you need to do now is call the payment submission request. You will get a response like:
+
+[source,json]
+----
+{
+    "Data": {
+        "PaymentSubmissionId": "6f347b12-241d-4047-a629-f150d72695d4",
+        "PaymentId": "P6be6ac06-6871-41e7-b740-c527e7940557",
+        "Status": "AcceptedSettlementInProcess",
+        "CreationDateTime": "2018-09-06T11:47:17+00:00"
+    }
+}
+----
+
+Congratulation! You successfully completed your first payment. The status `AcceptedSettlementInProcess` means that the bank as accepted the payment
+but need to do further checking before completing it.
+If you were a shop and doing a real payment, before sending the goods, you probably want to make sure the payment is completed.
+
+The way to do so in Open Banking V1 and V2, is by polling the `Get payment submission`
+
+==== Poll Payment submission
+
+In the case of ForgeRock ASPSP, which is a mock bank, we simulate the payment. To give you the chance to see the status `AcceptedSettlementInProcess`,
+we decided to wait a few minutes before completing it.
+Try to call the `Get payment submission` request. If you have wait long enough, you would have the following answer:
+
+[source,json]
+----
+{
+    "Data": {
+        "PaymentSubmissionId": "6f347b12-241d-4047-a629-f150d72695d4",
+        "PaymentId": "P6be6ac06-6871-41e7-b740-c527e7940557",
+        "Status": "AcceptedSettlementCompleted",
+        "CreationDateTime": "2018-09-06T11:52:05+00:00"
+    }
+}
+----
+
+As a shop, it's only at this time you should consider the payment completed and you can send the goods.
+
+=== Accessing PSU accounts
+
+The payment and the account flow share a lot in common. Therefore, if you haven't make a payment yet, we strongly recommend you do so first.
+The account flow can be found in https://postman.ob.forgerock.financial/#eeed9aa7-2f97-4cf4-8721-6a632c16ddc5[here]
+
+If you look at the sequence, there is a lot of similarity. In this section, we will concentrate on the difference with the payment flow.
+
+==== Generate a client credential JWT
+
+Same as the payment flow. Please reference to the according section.
+
+==== Client credential
+
+Same as the payment flow. Please reference to the according section.
+
+==== Create account request
+
+The same way we created the payment request, we are going to create an account request. The difference is in the payload we are going to send.
+This time, we are sending the list of permissions we would like. The payload in our starter kit looks like this:
+
+[source,json]
+----
+{
+  "Data": {
+    "Permissions": [
+      "ReadAccountsDetail",
+      "ReadBalances",
+      "ReadBeneficiariesDetail",
+      "ReadDirectDebits",
+      "ReadProducts",
+      "ReadStandingOrdersDetail",
+      "ReadTransactionsCredits",
+      "ReadTransactionsDebits",
+      "ReadTransactionsDetail",
+      "ReadOffers",
+      "ReadPAN",
+      "ReadParty",
+      "ReadPartyPSU",
+      "ReadScheduledPaymentsDetail",
+      "ReadStatementsDetail"
+    ],
+    "TransactionFromDateTime": "2017-05-03T00:00:00+00:00",
+    "TransactionToDateTime": "2018-12-03T00:00:00+00:00"
+  },
+  "Risk": {}
+}
+----
+
+Those permissions would be asked during the consent to the PSU
+
+==== Generating a request parameter
+
+Same as the payment flow. Please reference to the according section.
+
+==== Hybrid flow
+
+Same as the payment flow. Please reference to the according section.
+
+The difference with the payment would be in the consent page that the user will received. It will be about sharing his accounts data this time
+
+==== Exchange code
+
+Same as the payment flow. Please reference to the according section.
+
+Once you got the access token, you can consume any of the accounts APIs of your choice. We can considered that you successfully managed to
+get access to the user accounts data!
+
+To confirm this, the example suggest you to consume one of the most basic endpoints of it, the `get accounts`.
+
+==== Get accounts
+
+
+Have a try! Now call the `get accounts`. You should get a response like:
+
+[source,json]
+----
+{
+    "Data": {
+        "Account": [
+            {
+                "AccountId": "224a1676-0d78-489e-bf2f-d2bfacc62d24",
+                "Currency": "GBP",
+                "Nickname": "Household",
+                "Account": [
+                    {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "83518325256728",
+                        "Name": "demo"
+                    }
+                ]
+            },
+            {
+                "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                "Currency": "GBP",
+                "Nickname": "Bills",
+                "Account": [
+                    {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "6292710013690",
+                        "Name": "demo",
+                        "SecondaryIdentification": "53044601"
+                    }
+                ]
+            }
+        ]
+    },
+    "Links": {
+        "Self": "/accounts"
+    },
+    "Meta": {
+        "TotalPages": 1
+    }
+}
+----
+
+
+This starter kit is now finished. We leave you now to your imagination on how you can innovate in the Fintech field, using those APIs!

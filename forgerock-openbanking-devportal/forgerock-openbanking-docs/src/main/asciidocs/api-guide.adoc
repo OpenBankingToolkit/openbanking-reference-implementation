@@ -1,0 +1,16 @@
+:toc: left
+:stylesheet: forgerock-obri.css
+
+= ForgeRock Open Banking Reference Implementation documentations
+
+ForgeRock is providing an Open Banking Reference Implementation (OBRI), also called mock bank.
+This guide will walk you through some examples, giving you all the tools you need to
+explore the Open Banking APIs by yourself.
+
+include::starterkit/quickstart.adoc[]
+
+include::starterkit/deepdive.adoc[]
+
+== ForgeRock APIs
+
+include::forgerockapis/forgerock-apis.adoc[]

@@ -1,0 +1,8 @@
+{
+  "scope": "openid accounts payments fundsconfirmations",
+  "grant_types": ["authorization_code", "client_credentials"],
+  "response_types": ["code id_token"],
+  "token_endpoint_auth_method": "client_secret_basic",
+  "id_token_signed_response_alg": "PS256",
+  "subject_type": "pairwise"
+}

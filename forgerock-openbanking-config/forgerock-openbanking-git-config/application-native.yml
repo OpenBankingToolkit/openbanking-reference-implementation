@@ -1,0 +1,157 @@
+dns:
+  hosts:
+    root: dev-ob.forgerock.financial
+
+env:
+  name: "DEV"
+
+server:
+  internal:
+    hostname: ${server.hostname}
+
+
+as:
+  headless:
+    header-enable: true
+    always-enable: false
+
+am:
+  internal-port: 30443
+  internal:
+    root: https://openam:${am.internal-port}
+  port: 443
+  hostname: as.aspsp.${dns.hosts.root}:${am.port}
+  matls-hostname: matls.as.aspsp.${dns.hosts.root}:${am.port}
+  realm:
+    auth:
+      oidc:
+        issuerid: https://am.${dns.hosts.root}/oauth2/realms/root/realms/auth
+      hostname: am.${dns.hosts.root}:${scgw.port}
+  oidc:
+    endpoint:
+      accesstoken: ${am.internal.root}/oauth2/realms/root/realms/openbanking/access_token
+      authorization: ${am.internal.root}/oauth2/realms/root/realms/openbanking/authorize
+      userinfo: ${am.internal.root}/oauth2/realms/root/realms/openbanking/userinfo
+      registration: ${am.internal.root}/oauth2/realms/root/realms/openbanking/register
+    jwksuri: ${am.internal.root}/oauth2/realms/root/realms/openbanking/connect/jwk_uri
+rs:
+  detached-signature:
+    enable: false
+
+rs-discovery:
+  base-url: https://${rs-discovery.hostname}:8074
+
+shop:
+  port: ${scgw.port}
+  internal-port: 8083
+
+account:
+  port: ${scgw.port}
+  internal-port: 8093
+
+jwkms:
+  port: ${scgw.port}
+  internal-port: 8097
+
+rs-store:
+  port: ${scgw.port}
+  internal-port: 8086
+
+metrics:
+  port: ${scgw.port}
+  internal-port: 8098
+
+tpp:
+  port: ${scgw.port}
+  internal-port: 8095
+
+directory:
+  port: ${scgw.port}
+  internal-port: 8076
+
+as-api:
+  port: ${scgw.port}
+  internal-port: 8066
+
+rs-api:
+  port: ${scgw.port}
+  internal-port: 8094
+
+rs-ui:
+  port: ${scgw.port}
+  internal-port: 8092
+
+rs-simulator:
+  port: ${scgw.port}
+  internal-port: 8096
+
+forgerockdirectory:
+  port: ${scgw.port}
+
+rcs:
+  port: ${scgw.port}
+  internal-port: 8084
+
+scgw:
+  port: 8074
+  internal-port: 8074
+
+swagger-ui:
+  port: ${scgw.port}
+  internal-port: 8099
+
+doc:
+  port: ${scgw.port}
+  internal-port: 8081
+
+monitoring:
+  port: ${scgw.port}
+  internal-port: 8073
+
+register:
+  port: ${scgw.port}
+  internal-port: 8100
+
+config:
+  port: ${scgw.port}
+  internal-port: 8888
+
+spring:
+  # An example to show how to disable endpoints on demand
+  #  cloud:
+  #    gateway:
+  #      routes:
+  #      - id: jwkms-matls
+  #        order: -1
+  #        uri: https://jwkms.${dns.hosts.root}:8074
+  #        predicates:
+  #        - Path=/mtls/test
+  #        filters:
+  #        - SetStatus=404
+  boot:
+    admin:
+      client:
+        internal-port: 8082
+  data:
+    mongodb:
+      uri: mongodb://mongo:cj9ka0f6ie1mq1akqsb1iy10wp1yfz5b@mongo-mongodb/mongo
+
+#Authentication
+jwt-auth:
+  jwk-uri: "https://am.${dns.hosts.root}:${scgw.port}/oauth2/connect/jwk_uri"
+  ob-user-info: "https://am.aspsp.${dns.hosts.root}:${am.internal-port}/oauth2/realms/root/realms/openbanking/userinfo"
+  auth-user-info: "https://am.${dns.hosts.root}:${scgw.port}/oauth2/realms/root/realms/auth/userinfo"
+
+#doc
+logging:
+  file: ${user.dir}/logs/${spring.application.name}.log
+
+directory-data:
+  aspsps:
+    - name: ForgeRock Financial
+      logoUri: https://image4.owler.com/logo/forgerock_owler_20180131_182546_original.png
+      financialId: ${rs.financial_id}
+      asDiscoveryEndpoint: https://as.aspsp.${dns.hosts.root}:${am.port}/oauth2/
+      rsDiscoveryEndpoint: https://rs.aspsp.${dns.hosts.root}:${am.port}/open-banking/discovery
+      testMtlsEndpoint: https://rs.aspsp.${dns.hosts.root}:${am.port}/open-banking/mtlsTest
+      transportKeys: https://openbanking.atlassian.net/wiki/spaces/DZ/pages/252018873/OB+Root+and+Issuing+Certificates+for+Sandbox

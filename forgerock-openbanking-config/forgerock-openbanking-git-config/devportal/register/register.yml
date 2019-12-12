@@ -1,0 +1,46 @@
+#Server config
+server:
+  hostname: service.register.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "service.register.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/register/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+#Authentication
+jwt-auth:
+  expected-issuer-id: "https://am.${dns.hosts.root}/oauth2/realms/root/realms/auth"
+  expected-audience-id: "register"
+  cookie: true
+  redirect-uri: "https://register.${dns.hosts.root}/redirectOpenId"
+
+ob:
+  auth:
+    session:
+      cookie:
+        domains: ${session.cookie.domains}
+    oidc:
+      idp:
+        issuerid: ${jwt-auth.expected-issuer-id}
+      client:
+        client-id: ${jwt-auth.expected-audience-id}
+        redirect-uri: ${jwt-auth.redirect-uri}
+      acr: ob-directory
+
+#AM config
+am:
+  cookie:
+    name: iPlanetDirectoryPro
+  internal:
+    oidc:
+      client-id: register
+
+session:
+  cookie:
+    domains: register.${dns.hosts.root}
+
+manual-onboarding:
+  aspspManualOnboardingEndpoint: https://matls.as.aspsp.${dns.hosts.root}/open-banking/manual-onboarding/registerApplication/

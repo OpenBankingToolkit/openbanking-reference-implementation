@@ -1,0 +1,410 @@
+=== Testing your MATLS setup
+
+ForgeRock provides some facility endpoints to test your MATLS setup. We mentioned them already in the starter kit, when
+setting up the client certificate in Postman.
+
+Those endpoints can be found in Postman https://postman.ob.forgerock.financial/#4500f039-fefc-447a-91f7-c0da79452008[here].
+If you are implementing your TPP application with the language of your choice, you may found handy to test your MATLS setup
+against those endpoints.
+
+If your client certificate is not setup properly, the endpoint will return
+
+[source,json]
+----
+{
+  "message": "Hello anonymous!",
+  "authorities": [
+    "ROLE_ANONYMOUS"
+  ]
+}
+----
+
+In the case of a well-configured client certs, the response would be:
+
+[source,json]
+----
+{
+  "message": "Hello X!",
+  "authorities": [
+    "ROLE_JWKMS_APP"
+  ]
+}
+----
+
+=== Adding financial Data to PSU accounts
+
+The Data APIs is a private APIs which provide write access to the account financial data of a user. In ForgeRock, we believe
+that mock data can't be an answer for every TPP business case. Part of the innovation is to be where you don't expect it,
+therefore, provided a defined set of data can be view as a boundary for some fintech ideas.
+
+To resolve this challenge, we decided to offer the write access of a PSU financial data, so TPPs can import the data
+of their choice to a specific user.
+We choose to adopt the Open Banking data-model obviously, to import and export data.
+
+We protected the data apis with OAuth2. A concept you should be familiar, especially if you have already played with the
+Open Banking API.
+
+==== Password credential flow
+
+To make the generation of the access token easier, we enabled one of the simpliest flow: the password credential flow.
+
+All you need to do to get an access token, is changing the credential that are part of the body of the request. As a result,
+you will get an access token like follow:
+
+[source,jwt]
+----
+eyJ0eXAiOiJKV1QiLCJ6aXAiOiJOT05FIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJkZW1vIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiMTI4M2I0N2QtM2Y3Zi00NDhhLTgwNWQtMTA3NWRmOTNiNmViIiwiaXNzIjoiaHR0cHM6Ly9hbS5vYi5mb3JnZXJvY2suZmluYW5jaWFsOjQ0My9vYXV0aDIvYXV0aCIsInRva2VuTmFtZSI6ImFjY2Vzc190b2tlbiIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJhdXRoR3JhbnRJZCI6ImJhZmNiYzc2LWY3ZjctNDczMi05Mzg2LThlZWUzNzU2NjQzOSIsImF1ZCI6ImJhbmsiLCJuYmYiOjE1MzYyMjYxODYsImdyYW50X3R5cGUiOiJwYXNzd29yZCIsInNjb3BlIjpbIm9wZW5pZCIsImdyb3VwIl0sImF1dGhfdGltZSI6MTUzNjIyNjE4NiwicmVhbG0iOiIvYXV0aCIsImV4cCI6MTUzNjIyOTc4NiwiaWF0IjoxNTM2MjI2MTg2LCJleHBpcmVzX2luIjozNjAwLCJqdGkiOiI1MWUzZTQxNS1kZWQyLTQyMzEtOGYyMy03ODUxNmUwYjkzZTQifQ.oLNCUeDejgBnAtV1csBqXU1feui8WJXgfoOSxbj91Ig
+----
+
+
+==== Export the user data
+
+The export endpoint does an exportation of the user data, without pagination. If you need to do a back-up of the user data,
+this is the endpoint we recommend you use.
+
+Once you call it, you will get an export look like:
+
+[source,json]
+----
+{
+    "userName": "demo",
+    "party": {
+        "PartyId": "cd1450a6-202e-4304-adb7-6b145c2a9705",
+        "Name": "demo"
+    },
+    "accountDatas": [
+        {
+            "account": {
+                "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                "Currency": "GBP",
+                "Nickname": "Bills",
+                "Account": [
+                    {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "6292710013690",
+                        "Name": "demo",
+                        "SecondaryIdentification": "53044601"
+                    }
+                ]
+            },
+            "balance": {
+                "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                "Amount": {
+                    "Amount": "9983.73",
+                    "Currency": "GBP"
+                },
+                "CreditDebitIndicator": "Debit",
+                "Type": "InterimAvailable",
+                "DateTime": "2018-09-06T09:29:51+00:00"
+            },
+            "product": {
+                "ProductName": "321 Product",
+                "ProductId": "c7391b6b-c5da-4a09-b8b2-35d4bcc30d7f",
+                "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                "ProductType": "PCA"
+            },
+            "party": {
+                "PartyId": "80e825e3-6611-4f34-9f59-61b1adc79153",
+                "Name": "demo"
+            },
+            "beneficiaries": [
+                {
+                    "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                    "BeneficiaryId": "f42ef1bf-968e-47b4-9ef6-97881509dc1a",
+                    "Reference": "Auctor Non Corp.",
+                    "CreditorAccount": {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "85319935719139",
+                        "Name": "Puckett, Jameson I."
+                    }
+                },
+                ...
+            ],
+            "directDebits": [
+                {
+                    "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                    "DirectDebitId": "208a14ed-5144-4f0b-89fc-88e2a0ea8a00",
+                    "MandateIdentification": "Risus Inc.",
+                    "DirectDebitStatusCode": "Active",
+                    "Name": "Risus Inc.",
+                    "PreviousPaymentDateTime": "2018-08-06T09:29:51+00:00",
+                    "PreviousPaymentAmount": {
+                        "Amount": "431.24",
+                        "Currency": "GBP"
+                    }
+                },
+                ...
+            ],
+            "standingOrders": [
+                {
+                    "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                    "StandingOrderId": "ba42e5cf-0ddb-45e6-95e6-4733a49b05fa",
+                    "Frequency": "EvryWorkgDay",
+                    "Reference": "Dapibus Foundation",
+                    "FirstPaymentDateTime": "2017-09-06T09:29:51+00:00",
+                    "FirstPaymentAmount": {
+                        "Amount": "240.61",
+                        "Currency": "GBP"
+                    },
+                    "NextPaymentDateTime": "2018-11-06T09:29:51+00:00",
+                    "NextPaymentAmount": {
+                        "Amount": "240.61",
+                        "Currency": "GBP"
+                    },
+                    "FinalPaymentDateTime": "2028-09-06T09:29:51+00:00",
+                    "StandingOrderStatusCode": "Active",
+                    "CreditorAccount": {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "13915160867730",
+                        "Name": "Burch, Bruno K."
+                    }
+                },
+                ...
+            ],
+            "transactions": [
+                {
+                    "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                    "TransactionId": "da6fd893-cec1-4652-b7a0-b6499db54d04",
+                    "TransactionReference": "Ref 9228",
+                    "Amount": {
+                        "Amount": "324.65",
+                        "Currency": "GBP"
+                    },
+                    "CreditDebitIndicator": "Debit",
+                    "Status": "Booked",
+                    "BookingDateTime": "2017-09-25T23:19:37+00:00",
+                    "ValueDateTime": "2017-09-25T23:21:12+00:00",
+                    "BankTransactionCode": {
+                        "Code": "ReceivedCreditTransfer",
+                        "SubCode": "DomesticCreditTransfer"
+                    },
+                    "ProprietaryBankTransactionCode": {
+                        "Code": "Transfer",
+                        "Issuer": "AlphaBank"
+                    },
+                    "TransactionInformation": "Cash to Morse, Lev C.",
+                    "Balance": {
+                        "Amount": {
+                            "Amount": "10149.61",
+                            "Currency": "GBP"
+                        },
+                        "CreditDebitIndicator": "Debit",
+                        "Type": "InterimBooked"
+                    }
+                },
+               ...
+            ],
+            "statements": [
+                {
+                    "AccountId": "67b1c411-9399-4529-ba2c-eaeafe332dca",
+                    "StatementId": "2ae4d708-c8ac-4ddc-8072-6e8fc597c6db",
+                    "StatementReference": "2017-09",
+                    "Type": "RegularPeriodic",
+                    "StartDateTime": "2017-09-01T09:29:51+00:00",
+                    "EndDateTime": "2017-09-30T09:29:51+00:00",
+                    "StatementDescription": [
+                        "Sep 2017"
+                    ],
+                    "StatementAmount": [
+                        {
+                            "Amount": {
+                                "Amount": "4937.93",
+                                "Currency": "GBP"
+                            },
+                            "CreditDebitIndicator": "Debit",
+                            "Type": "PreviousClosingBalance"
+                        },
+                        {
+                            "Amount": {
+                                "Amount": "5348.33",
+                                "Currency": "GBP"
+                            },
+                            "CreditDebitIndicator": "Debit",
+                            "Type": "ClosingBalance"
+                        }
+                    ]
+                },
+                ...
+            ],
+            "scheduledPayments": [
+                {
+                    "ScheduledPaymentId": "a6b5ed44-97aa-4503-b58d-bcef99d4a867",
+                    "ScheduledPaymentDateTime": "2018-10-11T09:29:51+00:00",
+                    "ScheduledType": "Execution",
+                    "InstructedAmount": {
+                        "Amount": "421.31",
+                        "Currency": "GBP"
+                    },
+                    "Reference": "Ultrices Industries",
+                    "CreditorAccount": {
+                        "SchemeName": "SortCodeAccountNumber",
+                        "Identification": "6913511237014",
+                        "Name": "Goodman, Jescie C."
+                    }
+                },
+                ...
+            ],
+            "offers": [
+                {
+                    "OfferId": "18cb5909-f873-484b-a356-2d8c799976f4",
+                    "OfferType": "LimitIncrease",
+                    "Description": "Credit limit increase for the account up to £10200.00",
+                    "Amount": {
+                        "Amount": "10200.00",
+                        "Currency": "GBP"
+                    }
+                },
+               ...
+            ]
+        },
+        ...
+    ]
+}
+----
+
+
+You can use this export to create your modified version of it that you can re-import.
+
+==== Create user data
+
+This API offer you the possibity to create new objects, like additional transaction.
+For that, all you need to do is to follow the same format than the export.
+Adding a new transaction would be:
+
+[source,json]
+----
+{
+
+   "accountDatas": [
+       {
+           "transactions": [
+                {
+                   "AccountId": "{AccountId}",
+                   "TransactionReference": "Ref TOTO",
+                   "Amount": {
+                       "Amount": "333",
+                       "Currency": "GBP"
+                   },
+                   "CreditDebitIndicator": "Credit",
+                   "Status": "Booked",
+                   "BookingDateTime": "2016-07-19T13:33:12+00:00",
+                   "ValueDateTime": "2016-07-19T13:36:12+00:00",
+                   "BankTransactionCode": {
+                       "Code": "ReceivedCreditTransfer",
+                       "SubCode": "DomesticCreditTransfer"
+                   },
+                   "ProprietaryBankTransactionCode": {
+                       "Code": "Transfer",
+                       "Issuer": "AlphaBank"
+                   },
+                   "TransactionInformation": "Cash from Sangeeta Singh",
+                   "Balance": {
+                       "Amount": {
+                           "Amount": "1950.00",
+                           "Currency": "GBP"
+                       },
+                       "CreditDebitIndicator": "Credit",
+                       "Type": "InterimBooked"
+                   }
+               }
+
+           ]
+        }
+    ]
+}
+----
+
+As an output, you will get the confirmation of the transaction creation, which would have a new transaction ID:
+
+[source,json]
+----
+{
+    "userName": "demo",
+    "accountDatas": [
+        {
+            "beneficiaries": [],
+            "directDebits": [],
+            "standingOrders": [],
+            "transactions": [
+                {
+                    "AccountId": "224a1676-0d78-489e-bf2f-d2bfacc62d24",
+                    "TransactionId": "356071ec-a55f-4d56-b734-324019c4033d",
+                    "TransactionReference": "Ref TOTO",
+                    "Amount": {
+                        "Amount": "333",
+                        "Currency": "GBP"
+                    },
+                    "CreditDebitIndicator": "Credit",
+                    "Status": "Booked",
+                    "BookingDateTime": "2016-07-19T13:33:12+00:00",
+                    "ValueDateTime": "2016-07-19T13:36:12+00:00",
+                    "BankTransactionCode": {
+                        "Code": "ReceivedCreditTransfer",
+                        "SubCode": "DomesticCreditTransfer"
+                    },
+                    "ProprietaryBankTransactionCode": {
+                        "Code": "Transfer",
+                        "Issuer": "AlphaBank"
+                    },
+                    "TransactionInformation": "Cash from Sangeeta Singh",
+                    "Balance": {
+                        "Amount": {
+                            "Amount": "1950.00",
+                            "Currency": "GBP"
+                        },
+                        "CreditDebitIndicator": "Credit",
+                        "Type": "InterimBooked"
+                    }
+                }
+            ],
+            "statements": [],
+            "scheduledPayments": [],
+            "offers": []
+        }
+    ]
+}
+----
+
+
+==== Update user data
+
+Sometimes, you don't want to create new objects but edit existent one.
+
+For example, you may want to change the party object, adding extra fields.
+
+
+[source,json]
+----
+{
+    "accountDatas": [
+        {
+            "account": {
+                "AccountId": "{AccountId}"
+            },
+            "party": {
+                "PartyId": "{PartyId}",
+                "Name": "quentin castel",
+                "EmailAddress": "quentin.castel@forgerock.com"
+            }
+        }
+    ]
+}
+----
+
+As a response, you will get the full export of your user data.
+
+==== Generate random data
+
+Playing with the create or update data APIs may lead to mistakes. For example, we often reset the demo user data,
+as this one is public and some other developers may have play with the data APIs with this user.
+
+If you are in this situation and you want to reset the user data, you can use this endpoint for that.
+
+
+==== Delete user data
+
+This API is explicit, it deletes the user data. A bit more brutal than the generate random data. We recommend you use the
+generate random data most of the time.
+
+
+

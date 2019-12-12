@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: headFragment">
+    <title id="pageTitle">An error happened!</title>
+</head>
+<body>
+<div th:replace="fragments/header :: menu">Header</div>
+<!--/* Insert content fragment with content of the element with id = 'task-list' */-->
+<div id="content">
+    <div class="text-center">
+        <img th:src="@{/images/forgebank-logo.png}" alt="ForgeBank"/>
+
+        <div class="alert alert-danger" role="alert">An error happened. Please contact your administrator.</div>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: footer">Footer</footer>
+
+</body>
+</html>

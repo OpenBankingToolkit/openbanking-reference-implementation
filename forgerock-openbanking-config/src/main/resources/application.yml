@@ -1,0 +1,96 @@
+config:
+  git:
+    uri: git@github.com:ForgeCloud/ob-sandbox-config
+
+spring:
+  profiles:
+    active: composite
+  application:
+    name: config
+  cloud:
+    config:
+      server:
+        native:
+          searchLocations:
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/rs"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/rs/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/as"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/as/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/tpp"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/tpp/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/directory"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/directory/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/metrics"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/metrics/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/devportal"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/devportal/{application}"
+            - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/swagger/"
+        composite:
+          - type: git
+            uri: ${config.git.uri}
+            forcePull: true
+            cloneOnStart: true
+            ignore-local-ssh-settings: ${CONFIG_GIT_IGNORE_LOCAL_SSH:true}
+            privateKey: ${GIT_CONFIG_SSH_KEY}
+            refreshRate: 600
+            searchPaths:
+              - "${CUSTOMER_NAME}-obri-config"
+              - "${CUSTOMER_NAME}-obri-config/{application}"
+              - "${CUSTOMER_NAME}-obri-config/aspsp/"
+              - "${CUSTOMER_NAME}-obri-config/aspsp/rs"
+              - "${CUSTOMER_NAME}-obri-config/aspsp/rs/{application}"
+              - "${CUSTOMER_NAME}-obri-config/aspsp/as"
+              - "${CUSTOMER_NAME}-obri-config/aspsp/as/{application}"
+              - "${CUSTOMER_NAME}-obri-config/tpp"
+              - "${CUSTOMER_NAME}-obri-config/tpp/{application}"
+              - "${CUSTOMER_NAME}-obri-config/directory"
+              - "${CUSTOMER_NAME}-obri-config/directory/{application}"
+              - "${CUSTOMER_NAME}-obri-config/metrics"
+              - "${CUSTOMER_NAME}-obri-config/metrics/{application}"
+              - "${CUSTOMER_NAME}-obri-config/devportal"
+              - "${CUSTOMER_NAME}-obri-config/devportal/{application}"
+              - "${CUSTOMER_NAME}-obri-config/swagger/"
+          - type: native
+            searchLocations:
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/rs"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/rs/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/as"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/aspsp/as/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/tpp"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/tpp/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/directory"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/directory/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/metrics"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/metrics/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/devportal"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/devportal/{application}"
+              - "file:///${user.dir}/forgerock-openbanking-config/forgerock-openbanking-git-config/swagger/"
+        health:
+          enabled: true
+  boot:
+    admin:
+      client:
+        auto-deregistration: true
+
+server:
+  port: 8888
+
+management:
+  security:
+    enables: false
+  endpoint:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+      sensitive: false
+
+logging:
+  file: ${user.dir}/logs/${spring.application.name}.log

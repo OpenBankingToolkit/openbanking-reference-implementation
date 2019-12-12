@@ -1,0 +1,51 @@
+#Server config
+server:
+  hostname: tpp-core.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: tpp-core.${dns.hosts.root}
+    key-store: file:/opt/openbanking/tpp/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+#TPP
+tpp:
+  certificate:
+    transport:
+      alias: 50jjzli0j1ybd0elxd9o2g
+  ssa: classpath:ob/ssa.jwt
+  software-id: 50jjZli0J1YBD0ElxD9o2G
+  aisp:
+    cookie:
+      domain: ${dns.hosts.root}
+    redirect_uri: ${tpp.root}/exchange_code/aisp/
+  pisp:
+    redirect_uri: ${tpp.root}/exchange_code/pisp/
+  oidc:
+    jwk_uri: ${tpp.root}/jwks/jwk_uri
+  openbanking:
+    version: v1.1
+  root: https://tpp-core.${dns.hosts.root}:443/open-banking/v1.1
+  clients:
+    - id: shop-ui
+      cors: https://shop.${dns.hosts.root}
+      statusCallback: https://shop.${dns.hosts.root}/rest/shop/statusCallback
+    - id: account-ui
+      cors: https://account.${dns.hosts.root}
+      statusCallback: https://account.${dns.hosts.root}/statusCallback
+    - id: openbankise
+      cors: http://openbankise.com
+      statusCallback: http://pisp.openbankise.com/rest/pisp/statusCallback
+
+#Swagger
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
+swagger:
+  title: "TPP APIs Specification"
+  description: "TPP APIs Specification"

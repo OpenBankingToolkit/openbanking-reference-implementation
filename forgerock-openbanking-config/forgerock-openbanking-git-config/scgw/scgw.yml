@@ -1,0 +1,45 @@
+#Server
+server:
+  hostname: scgw.${dns.hosts.root}
+  ssl:
+    enabled: true
+    client-certs-key-alias: "scgw.${dns.hosts.root}"
+    clientAuth: WANT
+    key-store: file:/opt/openbanking/scgw/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+info:
+  component: Edge Server
+
+#SCWG
+scgw:
+  max-initial-line-length: 52428800
+
+#Spring cloud gateway
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: false
+
+#AM
+am:
+  internal-route: https://openam:443
+
+#Logging
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: DEBUG
+
+spring:
+  #Spring boot admin
+  boot:
+    admin:
+      client:
+        instance:
+          management-base-url: https://${server.internal.hostname}:${server.port}/
+          service-base-url: https://${server.internal.hostname}:${server.port}/

@@ -1,0 +1,26 @@
+#Server
+server:
+  ssl:
+    client-auth: WANT
+    client-certs-key-alias: "*.${dns.hosts.root}"
+    enabled: true
+    key-store: file:/opt/openbanking/swagger-ui/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+  hostname: swagger.${dns.hosts.root}
+
+#Swagger
+swagger:
+  rs-api:
+    name: "RS-ASPSP"
+    uri: https://rs.aspsp.${dns.hosts.root}/api-docs
+  tpp:
+    name: "TPP"
+    uri: https://tpp-core.${dns.hosts.root}/open-banking/v1.1/api-docs
+  jwkms:
+   name: "JWK Management Service"
+   uri: https://jwkms.${dns.hosts.root}/v2/api-docs
+  directory:
+    name: "Open Banking Directory"
+    uri: https://service.directory.${dns.hosts.root}/v2/api-docs

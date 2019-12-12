@@ -1,0 +1,25 @@
+{
+  "aud": "https://matls.as.aspsp.dev-ob.forgerock.financial:8074/oauth2/openbanking",
+  "scope": "openid accounts payments",
+  "iss": "98e119f6-196f-4296-98d4-f1a2f445bca2",
+  "claims": {
+    "id_token": {
+      "acr": {
+        "value": "urn:openbanking:psd2:sca",
+        "essential": true
+      },
+      "openbanking_intent_id": {
+        "value": "PR_7d84bf83-4d56-46aa-8e6c-6d0c4593dd83",
+        "essential": true
+      }
+    }
+  },
+  "response_type": "code id_token",
+  "redirect_uri": "https://www.google.com",
+  "state": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
+  "exp": 1546446072,
+  "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
+  "iat": 1546445773,
+  "client_id": "98e119f6-196f-4296-98d4-f1a2f445bca2",
+  "jti": "8a30dd55-1892-4cd2-b805-52f381bd4397"
+}

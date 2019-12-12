@@ -1,0 +1,15 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+swagger:
+  # Add a CSS URL here to add your owm styling to swagger
+  #index.custom-css-url: https://yourCSS.css
+  rs-api:
+    uri: https://rs.aspsp.${dns.hosts.root}:8074/api-docs
+  tpp:
+    uri: https://tpp-core.${dns.hosts.root}:8074/api-docs
+  jwkms:
+    uri: https://jwkms.${dns.hosts.root}:8074/v2/api-docs
+  directory:
+    uri: https://service.directory.${dns.hosts.root}:8074/v2/api-docs

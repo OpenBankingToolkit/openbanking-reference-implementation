@@ -1,0 +1,11 @@
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks
+
+jwt-auth:
+  expected-issuer-id: "https://am.${dns.hosts.root}/oauth2/realms/root/realms/auth"
+  redirect-uri: "https://analytics.${dns.hosts.root}:4206/redirectOpenId"
+
+analytics:
+  ui:
+    root: "https://analytics.${dns.hosts.root}:4206"

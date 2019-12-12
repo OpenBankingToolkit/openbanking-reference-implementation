@@ -1,0 +1,71 @@
+#Server
+server:
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "service.directory.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/directory-services/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+  hostname: service.directory.${dns.hosts.root}
+
+#AM config
+am:
+  cookie:
+    name: iPlanetDirectoryPro
+  internal:
+    oidc:
+      client-id: directory
+
+#Authentication
+jwt-auth:
+  expected-issuer-id: "https://am.${dns.hosts.root}/oauth2/realms/root/realms/auth"
+  expected-audience-id: "directory"
+  cookie: true
+  redirect-uri: "https://directory.${dns.hosts.root}/redirectOpenId"
+
+ob:
+  auth:
+    session:
+      cookie:
+        domains: ${session.cookie.domains}
+    oidc:
+      idp:
+        issuerid: ${jwt-auth.expected-issuer-id}
+      client:
+        client-id: ${jwt-auth.expected-audience-id}
+        redirect-uri: ${jwt-auth.redirect-uri}
+
+#Directory CA
+directory:
+  ca:
+    pem: classpath:directory-ca.crt
+
+#Metrics config
+metrics:
+  endpoints:
+    - regex: /api/software-statement/(.*)/ssa
+    - regex: /api/software-statement/(.*)/onboarding/(.*)/testMtls/
+    - regex: /api/software-statement/(.*)/application.*
+    - regex: /api/software-statement/(.*)
+    - regex: /api/organisation/(.*)/software-statements.*
+    - regex: /api/organisation/(.*)
+    - regex: /api/aspsp/(.*)
+    - regex: /api/forgerock-applications/(.*)/connect-software-statement/(.*)
+    - regex: /api/directory/keys/(.*)/publicCert
+    - regex: /api/messages/all
+    - regex: /api/messages/unread
+    - regex: /api/messages/(.*) # If not 'all' or 'unread' then is a key id
+    - regex: /api/messages
+    - regex: /api/directory/keys/.*
+    - regex: /api/directory/authenticate
+    - regex: /api/user/.*
+
+swagger:
+  title: "Directory APIs Specification"
+  description: "Directory APIs Specification"
+
+session:
+  cookie:
+    domains: ${dns.hosts.root}

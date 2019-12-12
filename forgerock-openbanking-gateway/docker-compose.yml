@@ -1,0 +1,13 @@
+version: '2'
+services:
+ config-rs-rcs:
+  container_name: config-scgw
+  image: r.cfcr.io/openbanking/obri/config$TAG
+  ports:
+   - "18887:8888"
+  environment:
+   - spring_profiles_active=native,console-logging
+  networks:
+   default:
+    aliases:
+    - config.dev-ob.forgerock.financial

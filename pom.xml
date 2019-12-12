@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2019 ForgeRock AS.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>ForgeRock OpenBanking Reference Implementation</name>
+    <groupId>com.forgerock.openbanking</groupId>
+    <artifactId>forgerock-openbanking-reference-implementation</artifactId>
+    <version>MADNESS-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.forgerock.openbanking</groupId>
+        <artifactId>forgerock-openbanking-starter-parent</artifactId>
+        <version>1.0.47</version>
+        <relativePath />
+    </parent>
+
+    <organization>
+        <name>ForgeRock</name>
+        <url>http://www.forgerock.org</url>
+    </organization>
+    <url>http://www.forgerock.org</url>
+    
+    <scm>
+	    <connection>scm:git:https://$GITHUB_USERNAME:$GITHUB_ACCESS_TOKEN@github.com/ForgeCloud/ob-reference-implementation</connection>
+	    <url>https://github.com/ForgeCloud/ob-reference-implementation</url>
+	    <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <ob-common.version>1.0.38</ob-common.version>
+        <ob-jwkms.version>1.1.16</ob-jwkms.version>
+        <ob-analytics.version>1.1.12</ob-analytics.version>
+        <ob-auth.version>1.0.37</ob-auth.version>
+        <ob-directory.version>1.4.19</ob-directory.version>
+        <ob-aspsp.version>1.0.7</ob-aspsp.version>
+    </properties>
+
+    <modules>
+        <module>forgerock-openbanking-config</module>
+        <module>forgerock-openbanking-aspsp</module>
+        <module>forgerock-openbanking-jwkms</module>
+        <module>forgerock-openbanking-directory-services</module>
+        <module>forgerock-openbanking-gateway</module>
+        <module>forgerock-openbanking-devportal</module>
+        <module>forgerock-openbanking-backstage</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- OpenBanking -->
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-model</artifactId>
+                <version>${ob-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-am</artifactId>
+                <version>${ob-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-ssl</artifactId>
+                <version>${ob-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-jwt</artifactId>
+                <version>${ob-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-oidc</artifactId>
+                <version>${ob-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-upgrade</artifactId>
+                <version>${ob-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.analytics</groupId>
+                <artifactId>forgerock-openbanking-analytics-core</artifactId>
+                <version>${ob-analytics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.analytics</groupId>
+                <artifactId>forgerock-openbanking-analytics-client</artifactId>
+                <version>${ob-analytics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.jwkms</groupId>
+                <artifactId>forgerock-openbanking-jwkms-server</artifactId>
+                <version>${ob-jwkms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.jwkms</groupId>
+                <artifactId>forgerock-openbanking-jwkms-client</artifactId>
+                <version>${ob-jwkms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-auth</artifactId>
+                <version>${ob-auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.directory</groupId>
+                <artifactId>forgerock-openbanking-directory-server</artifactId>
+                <version>${ob-directory.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.as</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-as-gateway-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.as</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-as-manual-onboarding-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-rs-gateway-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-rs-mock-payment-simulator-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-rs-mock-portal-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-rs-mock-store-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.uk.aspsp.rs.rcs</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-rs-rcs-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>integration-test-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>forgerock-community-releases</id>
+            <url>http://maven.forgerock.org:80/repo/community</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>oss-sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>forgerock-releases</id>
+            <url>https://maven.forgerock.org/repo/releases</url>
+        </repository>
+        <repository>
+            <id>forgerock-snapshots</id>
+            <url>https://maven.forgerock.org/repo/snapshots</url>
+        </repository>
+        <repository>
+            <id>forgerock-private-releases</id>
+            <name>ForgeRock Private Releases Repository</name>
+            <url>https://maven.forgerock.org/repo/private-releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>1.4.12</version>
+                    <configuration>
+                        <skipPush>true</skipPush>
+                        <buildArgs>
+                            <SERVICE_FILE>target/SERVICE</SERVICE_FILE>
+                            <VERSION_FILE>target/VERSION</VERSION_FILE>
+                        </buildArgs>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>build</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>deploy</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>ru.yaal.maven</groupId>
+                    <artifactId>write-text-files-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <configuration>
+                        <charset>UTF-8</charset>
+                        <files>
+                            <file>
+                                <path>${project.build.directory}/SERVICE</path>
+                                <lines>
+                                    <line>${project.name}</line>
+                                </lines>
+                            </file>
+                            <file>
+                                <path>${project.build.directory}/VERSION</path>
+                                <lines>
+                                    <line>${project.version}</line>
+                                </lines>
+                            </file>
+                        </files>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>write-text-files</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>write-text-files</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.dkanejs.maven.plugins</groupId>
+                    <artifactId>docker-compose-maven-plugin</artifactId>
+                    <version>${docker-compose-maven-plugin.version}</version>
+                    <configuration>
+                        <composeFile>${project.basedir}/docker-compose.yml</composeFile>
+                        <detachedMode>true</detachedMode>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>start</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>up</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>stop</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>down</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>${argLine}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>${argLine}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <fork>true</fork>
+                    <compilerArgs>
+                        <arg>-XDignore.symbol.file</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                    <execution>
+                        <id>prepare-unit-test-coverage</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>prepare-it-coverage</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>merge-reports</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <header>file://${maven.multiModuleProjectDirectory}/legal/LICENSE.txt</header>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>pom.xml</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

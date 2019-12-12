@@ -1,0 +1,40 @@
+{
+  "clientId": "98311305-1c4f-4ffb-8af4-90c9b220e365",
+  "iss": "https://matls.as.aspsp.dev-ob.forgerock.financial:8074/oauth2/openbanking",
+  "csrf": "TZJNFDIkDUYcN0QZITrT/LvjsnW+7uT3yIyQV026Mek=",
+  "client_description": "",
+  "aud": "forgerock-rcs",
+  "save_consent_enabled": false,
+  "claims": {
+    "user_info": {
+      "acr": {
+        "value": "urn:openbanking:psd2:sca",
+        "essential": true
+      },
+      "openbanking_intent_id": {
+        "value": "PDC_3428f7d4-b91e-4247-b44f-21dab7a925ad",
+        "essential": true
+      }
+    },
+    "id_token": {
+      "acr": {
+        "value": "urn:openbanking:psd2:sca",
+        "essential": true
+      },
+      "openbanking_intent_id": {
+        "value": "PDC_3428f7d4-b91e-4247-b44f-21dab7a925ad",
+        "essential": true
+      }
+    }
+  },
+  "scopes": {
+    "openid": null,
+    "payments": "Payments",
+    "accounts": "Accounts information"
+  },
+  "exp": 1534240027,
+  "iat": 1534239847,
+  "client_name": "Postman",
+  "consentApprovalRedirectUri": "https://matls.as.aspsp.dev-ob.forgerock.financial:8074/oauth2/realms/root/realms/openbanking/authorize?response_type=code%20id_token&client_id=98311305-1c4f-4ffb-8af4-90c9b220e365&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&scope=openid%20payments%20accounts&redirect_uri=http://google.com&request=eyJraWQiOiI1NmMwNzI3NS1hZDQxLTQ2OGUtOWE0Ni1kNDZiMDNkMzI0MTMiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczpcL1wvbWF0bHMuYXMuYXNwc3AuZGV2LW9iLmZvcmdlcm9jay5maW5hbmNpYWw6ODA3NFwvb2F1dGgyXC9vcGVuYmFua2luZyIsInNjb3BlIjoib3BlbmlkIGFjY291bnRzIHBheW1lbnRzIiwiaXNzIjoiOTgzMTEzMDUtMWM0Zi00ZmZiLThhZjQtOTBjOWIyMjBlMzY1IiwiY2xhaW1zIjp7ImlkX3Rva2VuIjp7ImFjciI6eyJ2YWx1ZSI6InVybjpvcGVuYmFua2luZzpwc2QyOnNjYSIsImVzc2VudGlhbCI6dHJ1ZX0sIm9wZW5iYW5raW5nX2ludGVudF9pZCI6eyJ2YWx1ZSI6IlAzNDI4ZjdkNC1iOTFlLTQyNDctYjQ0Zi0yMWRhYjdhOTI1YWQiLCJlc3NlbnRpYWwiOnRydWV9fSwidXNlcmluZm8iOnsib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoiUDM0MjhmN2Q0LWI5MWUtNDI0Ny1iNDRmLTIxZGFiN2E5MjVhZCIsImVzc2VudGlhbCI6dHJ1ZX19fSwicmVzcG9uc2VfdHlwZSI6ImNvZGUgaWRfdG9rZW4iLCJyZWRpcmVjdF91cmkiOiJodHRwOlwvXC9nb29nbGUuY29tIiwic3RhdGUiOiIxMGQyNjBiZi1hN2Q5LTQ0NGEtOTJkOS03YjdhNWYwODgyMDgiLCJleHAiOjE1MzQyNDAxMzMsIm5vbmNlIjoiMTBkMjYwYmYtYTdkOS00NDRhLTkyZDktN2I3YTVmMDg4MjA4IiwiaWF0IjoxNTM0MjM5ODMzLCJjbGllbnRfaWQiOiI5ODMxMTMwNS0xYzRmLTRmZmItOGFmNC05MGM5YjIyMGUzNjUiLCJqdGkiOiJjZjdiMThmYy1kZTZkLTQzZGItYmUyOC1lZDFjM2IyMDkzOGUifQ.2J27PqLNHnFMnF-cqEUHWDFEgF9MhFDpUNeYFrmakinRBCNOrsBC33Nu-a7v0xUwfliOIMLn8HSlQ4nn470E40Myw6ZvkgEqu-JARBpeV0pL4lrqsii-yg6UpSqZvXVS4mh7QKJqAixBQc-6pJ_anYD3G3XLTQEcwoB1LAVhbi6ynhvPd0hFjMvUR2UKG98co4raGQv3b-aPUDrTHpJ7PGVjCSEqUQCA72akBl0JpjInJBZCk-t3QPA6gDOMoLwG-dvyFHX0oeb3fYwnmdPv4H3H0888HsHwZRJ1tN7ZI_GuZUDxNt4BSNcRMQKsMyE-jM8-RH8qEYASLcNl_vSSEQ",
+  "username": "demo"
+}

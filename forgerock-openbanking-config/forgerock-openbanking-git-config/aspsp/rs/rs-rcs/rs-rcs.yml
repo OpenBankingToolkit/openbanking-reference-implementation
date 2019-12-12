@@ -1,0 +1,21 @@
+#Server
+server:
+  hostname: rcs.aspsp.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "rcs.aspsp.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/rs-rcs/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+#RCS discovery
+rcs:
+  issuer-id: forgerock-rcs
+
+metrics:
+  endpoints:
+    - regex: /api/rcs/consent/details
+    - regex: /api/rcs/consent/decision
+    - regex: /api/rcs/consent/auto-accept

@@ -1,0 +1,40 @@
+#Server config
+server:
+  hostname: service.metrics.${dns.hosts.root}
+  ssl:
+    client-auth: WANT
+    enabled: true
+    client-certs-key-alias: "service.metrics.${dns.hosts.root}"
+    key-store: file:/opt/openbanking/metrics-services/config/keystore.jks
+    key-password: changeit
+    key-store-password: changeit
+    key-alias: "${server.ssl.client-certs-key-alias}"
+
+#Authentication
+jwt-auth:
+  expected-audience-id: "metrics"
+  cookie: true
+  expected-issuer-id: "https://am.${dns.hosts.root}/oauth2/realms/root/realms/auth"
+  redirect-uri: "${analytics.ui.root}/redirectOpenId"
+
+analytics:
+  ui:
+    root: "https://analytics.${dns.hosts.root}"
+
+#AM config
+am:
+  internal:
+    oidc:
+      client-id: metrics
+
+ob:
+  auth:
+    session:
+      cookie:
+        domains: ${session.cookie.domains}
+    oidc:
+      idp:
+        issuerid: ${jwt-auth.expected-issuer-id}
+      client:
+        client-id: ${jwt-auth.expected-audience-id}
+        redirect-uri: ${jwt-auth.redirect-uri}

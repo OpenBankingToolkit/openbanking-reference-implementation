@@ -1,0 +1,4 @@
+#Server
+server:
+  ssl:
+    key-store: classpath:keystore/keystore.jks

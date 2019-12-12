@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: headFragment">
+    <title id="pageTitle">All payments registered in the system, completed or not.</title>
+</head>
+<body>
+<div th:replace="fragments/header :: menu">Header</div>
+<!--/* Insert content fragment with content of the element with id = 'task-list' */-->
+<div id="content">
+    <h2 th:text="'Permissions asked by the application ' + ${clientId} + ':'"></h2>
+    <div id="permissions">
+        <ul>
+            <li th:each="permission : ${permissions}">
+                <span th:text="${permission}"></span>
+            </li>
+        </ul>
+    </div>
+    <h3 th:text="'Select the account you want to share information:'"></h3>
+    <div id="accounts-list">
+        <form action="#" th:action="@{/web/rcs/aisp/consent}" method="post">
+            <p>Do you consent to share your account information:</p>
+            <div class="form-group row">
+                <div class="col-xs-12">
+                    <label class="col-2 col-form-label" th:for="${#ids.next('allowingConsent')}"
+                           th:text="'Allowing consent'"></label>
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="deny-answer btn active">
+                            <input type="radio" name='decision' value="deny" checked="checked"/>
+                            <i class="fa fa-circle-o fa-2x"></i>
+                            <i class="fa fa-times fa-2x"></i><span> Deny</span>
+                        </label>
+                        <label class="allow-answer btn">
+                            <input type="radio" name='decision' value="allow"/>
+                            <i class="fa fa-circle-o fa-2x"></i>
+                            <i class="fa fa-check-circle-o fa-2x"></i><span> Allow</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Schema</td>
+                    <td>Identification</td>
+                    <td>Currency</td>
+                    <td>Select</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${accounts.empty}">
+                    <td colspan="5">No Account</td>
+                </tr>
+                <tr th:each="account : ${accounts}">
+
+                    <td th:text="${account.account.getNickname()}">Loy Isa Prem</td>
+                    <td th:text="${account.account.getAccount().getSchemeName()}">Account number and sort code</td>
+                    <td th:text="${account.account.getAccount().getIdentification()}">123123123 - 40-23-32</td>
+                    <td th:text="${account.account.getCurrency()}">£</td>
+                    <td>
+                        <input checked="checked"
+                               type="checkbox" name="sharedAccounts"
+                               th:value="${account.getId()}" />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <input class="form-control" name="consentJwt" type="hidden" th:value="${consentResponse.consentJwt}"
+                   readonly="readonly"/>
+            <button type="submit" class="btn btn-primary">Select</button>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: footer">Footer</footer>
+
+</body>
+</html>
