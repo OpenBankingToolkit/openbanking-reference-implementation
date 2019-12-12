@@ -36,7 +36,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+            <groupId>com.forgerock.openbanking.aspsp</groupId>
             <artifactId>forgerock-openbanking-uk-aspsp-rs-gateway-server</artifactId>
         </dependency>
 		<dependency>

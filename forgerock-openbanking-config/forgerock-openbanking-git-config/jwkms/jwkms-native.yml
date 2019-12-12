@@ -1,3 +1,6 @@
 server:
    ssl:
     key-store: classpath:keystore/keystore.jks
+
+jwkms:
+  jwk-key-store: classpath:keystore/jwksstore.pfx

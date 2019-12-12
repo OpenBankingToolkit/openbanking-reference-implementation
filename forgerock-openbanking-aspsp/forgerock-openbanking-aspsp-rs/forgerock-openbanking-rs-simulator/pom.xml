@@ -40,9 +40,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.forgerock.openbanking.uk.aspsp.rs</groupId>
+			<groupId>com.forgerock.openbanking.aspsp</groupId>
 			<artifactId>forgerock-openbanking-uk-aspsp-rs-mock-payment-simulator-server</artifactId>
-			<version>${ob-aspsp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>dev.openbanking4.spring.security</groupId>

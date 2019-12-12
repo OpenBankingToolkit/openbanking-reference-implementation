@@ -22,11 +22,7 @@ package com.forgerock.openbanking.register;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.authentication.configurers.MultiAuthenticationCollectorConfigurer;
-import com.forgerock.openbanking.authentication.configurers.collectors.PSD2Collector;
-import com.forgerock.openbanking.authentication.configurers.collectors.X509Collector;
-import com.forgerock.openbanking.authentication.model.CertificateHeaderFormat;
-import com.forgerock.openbanking.authentication.model.granttypes.PSD2GrantType;
+
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
@@ -34,6 +30,11 @@ import com.forgerock.openbanking.model.error.ClientResponseErrorHandler;
 import com.forgerock.openbanking.ssl.config.SslConfiguration;
 import com.forgerock.openbanking.ssl.exceptions.SslConfigurationFailure;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
+import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Collector;
+import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import io.netty.handler.ssl.SslContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -141,13 +142,13 @@ public class ForgerockOpenbankingRegisterApplication {
 					.and()
 					.authenticationProvider(new CustomAuthProvider())
 					.apply(new MultiAuthenticationCollectorConfigurer<HttpSecurity>()
-							.collector(PSD2Collector.builder()
+							.collector(PSD2Collector.psd2Builder()
 									.collectFromHeader(CertificateHeaderFormat.JWK)
 									.headerName(CLIENT_CERTIFICATE_HEADER_NAME)
 									.usernameCollector(obriInternalCertificates)
 									.authoritiesCollector(obriInternalCertificates)
 									.build())
-							.collector(PSD2Collector.builder()
+							.collector(PSD2Collector.psd2Builder()
 									.collectFromHeader(CertificateHeaderFormat.JWK)
 									.headerName(CLIENT_CERTIFICATE_HEADER_NAME)
 									.usernameCollector(obriExternalCertificates)

@@ -5,7 +5,6 @@ server:
     client-auth: WANT
     enabled: true
     client-certs-key-alias: "jwkms.${dns.hosts.root}"
-    jwk-key-store: file:/opt/openbanking/jwkms/jwksstore.pfx
     jwk-key-store-password: changeit
     key-store: file:/opt/openbanking/jwkms/config/keystore.jks
     key-password: changeit
@@ -15,6 +14,7 @@ server:
 #JKWMS configuration
 jwkms:
   tan: openbanking.org.uk
+  certificateAuthorityAlias: obri-external-ca
   certificate:
     ou: forgerock.financial
     o: ForgeRock
@@ -22,7 +22,6 @@ jwkms:
     st: Avon
     c: UK
   jwkMsId: jwkms
-  app-auth-header: X-APP
   rotationScheduler: "0 0 1 * * *"
   keysCleanup: "0 0 1 * * *"
   transport:
@@ -36,8 +35,8 @@ jwkms:
   rotation:
     transport: 7776000000
     keys: 7776000000
-  internalCAAlias: obri-internal-ca
-  defaultCAAlias: obri-external-ca
+  jwk-key-store: file:/opt/openbanking/jwkms/jwksstore.pfx
+  jwk-key-store-password: changeit
   forgerock-applications:
     - name: aspsp
       group: as.aspsp.${dns.hosts.root}, rs.aspsp.${dns.hosts.root}, rcs.aspsp.${dns.hosts.root}, simulator.rs.${dns.hosts.root}, service.bank.${dns.hosts.root}, rs-store.aspsp.${dns.hosts.root}

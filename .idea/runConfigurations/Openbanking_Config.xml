@@ -2,7 +2,7 @@
   <configuration default="false" name="Openbanking-Config" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="backstage">
     <module name="forgerock-openbanking-config" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.forgerock.openbanking.config.forgerockopenbankingconfig.ForgerockOpenbankingConfigApplication" />
-    <option name="ACTIVE_PROFILES" value="native,console-logging" />
+    <option name="ACTIVE_PROFILES" value="composite,console-logging" />
     <option name="VM_PARAMETERS" value=" -Xms128m -Xmx256m -Djavax.net.ssl.trustStore=keystore/truststore.jks" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <additionalParameters>
@@ -17,6 +17,9 @@
         <option name="value" value="git@github.com:$USER/ob-reference-implementation.git" />
       </param>
     </additionalParameters>
+    <envs>
+      <env name="CONFIG_GIT_IGNORE_LOCAL_SSH" value="false" />
+    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

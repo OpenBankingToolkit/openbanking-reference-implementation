@@ -56,7 +56,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.forgerock.openbanking.jwkms</groupId>
+			<groupId>com.forgerock.openbanking.clients</groupId>
 			<artifactId>forgerock-openbanking-jwkms-client</artifactId>
 		</dependency>
 		<dependency>

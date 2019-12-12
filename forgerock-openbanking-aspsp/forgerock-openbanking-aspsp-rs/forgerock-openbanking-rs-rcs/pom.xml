@@ -40,7 +40,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.forgerock.openbanking.uk.aspsp.rs.rcs</groupId>
+            <groupId>com.forgerock.openbanking.aspsp</groupId>
             <artifactId>forgerock-openbanking-uk-aspsp-rs-rcs-server</artifactId>
         </dependency>
 		<dependency>
