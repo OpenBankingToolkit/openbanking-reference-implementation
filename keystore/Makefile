@@ -135,6 +135,7 @@ HOSTNAME_ASPSP_RS_SIMULATOR=simulator.rs.aspsp.${DOMAIN}
 HOSTNAME_AUTH_UI=auth.${DOMAIN}
 HOSTNAME_DIRECTORY_UI=directory.${DOMAIN}
 HOSTNAME_DIRECTORY_SERVICE=service.directory.${DOMAIN}
+HOSTNAME_DIRECTORY_MATLS_SERVICE=matls.service.directory.${DOMAIN}
 HOSTNAME_JWKMS=jwkms.${DOMAIN}
 
 #TPP
@@ -872,9 +873,11 @@ create-scgw-key:
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_SHOP))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_RCS))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_RS))
+	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_RS_MATLS))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_JWKMS))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_UI))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_DIRECTORY_SERVICE))
+	$(eval SAN=$(SAN),dns:$(HOSTNAME_DIRECTORY_MATLS_SERVICE))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_METRICS_SERVICE))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_AS_MATLS))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_AS))
