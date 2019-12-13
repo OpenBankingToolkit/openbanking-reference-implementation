@@ -10,8 +10,8 @@ server:
     key-password: changeit
     key-store-password: changeit
     key-alias: "${server.ssl.client-certs-key-alias}"
+    jwk-key-store: file:/opt/openbanking/jwkms/jwksstore.pfx
 
-#JKWMS configuration
 jwkms:
   tan: openbanking.org.uk
   certificateAuthorityAlias: obri-external-ca
@@ -35,7 +35,7 @@ jwkms:
   rotation:
     transport: 7776000000
     keys: 7776000000
-  jwk-key-store: file:/opt/openbanking/jwkms/jwksstore.pfx
+  jwk-key-store: "${server.ssl.jwk-key-store}"
   jwk-key-store-password: changeit
   forgerock-applications:
     - name: aspsp
