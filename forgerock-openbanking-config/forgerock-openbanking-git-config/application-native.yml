@@ -155,3 +155,8 @@ directory-data:
       rsDiscoveryEndpoint: https://rs.aspsp.${dns.hosts.root}:${am.port}/open-banking/discovery
       testMtlsEndpoint: https://rs.aspsp.${dns.hosts.root}:${am.port}/open-banking/mtlsTest
       transportKeys: https://openbanking.atlassian.net/wiki/spaces/DZ/pages/252018873/OB+Root+and+Issuing+Certificates+for+Sandbox
+
+graceful:
+  shutdown:
+    wait: 0
+    timeout: 0
