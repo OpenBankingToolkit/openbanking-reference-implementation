@@ -53,8 +53,8 @@ Follow the steps for all the certificates in the folder `certificates/`.
 
 #### Install the CA in FireFox truststore
 
-For a reason, Firefox has decided to not read the system truststore but to have it's own. Therefore,
-you need to add the certificates in firefox trusted certificates.
+Firefox does not read the system truststore but instead implements it's own. Therefore,
+you need to add the certificates to firefox trusted certificates.
 
 Find the certificate sections in Privacy & Security
 
@@ -69,9 +69,43 @@ You should then have the certificates in the trusted CA list, as follow:
 
 You will need to install this extension as described in https://stackoverflow.com/questions/6481627/java-security-illegal-key-size-or-default-parameters
 
-### Setup jwkstore
+### Setup the JWKMS' Trust Store
 
-1. `sudo mkdir -p /opt/openbanking/jwkms/`
+The jwkms (Json Web Key Management Services) micro service uses a trust store from which  it obtains two CA certificates, `obri-external-ca` and `obri-internal-ca`. These are used by the jwkms to;
+
+- Sign the transport and signing certificates issued to a Third Party Provider application when it is registered with the Open Banking Directory. These certificates will be signed by the `obri-external-ca` certificate.
+
+- Sign the transport and signing certificates issued to each micro service for the purpose of signing payloads etc. For example, the Open Banking Directory will be issued a signing certificate that is signed by the `obri-external-ca` certificate. This certificate will be used to sign SSAs issued by the directory.
+
+  The `obri-external-ca` will appear as the issuer of certs described above.
+
+  ```
+  Issuer Name
+  C (Country):	UK
+  ST (County):	Avon
+  L (Locality):	Bristol
+  O (Organisation):	ForgeRock
+  OU (Organisational Unit):	forgerock.financial
+  CN (Common Name):	obri-external-ca
+  ```
+
+- Sign the Mutual Transport Layer Security certificates used by the micro services to communicate securely between each other. The subject of a presented MTLS certificate will also identify the micro service from which a call has been made.
+
+  These internal certs will have the following issuer;
+
+  ```
+  Issuer Name
+  C (Country):	UK
+  ST (County):	Avon
+  L (Locality):	Bristol
+  O (Organisation):	ForgeRock
+  OU (Organisational Unit):	forgerock.financial
+  CN (Common Name):	obri-internal-ca
+  ```
+
+To make these keys available to the jwkms you will need to;
+
+1. sudo mkdir -p /opt/openbanking/jwkms/`
 1. `sudo chown -R $USER /opt/openbanking`
 1. `cp keystore/jwkstore/jwksstore.pfx /opt/openbanking/jwkms/jwksstore.pfx`
 
@@ -86,6 +120,7 @@ You will need to install this extension as described in https://stackoverflow.co
   - Directory/Openbanking-directory
   From this point, the order doesn't matter anymore
   
+
 You don't need to run all the microservices all the time. Depending on what you are working on,
 you can choose to enable a subset of the microservices.
 
