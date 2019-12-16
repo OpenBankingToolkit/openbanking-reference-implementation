@@ -34,7 +34,7 @@
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-starter-parent</artifactId>
-        <version>1.0.52</version>
+        <version>1.0.57</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -46,12 +46,12 @@
 
     <properties>
         <ob-common.version>1.0.52</ob-common.version>
-        <ob-jwkms.version>1.1.37</ob-jwkms.version>
         <ob-analytics.version>1.1.21</ob-analytics.version>
-        <ob-auth.version>1.0.45</ob-auth.version>
-        <ob-directory.version>1.4.25</ob-directory.version>
-        <ob-aspsp.version>1.0.21</ob-aspsp.version>
-        <ob-clients.version>1.0.1</ob-clients.version>
+        <ob-jwkms.version>1.1.38</ob-jwkms.version>
+        <ob-auth.version>1.0.47</ob-auth.version>
+        <ob-directory.version>1.4.27</ob-directory.version>
+        <ob-aspsp.version>1.0.23</ob-aspsp.version>
+        <ob-clients.version>1.0.7</ob-clients.version>
     </properties>
 
     <modules>
@@ -67,54 +67,10 @@
     <dependencyManagement>
         <dependencies>
             <!-- OpenBanking -->
-            <!-- Spring -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-model</artifactId>
-                <version>${ob-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-am</artifactId>
-                <version>${ob-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-ssl</artifactId>
-                <version>${ob-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-jwt</artifactId>
-                <version>${ob-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-oidc</artifactId>
-                <version>${ob-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-upgrade</artifactId>
-                <version>${ob-common.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking.analytics</groupId>
                 <artifactId>forgerock-openbanking-analytics-core</artifactId>
                 <version>${ob-analytics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking.clients</groupId>
-                <artifactId>forgerock-openbanking-analytics-client</artifactId>
-                <version>${ob-clients.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking.jwkms</groupId>
@@ -171,33 +127,8 @@
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-rcs-server</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>integration-test-support</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
     <scm>
         <connection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</connection>
@@ -227,34 +158,6 @@
             <name>bintray</name>
             <url>https://dl.bintray.com/openbanking-toolkit/OpenBankingToolKit</url>
         </repository>
-
-        <repository>
-            <id>forgerock-community-releases</id>
-            <url>http://maven.forgerock.org:80/repo/community</url>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>fail</checksumPolicy>
-            </releases>
-        </repository>
-        <repository>
-            <id>forgerock-releases</id>
-            <url>https://maven.forgerock.org/repo/releases</url>
-        </repository>
-        <repository>
-            <id>forgerock-snapshots</id>
-            <url>https://maven.forgerock.org/repo/snapshots</url>
-        </repository>
-        <repository>
-            <id>forgerock-private-releases</id>
-            <name>ForgeRock Private Releases Repository</name>
-            <url>https://maven.forgerock.org/repo/private-releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
     </repositories>
 
     <build>
@@ -263,7 +166,7 @@
                 <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>dockerfile-maven-plugin</artifactId>
-                    <version>1.4.12</version>
+                    <version>1.4.13</version>
                     <configuration>
                         <skipPush>true</skipPush>
                         <buildArgs>
@@ -354,7 +257,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -367,7 +270,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>prepare-unit-test-coverage</id>

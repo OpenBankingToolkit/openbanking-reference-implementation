@@ -126,7 +126,7 @@
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.6</version>
+				<version>1.6.0</version>
 				<configuration>
 					<backend>html</backend>
 					<doctype>book</doctype>
