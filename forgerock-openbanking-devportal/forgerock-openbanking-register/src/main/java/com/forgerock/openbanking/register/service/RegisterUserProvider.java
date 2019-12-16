@@ -21,11 +21,13 @@
 package com.forgerock.openbanking.register.service;
 
 import com.forgerock.openbanking.auth.services.UserProvider;
-import com.forgerock.openbanking.model.UserContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,10 +36,12 @@ import java.util.stream.Collectors;
 
 @Primary
 @Service
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class RegisterUserProvider implements UserProvider {
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_TPP','ROLE_SOFTWARE_STATEMENT','ROLE_USER')")
     public Object getUser(Authentication authentication) {
-        UserContext principal = (UserContext) authentication.getPrincipal();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
         return new RegisterUser(principal.getUsername(), principal.getAuthorities().stream().map(Objects::toString).collect(Collectors.toList()));
     }
 
