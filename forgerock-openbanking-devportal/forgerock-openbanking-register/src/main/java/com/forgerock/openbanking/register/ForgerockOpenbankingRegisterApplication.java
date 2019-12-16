@@ -22,21 +22,25 @@ package com.forgerock.openbanking.register;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
+import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
 import com.forgerock.openbanking.model.error.ClientResponseErrorHandler;
 import com.forgerock.openbanking.ssl.config.SslConfiguration;
 import com.forgerock.openbanking.ssl.exceptions.SslConfigurationFailure;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
+import com.google.common.collect.Sets;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.JWT;
 import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Collector;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.*;
 import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import dev.openbanking4.spring.security.multiauth.model.authentication.AuthenticationWithEditableAuthorities;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import io.netty.handler.ssl.SslContext;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -60,26 +64,28 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @EnableDiscoveryClient
@@ -124,6 +130,9 @@ public class ForgerockOpenbankingRegisterApplication {
 		@Autowired
 		private TppStoreService tppStoreService;
 
+		@Autowired
+		private CryptoApiClient cryptoApiClient;
+
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			loadOBCertificates();
@@ -154,6 +163,18 @@ public class ForgerockOpenbankingRegisterApplication {
 									.usernameCollector(obriExternalCertificates)
 									.authoritiesCollector(obriExternalCertificates)
 									.build())
+							.collector(DecryptingJwtCookieCollector.jwtBuilder()
+									.cryptoApiClient(cryptoApiClient)
+									.cookieName("obri-session")
+									.authoritiesCollector(t -> Sets.newHashSet(
+											OBRIRole.ROLE_SOFTWARE_STATEMENT,
+											OBRIRole.ROLE_USER,
+											OBRIRole.ROLE_TPP))
+									.build())
+							.collector(StaticUserCollector.builder()
+									.grantedAuthorities(Collections.emptySet())
+									.usernameCollector(() -> "Anonymous")
+									.build())
 					);
 		}
 
@@ -179,6 +200,26 @@ public class ForgerockOpenbankingRegisterApplication {
 				}
 			}
 		}
+	}
+
+	public static class DecryptingJwtCookieCollector extends CustomJwtCookieCollector {
+
+		@Builder(builderMethodName = "jwtBuilder")
+		public DecryptingJwtCookieCollector(CustomJwtCookieCollector.AuthoritiesCollector<JWT> authoritiesCollector, String cookieName, CryptoApiClient cryptoApiClient) {
+			super(
+					"jwt-cookie",
+					tokenSerialised -> {
+						try {
+							return cryptoApiClient.decryptJwe(tokenSerialised);
+						} catch (JOSEException e) {
+							throw new BadCredentialsException("Invalid cookie");
+						}
+					},
+					authoritiesCollector,
+					cookieName
+			);
+		}
+
 	}
 
 	@Slf4j
@@ -295,7 +336,9 @@ public class ForgerockOpenbankingRegisterApplication {
 		public boolean supports(Class<?> aClass) {
 			return true;
 		}
+
 	}
+
 
 	@Bean
 	public RestTemplate restTemplate(@Qualifier("mappingJacksonHttpMessageConverter")
