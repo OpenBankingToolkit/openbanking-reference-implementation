@@ -19,6 +19,7 @@ services:
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8888
       HOSTNAME: config
+      SPRING_CLOUD_CONFIG_SERVER_OVERRIDES_AM_INTERNAL_PORT: 8443
   jwkms:
     container_name: jwkms
     image: r.cfcr.io/openbanking/obri/jwkms
@@ -53,7 +54,7 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
-      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8074
+      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8074 -Dam.internal-port=8443
       HOSTNAME: scgw
     volumes:
       - ./forgerock-openbanking-gateway/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
@@ -66,7 +67,7 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
-      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8066 -Dam.internal-route=host.docker.internal
+      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8066 -Dam.internal-port=8443
       HOSTNAME: as-api
     volumes:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
@@ -136,3 +137,9 @@ services:
     volumes:
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
+  openam:
+    container_name: openam
+    image: r.cfcr.io/openbanking/obri/am-dev:92396f8392441ab60ef6d6fdb54c4007d5e31141
+    ports:
+      - "30443:30443"
+      - "443:8443"
