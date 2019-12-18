@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>MADNESS-SNAPSHOT</version>
+        <version>MADNESS</version>
     </parent>
 
     <dependencies>
