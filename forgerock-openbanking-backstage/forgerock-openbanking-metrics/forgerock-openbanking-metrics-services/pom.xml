@@ -35,7 +35,7 @@
 	<parent>
 		<groupId>com.forgerock.openbanking.metrics</groupId>
 		<artifactId>forgerock-openbanking-metrics</artifactId>
-		<version>MADNESS-SNAPSHOT</version>
+		<version>MADNESS</version>
 	</parent>
 
 	<dependencies>
