@@ -28,13 +28,13 @@
     <name>ForgeRock OpenBanking Reference Implementation - ASPSP</name>
     <groupId>com.forgerock.openbanking.aspsp</groupId>
     <artifactId>forgerock-openbanking-aspsp</artifactId>
-     <version>MADNESS</version>
+     <version>NIRVANA-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-         <version>MADNESS</version>
+         <version>NIRVANA-SNAPSHOT</version>
     </parent>
 
     <modules>

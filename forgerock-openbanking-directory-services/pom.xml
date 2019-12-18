@@ -34,7 +34,7 @@
 	<parent>
 		<groupId>com.forgerock.openbanking</groupId>
 		<artifactId>forgerock-openbanking-reference-implementation</artifactId>
-		<version>MADNESS</version>
+		<version>NIRVANA-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>

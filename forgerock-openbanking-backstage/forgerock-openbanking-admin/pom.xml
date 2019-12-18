@@ -35,7 +35,7 @@
 	<parent>
 		<groupId>com.forgerock.openbanking.backstage</groupId>
 		<artifactId>forgerock-openbanking-backstage</artifactId>
-		<version>MADNESS</version>
+		<version>NIRVANA-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>

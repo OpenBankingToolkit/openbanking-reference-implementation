@@ -28,7 +28,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>MADNESS</version>
+    <version>NIRVANA-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>

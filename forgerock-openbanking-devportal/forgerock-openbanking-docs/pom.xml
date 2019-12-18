@@ -35,7 +35,7 @@
 	<parent>
 		<groupId>com.forgerock.openbanking.devportal</groupId>
 		<artifactId>forgerock-openbanking-devportal</artifactId>
-		<version>MADNESS</version>
+		<version>NIRVANA-SNAPSHOT</version>
 	</parent>
 
 	<properties>
