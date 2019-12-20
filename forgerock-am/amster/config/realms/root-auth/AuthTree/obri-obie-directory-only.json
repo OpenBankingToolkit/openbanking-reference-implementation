@@ -1,0 +1,37 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "AuthTree",
+    "entityId" : "obri-obie-directory-only",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "obri-obie-directory-only",
+    "nodes" : {
+      "fa9e6e14-213f-48b7-954c-b65b128add40" : {
+        "displayName" : "ForgeRock OBIE Proxy",
+        "nodeType" : "SocialNode",
+        "connections" : {
+          "NO_ACCOUNT" : "a3839246-8975-4517-a4b9-1069c9ae8243",
+          "ACCOUNT_EXISTS" : "9e97ac4a-b637-44f8-90e1-fd978259bcdb"
+        }
+      },
+      "a3839246-8975-4517-a4b9-1069c9ae8243" : {
+        "displayName" : "Provision Dynamic Account",
+        "nodeType" : "ProvisionDynamicAccountNode",
+        "connections" : {
+          "outcome" : "9e97ac4a-b637-44f8-90e1-fd978259bcdb"
+        }
+      },
+      "9e97ac4a-b637-44f8-90e1-fd978259bcdb" : {
+        "displayName" : "Set directory ID to OBIE",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      }
+    },
+    "entryNodeId" : "fa9e6e14-213f-48b7-954c-b65b128add40"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "Scripts",
+    "entityId" : "89fcd3be-2d87-4196-a93f-2cd8a98e2ae9",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "89fcd3be-2d87-4196-a93f-2cd8a98e2ae9",
+    "name" : "skipNamesGroovy",
+    "description" : "null",
+    "script" : "bG9nZ2VyLm1lc3NhZ2UoIiMjIyMjIyBTVEFSVCAjIyMjIyMiKTsKbG9nZ2VyLm1lc3NhZ2Uoc2hhcmVkU3RhdGUuZ2V0KCJqYXZheC5zZWN1cml0eS5hdXRoLmxvZ2luLm5hbWUiKSkKCmRlZiB1c2VybmFtZXMgPSBbJ3NpbW9uaGFyZGluZycsICd0ZXN0NycsJ2pvc2VwaCcsJ2x1aWdpJywgJ3F1ZW50aW4nLCAnZGVtbycsICdsb2FkdGVzdGVyJywgJ2FwcHNlY3VyaXR5dGVzdCcsICdqYWNrcnJhdHQnXSBhcyBTdHJpbmdbXQoKaWYgKHVzZXJuYW1lcy5jb250YWlucyhzaGFyZWRTdGF0ZS5nZXQoImphdmF4LnNlY3VyaXR5LmF1dGgubG9naW4ubmFtZSIpKSkgewogIGF1dGhTdGF0ZT0gU1VDQ0VTUwp9IGVsc2UgewogIGF1dGhTdGF0ZT0gRkFJTEVECn0=",
+    "default" : false,
+    "language" : "GROOVY",
+    "context" : "AUTHENTICATION_SERVER_SIDE",
+    "createdBy" : "null",
+    "creationDate" : 0,
+    "lastModifiedBy" : "null",
+    "lastModifiedDate" : 0
+  }
+}

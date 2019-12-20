@@ -1,0 +1,24 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "SoftwarePublisher",
+    "entityId" : "OpenBanking",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "OpenBanking",
+    "jwkStoreCacheMissCacheTime" : 0,
+    "jwksCacheTimeout" : 0,
+    "publicKeyLocation" : "jwks_uri",
+    "jwkSet" : null,
+    "softwareStatementSigningAlgorithm" : "PS256",
+    "jwksUri" : "https://keystore.openbankingtest.org.uk/keystore/openbanking.jwks",
+    "issuer" : "OpenBanking Ltd",
+    "_type" : {
+      "_id" : "SoftwarePublisher",
+      "name" : "OAuth2 Software Publisher",
+      "collection" : true
+    }
+  }
+}

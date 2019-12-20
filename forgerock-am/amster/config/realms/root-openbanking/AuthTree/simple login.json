@@ -1,0 +1,30 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "AuthTree",
+    "entityId" : "simple login",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "simple login",
+    "nodes" : {
+      "36877d26-8b2b-4cf7-8b30-4d8a40960a59" : {
+        "displayName" : "Page Node",
+        "nodeType" : "PageNode",
+        "connections" : {
+          "outcome" : "5590d45d-bae0-4da7-b96f-00c4f6cac70b"
+        }
+      },
+      "5590d45d-bae0-4da7-b96f-00c4f6cac70b" : {
+        "displayName" : "Data Store Decision",
+        "nodeType" : "DataStoreDecisionNode",
+        "connections" : {
+          "true" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+          "false" : "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      }
+    },
+    "entryNodeId" : "36877d26-8b2b-4cf7-8b30-4d8a40960a59"
+  }
+}

@@ -138,8 +138,11 @@ services:
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
   openam:
+    build:
+      context: .
+      dockerfile: forgerock-am/Dockerfile
+    image: openam:local
     container_name: openam
-    image: r.cfcr.io/openbanking/obri/am-dev:92396f8392441ab60ef6d6fdb54c4007d5e31141
     ports:
-      - "30443:30443"
+      - "80:8080"
       - "443:8443"

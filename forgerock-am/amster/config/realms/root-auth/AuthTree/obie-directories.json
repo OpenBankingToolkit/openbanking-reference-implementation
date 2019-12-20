@@ -1,0 +1,74 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "AuthTree",
+    "entityId" : "obie-directories",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "obie-directories",
+    "nodes" : {
+      "39b15562-54b6-42cc-b419-d38b31121b13" : {
+        "displayName" : "Directory choice",
+        "nodeType" : "ChoiceCollectorNode",
+        "connections" : {
+          "ForgeRock Directory" : "73aff066-99ad-4f59-9a49-cbdb97680c6a",
+          "OBIE directory" : "fa665884-9c39-4c18-a8ea-1f0d5077695d"
+        }
+      },
+      "73aff066-99ad-4f59-9a49-cbdb97680c6a" : {
+        "displayName" : "Username Collector",
+        "nodeType" : "UsernameCollectorNode",
+        "connections" : {
+          "outcome" : "1626ccea-0baa-45fa-bb68-7e11fb483c89"
+        }
+      },
+      "1626ccea-0baa-45fa-bb68-7e11fb483c89" : {
+        "displayName" : "Password Collector",
+        "nodeType" : "PasswordCollectorNode",
+        "connections" : {
+          "outcome" : "99b6f85f-4a16-40c5-9305-ee3a65a79eed"
+        }
+      },
+      "99b6f85f-4a16-40c5-9305-ee3a65a79eed" : {
+        "displayName" : "Data Store Decision",
+        "nodeType" : "DataStoreDecisionNode",
+        "connections" : {
+          "true" : "2cf1be9c-51f0-4275-8c21-43786f8fa614",
+          "false" : "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      },
+      "214cc04a-2b88-40fb-be2a-8e2b13c95e7b" : {
+        "displayName" : "Set directory ID to OBIE",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      },
+      "fa665884-9c39-4c18-a8ea-1f0d5077695d" : {
+        "displayName" : "OBIE Directory",
+        "nodeType" : "SocialNode",
+        "connections" : {
+          "NO_ACCOUNT" : "bdb93216-e698-4492-b599-ad306d8a8df8",
+          "ACCOUNT_EXISTS" : "214cc04a-2b88-40fb-be2a-8e2b13c95e7b"
+        }
+      },
+      "bdb93216-e698-4492-b599-ad306d8a8df8" : {
+        "displayName" : "Provision Dynamic Account",
+        "nodeType" : "ProvisionDynamicAccountNode",
+        "connections" : {
+          "outcome" : "214cc04a-2b88-40fb-be2a-8e2b13c95e7b"
+        }
+      },
+      "2cf1be9c-51f0-4275-8c21-43786f8fa614" : {
+        "displayName" : "Set directory ID to ForgeRock",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      }
+    },
+    "entryNodeId" : "39b15562-54b6-42cc-b419-d38b31121b13"
+  }
+}

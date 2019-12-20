@@ -1,0 +1,17 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "PasswordCollector",
+    "entityId" : "fd1c73d0-d970-469a-8aad-4a5c458ec0e5",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "fd1c73d0-d970-469a-8aad-4a5c458ec0e5",
+    "_type" : {
+      "_id" : "PasswordCollectorNode",
+      "name" : "Password Collector",
+      "collection" : true
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "AuthTree",
+    "entityId" : "obri-directories",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "obri-directories",
+    "nodes" : {
+      "666e4efe-6e2d-455a-a639-f0531cbbe614" : {
+        "displayName" : "Directory choice",
+        "nodeType" : "ChoiceCollectorNode",
+        "connections" : {
+          "ForgeRock Directory" : "cf61b485-7296-4aa2-b4e0-c31683195e0c",
+          "OBIE Directory" : "30410af1-d834-40ce-a02c-3fabff05ac60",
+          "EIDAS" : "c2823fa1-053b-434f-a461-cd143250ecc5"
+        }
+      },
+      "cf61b485-7296-4aa2-b4e0-c31683195e0c" : {
+        "displayName" : "Username Collector",
+        "nodeType" : "UsernameCollectorNode",
+        "connections" : {
+          "outcome" : "034ed4c5-be59-424e-8b81-08f650de701f"
+        }
+      },
+      "034ed4c5-be59-424e-8b81-08f650de701f" : {
+        "displayName" : "Password Collector",
+        "nodeType" : "PasswordCollectorNode",
+        "connections" : {
+          "outcome" : "3be5ac96-8240-4a5f-945a-445bebb8b05c"
+        }
+      },
+      "3be5ac96-8240-4a5f-945a-445bebb8b05c" : {
+        "displayName" : "Data Store Decision",
+        "nodeType" : "DataStoreDecisionNode",
+        "connections" : {
+          "false" : "e301438c-0bd0-429c-ab0c-66126501069a",
+          "true" : "516a74ac-ed55-4a41-902d-41d90f962ea0"
+        }
+      },
+      "516a74ac-ed55-4a41-902d-41d90f962ea0" : {
+        "displayName" : "Set directory ID to ForgeRock",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      },
+      "30410af1-d834-40ce-a02c-3fabff05ac60" : {
+        "displayName" : "ForgeRock OBIE Proxy",
+        "nodeType" : "SocialNode",
+        "connections" : {
+          "ACCOUNT_EXISTS" : "b7853f94-8d09-4d32-a608-a31cb53cb640",
+          "NO_ACCOUNT" : "eb85b78f-84b3-4202-9a14-587db563f8a6"
+        }
+      },
+      "eb85b78f-84b3-4202-9a14-587db563f8a6" : {
+        "displayName" : "Provision Dynamic Account",
+        "nodeType" : "ProvisionDynamicAccountNode",
+        "connections" : {
+          "outcome" : "b7853f94-8d09-4d32-a608-a31cb53cb640"
+        }
+      },
+      "b7853f94-8d09-4d32-a608-a31cb53cb640" : {
+        "displayName" : "Set directory ID to OBIE",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      },
+      "dd5011fa-2ca7-4d75-8f0f-c5011fb824c5" : {
+        "displayName" : "EIDAS collector",
+        "nodeType" : "EidasAuthNode",
+        "connections" : {
+          "outcome" : "f9d12e9d-9a90-451a-b86f-3811693c9fef"
+        }
+      },
+      "f9d12e9d-9a90-451a-b86f-3811693c9fef" : {
+        "displayName" : "Set directory ID to EIDAS",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      },
+      "c2823fa1-053b-434f-a461-cd143250ecc5" : {
+        "displayName" : "Setup client certificate",
+        "nodeType" : "MessageNode",
+        "connections" : {
+          "true" : "e301438c-0bd0-429c-ab0c-66126501069a",
+          "false" : "dd5011fa-2ca7-4d75-8f0f-c5011fb824c5"
+        }
+      }
+    },
+    "entryNodeId" : "666e4efe-6e2d-455a-a639-f0531cbbe614"
+  }
+}

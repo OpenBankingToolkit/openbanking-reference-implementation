@@ -1,0 +1,22 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "KeyStoreSecretStore",
+    "entityId" : "CATrustStore",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "CATrustStore",
+    "storePassword" : "defaultpass",
+    "storetype" : "JCEKS",
+    "file" : "/etc/ssl/certs/java/cacerts",
+    "leaseExpiryDuration" : 5,
+    "keyEntryPassword" : "defaultpass",
+    "_type" : {
+      "_id" : "KeyStoreSecretStore",
+      "name" : "Keystore",
+      "collection" : true
+    }
+  }
+}

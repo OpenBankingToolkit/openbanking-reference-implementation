@@ -1,0 +1,24 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "SoftwarePublisher",
+    "entityId" : "forgerock-directory",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "forgerock-directory",
+    "jwkStoreCacheMissCacheTime" : 0,
+    "jwksCacheTimeout" : 0,
+    "publicKeyLocation" : "jwks_uri",
+    "jwkSet" : null,
+    "softwareStatementSigningAlgorithm" : "PS256",
+    "jwksUri" : "https://service.directory.&{ob.domain}:8074/api/directory/keys/jwk_uri",
+    "issuer" : "ForgeRock",
+    "_type" : {
+      "_id" : "SoftwarePublisher",
+      "name" : "OAuth2 Software Publisher",
+      "collection" : true
+    }
+  }
+}

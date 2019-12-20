@@ -1,0 +1,17 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "DataStoreDecision",
+    "entityId" : "5590d45d-bae0-4da7-b96f-00c4f6cac70b",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "5590d45d-bae0-4da7-b96f-00c4f6cac70b",
+    "_type" : {
+      "_id" : "DataStoreDecisionNode",
+      "name" : "Data Store Decision",
+      "collection" : true
+    }
+  }
+}
