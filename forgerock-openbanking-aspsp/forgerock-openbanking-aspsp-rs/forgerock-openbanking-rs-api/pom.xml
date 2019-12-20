@@ -39,6 +39,10 @@
             <groupId>com.forgerock.openbanking.aspsp</groupId>
             <artifactId>forgerock-openbanking-uk-aspsp-rs-gateway-server</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.forgerock.openbanking.clients</groupId>
+            <artifactId>forgerock-openbanking-analytics-webclient</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>dev.openbanking4.spring.security</groupId>
 			<artifactId>spring-security-multi-auth-starter</artifactId>
