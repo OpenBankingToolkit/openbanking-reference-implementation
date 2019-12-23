@@ -45,12 +45,12 @@
     <url>http://www.forgerock.org</url>
 
     <properties>
-        <ob-common.version>1.0.52</ob-common.version>
+        <ob-common.version>1.0.56</ob-common.version>
         <ob-analytics.version>1.1.29</ob-analytics.version>
         <ob-jwkms.version>1.1.44</ob-jwkms.version>
         <ob-auth.version>1.0.47</ob-auth.version>
         <ob-directory.version>1.4.34</ob-directory.version>
-        <ob-aspsp.version>1.0.31</ob-aspsp.version>
+        <ob-aspsp.version>1.0.32</ob-aspsp.version>
         <ob-clients.version>1.0.13</ob-clients.version>
     </properties>
 
@@ -80,6 +80,16 @@
             <dependency>
                 <groupId>com.forgerock.openbanking.clients</groupId>
                 <artifactId>forgerock-openbanking-jwkms-client</artifactId>
+                <version>${ob-clients.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.analytics</groupId>
+                <artifactId>forgerock-openbanking-analytics-client</artifactId>
+                <version>${ob-clients.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.clients</groupId>
+                <artifactId>forgerock-openbanking-analytics-webclient</artifactId>
                 <version>${ob-clients.version}</version>
             </dependency>
             <dependency>

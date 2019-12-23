@@ -40,6 +40,10 @@
 			<artifactId>spring-security-multi-auth-starter</artifactId>
 		</dependency>
         <dependency>
+            <groupId>com.forgerock.openbanking.clients</groupId>
+            <artifactId>forgerock-openbanking-analytics-webclient</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.forgerock.openbanking.jwkms</groupId>
             <artifactId>forgerock-openbanking-jwkms-server</artifactId>
         </dependency>
