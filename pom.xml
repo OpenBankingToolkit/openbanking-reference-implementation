@@ -50,7 +50,7 @@
         <ob-jwkms.version>1.1.45</ob-jwkms.version>
         <ob-auth.version>1.0.48</ob-auth.version>
         <ob-directory.version>1.4.36</ob-directory.version>
-        <ob-aspsp.version>1.0.33</ob-aspsp.version>
+        <ob-aspsp.version>1.0.34</ob-aspsp.version>
         <ob-clients.version>1.0.15</ob-clients.version>
     </properties>
 
