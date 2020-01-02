@@ -16,7 +16,10 @@ SHELL ["/bin/bash", "-c"]
 ENV FORGEROCK_HOME /home/forgerock
 ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
-ENV CATALINA_OPTS "-Xms2048m -Xmx2048m"
+ENV CATALINA_OPTS "-server -Xms2048m -Xmx2048m \
+  -Dcom.sun.identity.util.debug.provider=com.sun.identity.shared.debug.impl.StdOutDebugProvider \
+  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\""
+
 
 RUN rm -fr "$CATALINA_HOME"/webapps/*
 COPY --from=0 /var/tmp/openam "$CATALINA_HOME"/webapps/ROOT
@@ -30,13 +33,16 @@ RUN apt-get update && \
     addgroup --gid 11111 forgerock && \
     adduser --shell /bin/bash --home "$FORGEROCK_HOME" --uid 11111 --disabled-password --ingroup root --gecos 'forgerock' forgerock && \
     mkdir -p "$OPENAM_HOME" && \
+    mkdir -p "$OPENAM_HOME/secrets/plaintext" && \
+    echo -n "changeit" > $OPENAM_HOME/secrets/plaintext/defaultpass && \
     chown -R forgerock:root "$CATALINA_HOME" && \
     chown -R forgerock:root  "$FORGEROCK_HOME" && \
     chmod -R g+rwx "$CATALINA_HOME"
 
 ADD keystore/ca/*.crt /home/forgerock/
+ADD keystore/obOfficialCertificates/*.cer /home/forgerock/
 COPY  forgerock-am/am/server.xml "$CATALINA_HOME"/conf/server.xml
-ADD keystore/common/keystore.jks /etc/ssl/certs/java/keystore.jks
+ADD keystore/aspsp/keystore.jks /etc/ssl/certs/java/keystore.jks
 
 RUN mkdir -p /var/run/secrets/amster && \
     ssh-keygen -t rsa -b 4096 -C "obri-amster@example.com" -f /var/run/secrets/amster/id_rsa -q -N "" && \
@@ -45,7 +51,14 @@ RUN mkdir -p /var/run/secrets/amster && \
             -file /home/forgerock/obri-internal-ca.crt && \
     keytool -import -alias obri-external-ca -trustcacerts -noprompt \
             -keystore /etc/ssl/certs/java/cacerts -storepass changeit \
-            -file /home/forgerock/obri-external-ca.crt
+            -file /home/forgerock/obri-external-ca.crt && \ 
+    keytool -import -alias obsandboxrootca -trustcacerts -noprompt \
+            -keystore /etc/ssl/certs/java/cacerts -storepass changeit \
+            -file /home/forgerock/OB_SandBox_PP_Root_CA.cer && \ 
+    keytool -import -alias obsandboxissuingca -trustcacerts -noprompt \
+            -keystore /etc/ssl/certs/java/cacerts -storepass changeit \
+            -file /home/forgerock/OB_SandBox_PP_Issuing_CA.cer
+    
 
 ADD forgerock-am/amster/ /opt/amster/
 ADD forgerock-am/am/*.sh $FORGEROCK_HOME/
