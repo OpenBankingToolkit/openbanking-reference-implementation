@@ -1,0 +1,37 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "AuthTree",
+    "entityId" : "obie-directory-only",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "obie-directory-only",
+    "nodes" : {
+      "3722013a-5cb1-4624-8692-8710158abc0a" : {
+        "displayName" : "OBIE Directory",
+        "nodeType" : "SocialNode",
+        "connections" : {
+          "NO_ACCOUNT" : "7b7ede94-90b4-4b20-8d96-de4aa6588439",
+          "ACCOUNT_EXISTS" : "e7d8bc1c-d2d6-4f3c-8e78-80b09c89a45a"
+        }
+      },
+      "7b7ede94-90b4-4b20-8d96-de4aa6588439" : {
+        "displayName" : "Provision Dynamic Account",
+        "nodeType" : "ProvisionDynamicAccountNode",
+        "connections" : {
+          "outcome" : "e7d8bc1c-d2d6-4f3c-8e78-80b09c89a45a"
+        }
+      },
+      "e7d8bc1c-d2d6-4f3c-8e78-80b09c89a45a" : {
+        "displayName" : "Set directory ID to OBIE",
+        "nodeType" : "SetSessionPropertiesNode",
+        "connections" : {
+          "outcome" : "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      }
+    },
+    "entryNodeId" : "3722013a-5cb1-4624-8692-8710158abc0a"
+  }
+}

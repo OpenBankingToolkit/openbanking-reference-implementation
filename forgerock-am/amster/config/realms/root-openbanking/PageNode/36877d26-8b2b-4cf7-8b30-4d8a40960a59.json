@@ -1,0 +1,26 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "PageNode",
+    "entityId" : "36877d26-8b2b-4cf7-8b30-4d8a40960a59",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "36877d26-8b2b-4cf7-8b30-4d8a40960a59",
+    "nodes" : [ {
+      "_id" : "b06f5a13-b681-4977-a433-16faeb4aa295",
+      "nodeType" : "UsernameCollectorNode",
+      "displayName" : "Username Collector"
+    }, {
+      "_id" : "fd1c73d0-d970-469a-8aad-4a5c458ec0e5",
+      "nodeType" : "PasswordCollectorNode",
+      "displayName" : "Password Collector"
+    } ],
+    "_type" : {
+      "_id" : "PageNode",
+      "name" : "Page Node",
+      "collection" : true
+    }
+  }
+}

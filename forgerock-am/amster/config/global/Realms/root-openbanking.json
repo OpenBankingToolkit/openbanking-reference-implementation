@@ -1,0 +1,16 @@
+{
+  "metadata" : {
+    "realm" : null,
+    "amsterVersion" : "&{version}",
+    "entityType" : "Realms",
+    "entityId" : "L29wZW5iYW5raW5n",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "L29wZW5iYW5raW5n",
+    "parentPath" : "/",
+    "active" : true,
+    "name" : "openbanking",
+    "aliases" : [ "as.aspsp.&{ob.domain}", "matls.as.aspsp.&{ob.domain}" ]
+  }
+}

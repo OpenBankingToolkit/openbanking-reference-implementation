@@ -1,0 +1,42 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "OAuth20",
+    "entityId" : "30410af1-d834-40ce-a02c-3fabff05ac60",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "30410af1-d834-40ce-a02c-3fabff05ac60",
+    "redirectURI" : "https://am.&{ob.domain}/oauth2c/OAuthProxy.jsp",
+    "authenticationIdKey" : "sub",
+    "clientId" : "obri-proxy",
+    "basicAuth" : true,
+    "cfgAccountProviderClass" : "org.forgerock.openam.authentication.modules.common.mapping.DefaultAccountProvider",
+    "scopeString" : "phone openid profile email",
+    "cfgAccountMapperConfiguration" : {
+      "sub" : "uid"
+    },
+    "scopeDelimiter" : " ",
+    "cfgAttributeMappingClasses" : [ "org.forgerock.openam.authentication.modules.common.mapping.JsonAttributeMapper" ],
+    "issuer" : "https://am.proxy.forgerock.financial/oauth2/realms/root/realms/auth",
+    "tokenEndpoint" : "https://am.proxy.forgerock.financial/oauth2/realms/root/realms/auth/access_token",
+    "cfgAttributeMappingConfiguration" : {
+      "sub" : "uid",
+      "softwareIds" : "softwareIds",
+      "name" : "cn"
+    },
+    "provider" : "ForgeRock OB proxy",
+    "cfgMixUpMitigation" : false,
+    "authorizeEndpoint" : "https://am.proxy.forgerock.financial/oauth2/realms/root/realms/auth/authorize",
+    "clientSecret" : null,
+    "cfgAccountMapperClass" : "org.forgerock.openam.authentication.modules.common.mapping.JsonAttributeMapper",
+    "userInfoEndpoint" : "https://am.proxy.forgerock.financial/oauth2/realms/root/realms/auth/userinfo",
+    "saveUserAttributesToSession" : true,
+    "_type" : {
+      "_id" : "SocialNode",
+      "name" : "OAuth 2.0",
+      "collection" : true
+    }
+  }
+}

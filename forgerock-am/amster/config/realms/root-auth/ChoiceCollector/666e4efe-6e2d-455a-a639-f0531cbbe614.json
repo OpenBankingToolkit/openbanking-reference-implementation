@@ -1,0 +1,20 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "ChoiceCollector",
+    "entityId" : "666e4efe-6e2d-455a-a639-f0531cbbe614",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "666e4efe-6e2d-455a-a639-f0531cbbe614",
+    "defaultChoice" : "ForgeRock Directory",
+    "choices" : [ "ForgeRock Directory", "OBIE Directory", "EIDAS" ],
+    "prompt" : "Choose a directory to login with",
+    "_type" : {
+      "_id" : "ChoiceCollectorNode",
+      "name" : "Choice Collector",
+      "collection" : true
+    }
+  }
+}

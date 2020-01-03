@@ -1,0 +1,20 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "SetSessionProperties",
+    "entityId" : "fa43afe5-b066-48f5-b7fe-f1127bbc0849",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "fa43afe5-b066-48f5-b7fe-f1127bbc0849",
+    "properties" : {
+      "directoryID" : "ForgeRock"
+    },
+    "_type" : {
+      "_id" : "SetSessionPropertiesNode",
+      "name" : "Set Session Properties",
+      "collection" : true
+    }
+  }
+}

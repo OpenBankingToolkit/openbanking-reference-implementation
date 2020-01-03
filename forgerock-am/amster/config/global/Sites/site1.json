@@ -1,0 +1,14 @@
+{
+  "metadata" : {
+    "realm" : null,
+    "amsterVersion" : "&{version}",
+    "entityType" : "Sites",
+    "entityId" : "site1",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "site1",
+    "url" : "https://login.default.&{ob.domain}/",
+    "secondaryURLs" : [ "https://matls.as.aspsp.&{ob.domain}", "https://as.aspsp.&{ob.domain}", "https://auth.&{ob.domain}", "https://am.&{ob.domain}" ]
+  }
+}

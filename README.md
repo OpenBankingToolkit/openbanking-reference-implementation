@@ -111,6 +111,12 @@ To make these keys available to the jwkms you will need to;
 
 ## How to run the development environment
 
+### Docker
+1. Copy am.war to forgerock-am/_binaries/am.war
+1. Copy amster.zip to forgerock-am/_binaries/amster.zip
+1. Run `docker-compose up -d` and wait for services to start
+
+### Kubernetes
 - Start Docker & Kubernetes
 - Start run configurations in the following order
   - "Run Mongo"

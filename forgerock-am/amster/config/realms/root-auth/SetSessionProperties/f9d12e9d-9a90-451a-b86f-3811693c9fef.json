@@ -1,0 +1,20 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "SetSessionProperties",
+    "entityId" : "f9d12e9d-9a90-451a-b86f-3811693c9fef",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "f9d12e9d-9a90-451a-b86f-3811693c9fef",
+    "properties" : {
+      "directoryID" : "EIDAS"
+    },
+    "_type" : {
+      "_id" : "SetSessionPropertiesNode",
+      "name" : "Set Session Properties",
+      "collection" : true
+    }
+  }
+}

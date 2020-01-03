@@ -1,0 +1,20 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "SetSessionProperties",
+    "entityId" : "9e97ac4a-b637-44f8-90e1-fd978259bcdb",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "9e97ac4a-b637-44f8-90e1-fd978259bcdb",
+    "properties" : {
+      "directoryID" : "OBIE"
+    },
+    "_type" : {
+      "_id" : "SetSessionPropertiesNode",
+      "name" : "Set Session Properties",
+      "collection" : true
+    }
+  }
+}

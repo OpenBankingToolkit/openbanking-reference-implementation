@@ -1,0 +1,21 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "KeyStoreMappings",
+    "entityId" : "am.services.oauth2.tls.client.cert.authentication",
+    "pathParams" : {
+      "KeyStoreSecretStore" : "CATrustStore"
+    }
+  },
+  "data" : {
+    "_id" : "am.services.oauth2.tls.client.cert.authentication",
+    "secretId" : "am.services.oauth2.tls.client.cert.authentication",
+    "aliases" : [ "obri-external-ca", "obsandboxrootca", "obsandboxissuingca" ],
+    "_type" : {
+      "_id" : "mappings",
+      "name" : "Mappings",
+      "collection" : true
+    }
+  }
+}

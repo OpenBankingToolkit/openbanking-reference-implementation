@@ -1,0 +1,26 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "MessageNode",
+    "entityId" : "c2823fa1-053b-434f-a461-cd143250ecc5",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "c2823fa1-053b-434f-a461-cd143250ecc5",
+    "messageYes" : {
+      "en" : "null"
+    },
+    "messageNo" : {
+      "en" : "done"
+    },
+    "message" : {
+      "en" : "Setup your client certificate in your web browser"
+    },
+    "_type" : {
+      "_id" : "MessageNode",
+      "name" : "Message Node",
+      "collection" : true
+    }
+  }
+}

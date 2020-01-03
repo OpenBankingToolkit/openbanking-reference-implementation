@@ -1,0 +1,32 @@
+{
+  "metadata" : {
+    "realm" : "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType" : "RemoteConsentAgent",
+    "entityId" : "forgerock-rcs",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "forgerock-rcs",
+    "remoteConsentResponseEncryptionAlgorithm" : "RSA-OAEP-256",
+    "jwkStoreCacheMissCacheTime" : 0,
+    "remoteConsentRequestEncryptionMethod" : "A128GCM",
+    "remoteConsentResponseEncryptionMethod" : "A128GCM",
+    "jwkSet" : null,
+    "remoteConsentResponseSigningAlg" : "PS256",
+    "requestTimeLimit" : 180,
+    "agentgroup" : null,
+    "jwksUri" : "https://rcs.aspsp.&{ob.domain}:8074/api/jwk/jwk_uri",
+    "remoteConsentRequestEncryptionAlgorithm" : "RSA-OAEP-256",
+    "remoteConsentRedirectUrl" : "https://bank.&{ob.domain}:4201/consent",
+    "jwksCacheTimeout" : 0,
+    "publicKeyLocation" : "jwks_uri",
+    "remoteConsentRequestSigningAlgorithm" : "PS256",
+    "remoteConsentRequestEncryptionEnabled" : false,
+    "_type" : {
+      "_id" : "RemoteConsentAgent",
+      "name" : "OAuth2 Remote Consent Service",
+      "collection" : true
+    }
+  }
+}

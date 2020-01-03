@@ -1,0 +1,18 @@
+{
+  "metadata" : {
+    "realm" : "/auth",
+    "amsterVersion" : "&{version}",
+    "entityType" : "ProvisionDynamicAccount",
+    "entityId" : "eb85b78f-84b3-4202-9a14-587db563f8a6",
+    "pathParams" : { }
+  },
+  "data" : {
+    "_id" : "eb85b78f-84b3-4202-9a14-587db563f8a6",
+    "accountProviderClass" : "org.forgerock.openam.authentication.modules.common.mapping.DefaultAccountProvider",
+    "_type" : {
+      "_id" : "ProvisionDynamicAccountNode",
+      "name" : "Provision Dynamic Account",
+      "collection" : true
+    }
+  }
+}

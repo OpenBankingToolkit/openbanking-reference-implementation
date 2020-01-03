@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "realm": "/openbanking",
+    "amsterVersion" : "&{version}",
+    "entityType": "OAuth2Clients",
+    "entityId": "bank",
+    "pathParams": {}
+  },
+  "data": {
+    "_id": "bank",
+    "signEncOAuth2ClientConfig": {
+      "idTokenEncryptionMethod": "A128CBC-HS256",
+      "jwkSet": null,
+      "idTokenEncryptionAlgorithm": "RSA1_5",
+      "userinfoResponseFormat": "JSON",
+      "jwksCacheTimeout": 0,
+      "userinfoSignedResponseAlg": null,
+      "requestParameterEncryptedAlg": null,
+      "tokenEndpointAuthSigningAlgorithm": "PS256",
+      "requestParameterEncryptedEncryptionAlgorithm": "A128CBC-HS256",
+      "jwkStoreCacheMissCacheTime": 60000,
+      "idTokenSignedResponseAlg": "PS256",
+      "idTokenEncryptionEnabled": false,
+      "idTokenPublicEncryptionKey": null,
+      "userinfoEncryptedResponseEncryptionAlgorithm": "A128CBC-HS256",
+      "publicKeyLocation": "jwks_uri",
+      "jwksUri": "https://service.bank.&{ob.domain}:8074/api/bank/keys/jwk_uri",
+      "userinfoEncryptedResponseAlg": null,
+      "requestParameterSignedAlg": "PS256",
+      "clientJwtPublicKey": null
+    },
+    "coreOAuth2ClientConfig": {
+      "clientType": "Confidential",
+      "scopes": [
+        "openid",
+        "group",
+        "authority"
+      ],
+      "authorizationCodeLifetime": 0,
+      "accessTokenLifetime": 0,
+      "agentgroup": null,
+      "refreshTokenLifetime": 0,
+      "defaultScopes": [
+        "group"
+      ],
+      "redirectionUris": [
+        "https://bank.&{ob.domain}/redirectOpenId",
+        "https://bank.&{ob.domain}:4201/redirectOpenId"
+      ],
+      "clientName": [],
+      "status": "Active"
+    },
+    "advancedOAuth2ClientConfig": {
+      "grantTypes": [
+        "authorization_code",
+        "implicit",
+        "password",
+        "client_credentials"
+      ],
+      "updateAccessToken": null,
+      "sectorIdentifierUri": null,
+      "isConsentImplied": true,
+      "contacts": [],
+      "requestUris": [],
+      "responseTypes": [
+        "code",
+        "token",
+        "id_token",
+        "code token",
+        "token id_token",
+        "code id_token",
+        "code token id_token",
+        "device_code",
+        "device_code id_token"
+      ],
+      "descriptions": [],
+      "mixUpMitigation": false,
+      "subjectType": "Public",
+      "name": [],
+      "tokenEndpointAuthMethod": "private_key_jwt"
+    },
+    "coreOpenIDClientConfig": {
+      "claims": [],
+      "jwtTokenLifetime": 0,
+      "clientSessionUri": null,
+      "defaultMaxAgeEnabled": false,
+      "postLogoutRedirectUri": [],
+      "defaultMaxAge": 600
+    },
+    "coreUmaClientConfig": {
+      "claimsRedirectionUris": []
+    },
+    "_type": {
+      "_id": "OAuth2Client",
+      "name": "OAuth2 Clients",
+      "collection": true
+    }
+  }
+}
