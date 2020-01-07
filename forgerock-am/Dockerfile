@@ -1,16 +1,21 @@
-FROM debian:stable-slim
+FROM gcr.io/forgerock-io/am@sha256:0443c576fa8ad6900e05471d14c8d33768f7f3bf7b4eb3e22265696dfb4dfa6b AS am-pit-container
+FROM gcr.io/forgerock-io/amster@sha256:8a91d06d08637e1bad318da506673aeb296c948433f12c56aa0a03da8a75f47e AS amster-pit-container
 
-ADD forgerock-am/_binaries/amster.zip /
-ADD forgerock-am/_binaries/am.war /
+# FROM debian:stable-slim AS extract-container
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y unzip && \
-    mkdir -p /var/tmp/openam && \
-    unzip -q /am.war -d /var/tmp/openam && \
-    mkdir -p /var/tmp/amster && \
-    unzip -q /amster.zip -d /var/tmp/amster
+# ADD forgerock-am/_binaries/amster.zip /
+# ADD forgerock-am/_binaries/am.war /
+# ADD forgerock-am/_binaries/openbanking-1-1-tpatch.zip /
 
-FROM tomcat:9-jre11-slim
+# RUN apt-get update && \
+#     apt-get install --no-install-recommends -y unzip && \
+#     mkdir -p /var/tmp/openam && \
+#     unzip -q /am.war -d /var/tmp/openam && \
+#     # unzip /openbanking-1-1-tpatch.zip -d /var/tmp/openam && \
+#     mkdir -p /var/tmp/amster && \
+#     unzip -q /amster.zip -d /var/tmp/amster
+
+FROM tomcat:9-jdk11-openjdk
 
 SHELL ["/bin/bash", "-c"]
 ENV FORGEROCK_HOME /home/forgerock
@@ -18,12 +23,15 @@ ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
 ENV CATALINA_OPTS "-server -Xms2048m -Xmx2048m \
   -Dcom.sun.identity.util.debug.provider=com.sun.identity.shared.debug.impl.StdOutDebugProvider \
-  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\""
+  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\" \
+  -Dcom.iplanet.services.debug.level=message"
 
 
 RUN rm -fr "$CATALINA_HOME"/webapps/*
-COPY --from=0 /var/tmp/openam "$CATALINA_HOME"/webapps/ROOT
-COPY --from=0 /var/tmp/amster /opt/amster
+# COPY --from=extract-container /var/tmp/openam "$CATALINA_HOME"/webapps/ROOT
+COPY --from=am-pit-container /usr/local/tomcat/webapps/am "$CATALINA_HOME"/webapps/ROOT
+# COPY --from=extract-container /var/tmp/amster /opt/amster
+COPY --from=amster-pit-container /opt/amster /opt/amster
 
 ADD https://github.com/krallin/tini/releases/download/v0.18.0/tini /usr/bin
 
@@ -72,7 +80,7 @@ RUN echo "127.0.0.1  openam" >> /etc/hosts && \
     cd /opt/amster && \
     set -euo pipefail && \
     /opt/amster/amster-install.sh |& tee /amster.log && \
-    if grep -q "Failed to\|IMPORT ERRORS\|SCRIPT ERROR\|Exception\|Configuration failed" /amster.log; then echo "ABORTING BUILD DUE TO AMSTER ERRORS." && exit 10; fi && \
+    if grep -q "IMPORT ERRORS\|SCRIPT ERROR\|Exception\|\(F\|f\)ailed\|\(U\|u\)nexpected" /amster.log; then echo "ABORTING BUILD DUE TO AMSTER ERRORS." && exit 10; fi && \
     echo "Shutting down tomcat" && \
     /usr/local/tomcat/bin/catalina.sh stop && \
     sleep 10
