@@ -1,51 +1,21 @@
-FROM gcr.io/forgerock-io/am@sha256:0443c576fa8ad6900e05471d14c8d33768f7f3bf7b4eb3e22265696dfb4dfa6b AS am-pit-container
-FROM gcr.io/forgerock-io/amster@sha256:8a91d06d08637e1bad318da506673aeb296c948433f12c56aa0a03da8a75f47e AS amster-pit-container
-
-# FROM debian:stable-slim AS extract-container
-
-# ADD forgerock-am/_binaries/amster.zip /
-# ADD forgerock-am/_binaries/am.war /
-# ADD forgerock-am/_binaries/openbanking-1-1-tpatch.zip /
-
-# RUN apt-get update && \
-#     apt-get install --no-install-recommends -y unzip && \
-#     mkdir -p /var/tmp/openam && \
-#     unzip -q /am.war -d /var/tmp/openam && \
-#     # unzip /openbanking-1-1-tpatch.zip -d /var/tmp/openam && \
-#     mkdir -p /var/tmp/amster && \
-#     unzip -q /amster.zip -d /var/tmp/amster
-
-FROM tomcat:9-jdk11-openjdk
-
+FROM gcr.io/forgerock-io/amster/pit1:latest AS amster-pit-container
+FROM gcr.io/forgerock-io/am/pit1:latest
+USER root
 SHELL ["/bin/bash", "-c"]
-ENV FORGEROCK_HOME /home/forgerock
-ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
 ENV CATALINA_OPTS "-server -Xms2048m -Xmx2048m \
-  -Dcom.sun.identity.util.debug.provider=com.sun.identity.shared.debug.impl.StdOutDebugProvider \
-  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\" \
-  -Dcom.iplanet.services.debug.level=message"
+                   -Dcom.sun.services.debug.mergeall=on \
+                   -Dcom.sun.identity.configuration.directory=/home/forgerock/openam \
+                   -Dcom.iplanet.services.stats.state=off"
 
-
-RUN rm -fr "$CATALINA_HOME"/webapps/*
-# COPY --from=extract-container /var/tmp/openam "$CATALINA_HOME"/webapps/ROOT
-COPY --from=am-pit-container /usr/local/tomcat/webapps/am "$CATALINA_HOME"/webapps/ROOT
-# COPY --from=extract-container /var/tmp/amster /opt/amster
 COPY --from=amster-pit-container /opt/amster /opt/amster
 
-ADD https://github.com/krallin/tini/releases/download/v0.18.0/tini /usr/bin
-
-RUN apt-get update && \
+RUN mv /usr/local/tomcat/webapps/am /usr/local/tomcat/webapps/ROOT && \
+    apt-get update && \
     apt-get install --no-install-recommends -y unzip curl bash procps openssh-client && \
-    chmod +x /usr/bin/tini && \
-    addgroup --gid 11111 forgerock && \
-    adduser --shell /bin/bash --home "$FORGEROCK_HOME" --uid 11111 --disabled-password --ingroup root --gecos 'forgerock' forgerock && \
-    mkdir -p "$OPENAM_HOME" && \
-    mkdir -p "$OPENAM_HOME/secrets/plaintext" && \
-    echo -n "changeit" > $OPENAM_HOME/secrets/plaintext/defaultpass && \
-    chown -R forgerock:root "$CATALINA_HOME" && \
-    chown -R forgerock:root  "$FORGEROCK_HOME" && \
-    chmod -R g+rwx "$CATALINA_HOME"
+    mkdir -p "$AM_HOME" && \
+    mkdir -p "$AM_HOME/secrets/plaintext" && \
+    echo -n "changeit" > $AM_HOME/secrets/plaintext/defaultpass
 
 ADD keystore/ca/*.crt /home/forgerock/
 ADD keystore/obOfficialCertificates/*.cer /home/forgerock/
@@ -54,6 +24,7 @@ ADD keystore/aspsp/keystore.jks /etc/ssl/certs/java/keystore.jks
 
 RUN mkdir -p /var/run/secrets/amster && \
     ssh-keygen -t rsa -b 4096 -C "obri-amster@example.com" -f /var/run/secrets/amster/id_rsa -q -N "" && \
+    if ! [ -f /etc/ssl/certs/java/cacerts ]; then ln -s $(find / -name cacerts | head -n1) /etc/ssl/certs/java/cacerts; fi && \
     keytool -import -alias obri-internal-ca -trustcacerts -noprompt \
             -keystore /etc/ssl/certs/java/cacerts -storepass changeit \
             -file /home/forgerock/obri-internal-ca.crt && \
@@ -69,7 +40,7 @@ RUN mkdir -p /var/run/secrets/amster && \
     
 
 ADD forgerock-am/amster/ /opt/amster/
-ADD forgerock-am/am/*.sh $FORGEROCK_HOME/
+# COPY forgerock-am/am/logback.xml /usr/local/tomcat/webapps/am/WEB-INF/classes
 
 RUN echo "127.0.0.1  openam" >> /etc/hosts && \
     /usr/local/tomcat/bin/catalina.sh start && \
@@ -85,5 +56,5 @@ RUN echo "127.0.0.1  openam" >> /etc/hosts && \
     /usr/local/tomcat/bin/catalina.sh stop && \
     sleep 10
 
-ENTRYPOINT ["/home/forgerock/docker-entrypoint.sh"]
-CMD ["run"]
+USER forgerock
+ENTRYPOINT [ "/usr/local/tomcat/bin/catalina.sh", "run" ]

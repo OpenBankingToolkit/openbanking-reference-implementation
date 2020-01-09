@@ -1,3 +1,5 @@
-connect http://openam:8080 -k /home/forgerock/openam/security/keys/amster
+ENV=System.getenv()
+amsterKeyPath = ENV.AMSTER_KEY_PATH
+connect http://openam:8080 -k amsterKeyPath
 import-config --path /opt/amster/config  --clean false
 :exit
