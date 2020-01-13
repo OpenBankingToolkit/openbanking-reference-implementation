@@ -30,11 +30,14 @@ services:
     image: r.cfcr.io/openbanking/obri/jwkms
     ports:
       - "8097:8097"
+      - "9097:9097"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8097 -Dam.internal-port=8443 -Dam.port=8074
       HOSTNAME: jwkms
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9097,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-jwkms/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-jwkms/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -45,11 +48,14 @@ services:
     image: r.cfcr.io/openbanking/obri/directory-services
     ports:
       - "8076:8076"
+      - "9076:9076"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8076 -Dam.internal-port=8443 -Dam.port=8074
       HOSTNAME: directory-services
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9076,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-directory-services/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-directory-services/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -60,11 +66,14 @@ services:
     image: r.cfcr.io/openbanking/obri/scgw
     ports:
       - "8074:8074"
+      - "9074:9074"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8074 -Dam.internal-port=8443 -Dam.port=8074
       HOSTNAME: scgw
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9074,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-gateway/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-gateway/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -88,11 +97,14 @@ services:
     image: r.cfcr.io/openbanking/obri/as-api
     ports:
       - "8066:8066"
+      - "9066:9066"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8066 -Dam.internal-port=8443 -Dam.port=8074
       HOSTNAME: as-api
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9066,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -103,11 +115,14 @@ services:
     image: r.cfcr.io/openbanking/obri/rs-api
     ports:
       - "8094:8094"
+      - "9094:9094"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8094 -Dam.internal-port=8443 -Dam.port=8074
       HOSTNAME: rs-api
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9094,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -118,11 +133,14 @@ services:
     image: r.cfcr.io/openbanking/obri/rs-rcs
     ports:
       - "8084:8084"
+      - "9084:9084"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8084 -Dam.internal-port=8443 -Dam.port=8074
       HOSTNAME: rs-rcs
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9084,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-rcs/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-rcs/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -133,11 +151,14 @@ services:
     image: r.cfcr.io/openbanking/obri/rs-store
     ports:
       - "8086:8086"
+      - "9086:9086"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8086
       HOSTNAME: rs-store
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9086,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -148,11 +169,14 @@ services:
     image: r.cfcr.io/openbanking/obri/rs-ui
     ports:
       - "8092:8092"
+      - "9092:9092"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8092 -Dam.internal-port=8443
       HOSTNAME: rs-ui
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9092,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
@@ -163,11 +187,14 @@ services:
     image: r.cfcr.io/openbanking/obri/monitoring
     ports:
       - "8073:8073"
+      - "9073:9073"
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
       java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8073
       HOSTNAME: monitoring
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9073,server=y,suspend=n
     volumes:
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
