@@ -23,7 +23,10 @@ ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
 ENV CATALINA_OPTS "-server -Xms2048m -Xmx2048m \
   -Dcom.sun.identity.util.debug.provider=com.sun.identity.shared.debug.impl.StdOutDebugProvider \
-  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\""
+  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\" \
+  -Dcom.sun.services.debug.mergeall=on \
+  -Dcom.iplanet.services.debug.level=message"
+
 
 RUN rm -fr "$CATALINA_HOME"/webapps/*
 
