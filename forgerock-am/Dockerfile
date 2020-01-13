@@ -74,7 +74,6 @@ RUN mkdir -p /var/run/secrets/amster && \
 
 ADD forgerock-am/amster/ /opt/amster/
 ADD forgerock-am/am/*.sh $FORGEROCK_HOME/
-COPY forgerock-am/am/logback.xml /usr/local/tomcat/webapps/am/WEB-INF/classes
 
 RUN echo "127.0.0.1  openam" >> /etc/hosts && \
     /usr/local/tomcat/bin/catalina.sh start && \
