@@ -1,6 +1,6 @@
 FROM tomcat:9-jdk11-openjdk AS extract-container
 
-ENV AM_WAR_NAME "am-6.5.1-vanilla.war"
+ENV AM_WAR_NAME "am.war"
 
 ADD forgerock-am/_binaries/amster.zip /
 ADD forgerock-am/_binaries/${AM_WAR_NAME} /am.war
@@ -10,6 +10,11 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y unzip && \
     mkdir -p /var/tmp/openam && \
     unzip -q /am.war -d /var/tmp/openam && \
+    if ! grep -q "com.iplanet.am.buildVersion=ForgeRock Access Management 6.5.1" /var/tmp/openam/WEB-INF/classes/serverdefaults.properties; then \
+    echo "ERROR: Provided war file is not AM version 6.5.1" && \
+    echo "VERSION FOUND: $(grep 'com.iplanet.am.buildVersion=' /var/tmp/openam/WEB-INF/classes/serverdefaults.properties)" && \
+    exit 10; \
+    fi && \
     unzip /openbanking-1-1-tpatch.zip -d /var/tmp/openam && \
     mkdir -p /var/tmp/amster && \
     unzip -q /amster.zip -d /var/tmp/amster
@@ -23,9 +28,7 @@ ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
 ENV CATALINA_OPTS "-server -Xms2048m -Xmx2048m \
   -Dcom.sun.identity.util.debug.provider=com.sun.identity.shared.debug.impl.StdOutDebugProvider \
-  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\" \
-  -Dcom.sun.services.debug.mergeall=on \
-  -Dcom.iplanet.services.debug.level=message"
+  -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\""
 
 
 RUN rm -fr "$CATALINA_HOME"/webapps/*

@@ -203,7 +203,7 @@ services:
   openam:
     build:
       context: .
-      dockerfile: forgerock-am/amMaster.Dockerfile
+      dockerfile: forgerock-am/Dockerfile
     image: openam:local
     container_name: openam
     ports:
