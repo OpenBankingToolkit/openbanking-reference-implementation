@@ -166,7 +166,7 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
       SPRING_PROFILES_ACTIVE: native,console-logging
-      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8073
+      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8073 -Dam.internal-port=8443
       HOSTNAME: monitoring
     volumes:
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
