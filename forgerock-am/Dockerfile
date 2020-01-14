@@ -52,7 +52,8 @@ RUN apt-get update && \
 
 ADD keystore/ca/*.crt /home/forgerock/
 ADD keystore/obOfficialCertificates/*.cer /home/forgerock/
-COPY  forgerock-am/am/server.xml "$CATALINA_HOME"/conf/server.xml
+COPY forgerock-am/am/server.xml "$CATALINA_HOME"/conf/server.xml
+COPY forgerock-am/am/web.xml "$CATALINA_HOME"/webapps/ROOT/WEB-INF/web.xml
 ADD keystore/aspsp/keystore.jks /etc/ssl/certs/java/keystore.jks
 
 RUN mkdir -p /var/run/secrets/amster && \

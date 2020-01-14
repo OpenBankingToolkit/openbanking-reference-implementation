@@ -27,3 +27,4 @@ requirements.lock
 .factorypath
 .project
 .settings/
+mongodata/
