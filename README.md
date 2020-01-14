@@ -112,8 +112,13 @@ To make these keys available to the jwkms you will need to;
 ## How to run the development environment
 
 ### Docker
-1. Copy am.war to forgerock-am/_binaries/am.war
-1. Copy amster.zip to forgerock-am/_binaries/amster.zip
+1. If you have not already, register on https://backstage.forgerock.com/
+1. Download AM 6.5.1 war file from backstage. This *must* be version 6.5.1.0, both the evaluation and full editions will work.
+    https://backstage.forgerock.com/downloads/browse/am/archive/productId:am/minorVersion:6.5/version:6.5.1/releaseType:full
+1. Copy the war file to `forgerock-am/_binaries` and rename the file to `am.war`, so that the path is `forgerock-am/_binaries/am.war`.
+1. Download the Amster 6.5.1 zip file from backstage
+    https://backstage.forgerock.com/downloads/browse/am/archive/productId:amster/minorVersion:6.5/version:6.5.1/releaseType:full
+1. Copy the amster zip file to `forgerock-am/_binaries` and rename the file to `amster.zip`, so that the path is `forgerock-am/_binaries/amster.zip`.
 1. Run `docker-compose up -d` and wait for services to start
 
 ### Kubernetes
