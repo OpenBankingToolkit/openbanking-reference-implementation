@@ -28,13 +28,13 @@
     <name>ForgeRock OpenBanking Metrics</name>
     <groupId>com.forgerock.openbanking.metrics</groupId>
     <artifactId>forgerock-openbanking-metrics</artifactId>
-    <version>MADNESS</version>
+    <version>OASIS</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>MADNESS</version>
+        <version>OASIS</version>
     </parent>
 
     <modules>

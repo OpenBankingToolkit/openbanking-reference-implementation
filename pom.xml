@@ -28,7 +28,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>MADNESS</version>
+    <version>OASIS</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -91,11 +91,6 @@
                 <groupId>com.forgerock.openbanking.clients</groupId>
                 <artifactId>forgerock-openbanking-analytics-webclient</artifactId>
                 <version>${ob-clients.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.forgerock.openbanking</groupId>
-                <artifactId>forgerock-openbanking-auth</artifactId>
-                <version>${ob-auth.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking.directory</groupId>

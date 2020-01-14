@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>MADNESS</version>
+        <version>OASIS</version>
     </parent>
 
     <dependencies>
@@ -133,6 +133,7 @@
         <dependency>
             <groupId>com.forgerock.openbanking</groupId>
             <artifactId>forgerock-openbanking-auth</artifactId>
+            <version>${ob-auth.version}</version>
         </dependency>
         <dependency>
             <groupId>com.forgerock.openbanking.clients</groupId>
