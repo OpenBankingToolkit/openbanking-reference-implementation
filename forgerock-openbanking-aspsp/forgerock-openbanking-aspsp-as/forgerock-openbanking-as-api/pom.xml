@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.aspsp.as</groupId>
         <artifactId>forgerock-openbanking-aspsp-as</artifactId>
-        <version>MADNESS</version>
+        <version>OASIS</version>
     </parent>
 
     <dependencies>
