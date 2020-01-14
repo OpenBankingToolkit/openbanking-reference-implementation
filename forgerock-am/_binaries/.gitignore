@@ -1,2 +1,3 @@
 *.zip
 *.war
+!openbanking-1-1-tpatch.zip
