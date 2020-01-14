@@ -48,8 +48,8 @@
         <ob-common.version>1.0.56</ob-common.version>
         <ob-analytics.version>1.1.29</ob-analytics.version>
         <ob-jwkms.version>1.1.45</ob-jwkms.version>
-        <ob-auth.version>1.0.48-SNAPSHOT</ob-auth.version>
-        <ob-directory.version>1.4.40-SNAPSHOT</ob-directory.version>
+        <ob-auth.version>1.0.49</ob-auth.version>
+        <ob-directory.version>1.4.40</ob-directory.version>
         <ob-aspsp.version>1.0.35</ob-aspsp.version>
         <ob-clients.version>1.0.16</ob-clients.version>
     </properties>
