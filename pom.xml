@@ -46,7 +46,7 @@
 
     <properties>
         <ob-common.version>1.0.56</ob-common.version>
-        <ob-analytics.version>1.1.29</ob-analytics.version>
+        <ob-analytics.version>1.1.33</ob-analytics.version>
         <ob-jwkms.version>1.1.48</ob-jwkms.version>
         <ob-auth.version>1.0.53</ob-auth.version>
         <ob-directory.version>1.4.40</ob-directory.version>
