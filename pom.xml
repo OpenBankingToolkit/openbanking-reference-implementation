@@ -51,7 +51,7 @@
         <ob-auth.version>1.0.53</ob-auth.version>
         <ob-directory.version>1.4.42</ob-directory.version>
         <ob-aspsp.version>1.0.39</ob-aspsp.version>
-        <ob-clients.version>1.0.19</ob-clients.version>
+        <ob-clients.version>1.0.20</ob-clients.version>
     </properties>
 
     <modules>
