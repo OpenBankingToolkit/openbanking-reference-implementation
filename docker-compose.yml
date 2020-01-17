@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 networks:
   obref:
 services:
@@ -25,6 +25,12 @@ services:
       HOSTNAME: config
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "http://localhost:8888/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   jwkms:
     container_name: jwkms
     image: r.cfcr.io/openbanking/obri/jwkms
@@ -43,6 +49,12 @@ services:
       - ./forgerock-openbanking-jwkms/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8097/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   directory-services:
     container_name: directory-services
     image: r.cfcr.io/openbanking/obri/directory-services
@@ -61,6 +73,12 @@ services:
       - ./forgerock-openbanking-directory-services/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8076/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   scgw:
     container_name: scgw
     image: r.cfcr.io/openbanking/obri/scgw
@@ -92,6 +110,12 @@ services:
           - swagger.dev-ob.forgerock.financial
           - scgw.dev-ob.forgerock.financial
           - rcs.aspsp.dev-ob.forgerock.financial
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8074/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   as-api:
     container_name: as-api
     image: r.cfcr.io/openbanking/obri/as-api
@@ -110,6 +134,12 @@ services:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8066/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   rs-api:
     container_name: rs-api
     image: r.cfcr.io/openbanking/obri/rs-api
@@ -128,6 +158,12 @@ services:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8094/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   rs-rcs:
     container_name: rs-rcs
     image: r.cfcr.io/openbanking/obri/rs-rcs
@@ -146,6 +182,12 @@ services:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-rcs/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8084/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   rs-store:
     container_name: rs-store
     image: r.cfcr.io/openbanking/obri/rs-store
@@ -164,6 +206,12 @@ services:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8086/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   rs-ui:
     container_name: rs-ui
     image: r.cfcr.io/openbanking/obri/rs-ui
@@ -182,6 +230,12 @@ services:
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8092/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   monitoring:
     container_name: monitoring
     image: r.cfcr.io/openbanking/obri/monitoring
