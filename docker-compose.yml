@@ -254,6 +254,12 @@ services:
       - ./forgerock-openbanking-backstage/forgerock-openbanking-monitoring/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8073/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   openam:
     build:
       context: .
