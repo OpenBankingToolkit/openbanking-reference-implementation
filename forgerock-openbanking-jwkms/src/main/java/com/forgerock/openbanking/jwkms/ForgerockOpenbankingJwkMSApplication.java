@@ -43,6 +43,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.mongo.MongoLockProvider;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +76,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashSet;
@@ -104,6 +110,15 @@ public class ForgerockOpenbankingJwkMSApplication  {
     @Value("${server.ssl.client-certs-key-alias}")
     private String keyAlias;
 
+    private static String getCn(X509Certificate x509Certificate) {
+        try {
+            X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getSubject();
+            RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+            return IETFUtils.valueToString(cn.getFirst().getValue());
+        } catch (CertificateEncodingException e) {
+            return null;
+        }
+    }
     @Configuration
     static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         private static String CLIENT_CERTIFICATE_HEADER_NAME = "x-client-jwk";
@@ -181,7 +196,7 @@ public class ForgerockOpenbankingJwkMSApplication  {
             if (!isCertificateIssuedByCA(certificatesChain)) {
                 return null;
             }
-            return applicationService.getApplication(certificatesChain[0].getSubjectDN().getName()).getIssuerId();
+            return applicationService.getApplication(getCn(certificatesChain[0])).getIssuerId();
         }
 
         private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
@@ -223,7 +238,7 @@ public class ForgerockOpenbankingJwkMSApplication  {
                 return applicationIdentity.getId();
             } catch (JOSEException e) {
                 log.warn("Can't convert the certificate into a JWK", e);
-                return certificatesChain[0].getSubjectDN().getName();
+                return getCn(certificatesChain[0]);
             }
         }
 

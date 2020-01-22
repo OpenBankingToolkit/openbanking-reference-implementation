@@ -41,6 +41,11 @@ import io.netty.handler.ssl.SslContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,6 +74,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.List;
@@ -99,9 +105,16 @@ public class ForgerockOpenbankingMetricsServicesApplication {
 	private SslConfiguration sslConfiguration;
 	@Value("${server.ssl.client-certs-key-alias}")
 	private String keyAlias;
-	@Value("${analytics.ui.root}")
-	private String analyticsUIUri;
 
+	private static String getCn(X509Certificate x509Certificate) {
+		try {
+			X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getSubject();
+			RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+			return IETFUtils.valueToString(cn.getFirst().getValue());
+		} catch (CertificateEncodingException e) {
+			return null;
+		}
+	}
 
 	@Configuration
 	static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
@@ -203,7 +216,7 @@ public class ForgerockOpenbankingMetricsServicesApplication {
 			if (!isCertificateIssuedByCA(certificatesChain)) {
 				return null;
 			}
-			return certificatesChain[0].getSubjectDN().getName();
+			return getCn(certificatesChain[0]);
 		}
 
 		private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {

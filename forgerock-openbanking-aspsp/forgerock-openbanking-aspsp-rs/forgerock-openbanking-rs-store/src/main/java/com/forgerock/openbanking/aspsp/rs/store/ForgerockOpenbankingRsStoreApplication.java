@@ -121,6 +121,15 @@ public class ForgerockOpenbankingRsStoreApplication{
     @Value("${server.ssl.client-certs-key-alias}")
     private String keyAlias;
 
+    private static String getCn(X509Certificate x509Certificate) {
+        try {
+            X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getSubject();
+            RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+            return IETFUtils.valueToString(cn.getFirst().getValue());
+        } catch (CertificateEncodingException e) {
+            return null;
+        }
+    }
 
     @Configuration
     static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
@@ -228,7 +237,7 @@ public class ForgerockOpenbankingRsStoreApplication{
             if (!isCertificateIssuedByCA(certificatesChain)) {
                 return null;
             }
-            return certificatesChain[0].getSubjectDN().getName();
+            return getCn(certificatesChain[0]);
         }
 
         private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
@@ -264,7 +273,7 @@ public class ForgerockOpenbankingRsStoreApplication{
             }
 
             if (authorities.contains(OBRIRole.ROLE_TPP)) {
-                String cn = certificatesChain[0].getSubjectDN().getName();
+                String cn = getCn(certificatesChain[0]);
                 Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
                 if (!optionalTpp.isPresent()) {
                     log.debug("TPP not found. This TPP {} is not on board yet", cn);
@@ -283,18 +292,12 @@ public class ForgerockOpenbankingRsStoreApplication{
                 return null;
             }
 
-            String subject = certificatesChain[0].getSubjectDN().getName();
+            String cn = getCn(certificatesChain[0]);
 
-            Optional<Tpp> optionalTpp = tppStoreService.findByCn(subject);
+            Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
             if (!optionalTpp.isPresent()) {
-                log.debug("TPP not found. This TPP {} is not on board yet", subject);
-                try {
-                    X500Name x500name = new JcaX509CertificateHolder(certificatesChain[0]).getSubject();
-                    RDN cn = x500name.getRDNs(BCStyle.CN)[0];
-                    return IETFUtils.valueToString(cn.getFirst().getValue());
-                } catch (CertificateEncodingException e) {
-                    return null;
-                }
+                log.debug("TPP not found. This TPP {} is not on board yet", cn);
+                return cn;
             } else {
                 return optionalTpp.get().getClientId();
             }

@@ -265,3 +265,42 @@ services:
       - "443:8443"
     networks:
       obref:
+
+  auth-ui:
+    image: openbankingtoolkit/openbanking-auth-ui
+    ports:
+      - "4203:443"
+    environment:
+      DOMAIN: .dev-ob.forgerock.financial
+      AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
+      DIRECTORY_BACKEND_URL: https://service.directory.dev-ob.forgerock.financial:8074/directory-services
+    volumes:
+      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
+  directory-ui:
+    image: openbankingtoolkit/openbanking-directory-ui
+    ports:
+      - "4202:443"
+    environment:
+      DOMAIN: .dev-ob.forgerock.financial
+      DIRECTORY_BACKEND_URL: https://service.directory.dev-ob.forgerock.financial:8074
+      AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
+      ACCOUNT_REQUEST_BACKEND_URL: https://rs.aspsp.dev-ob.forgerock.financial:8074/api/account-requests
+    volumes:
+      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
+  bank-ui:
+    image: openbankingtoolkit/openbanking-bank-ui
+    ports:
+      - "4201:443"
+    environment:
+      DOMAIN: .dev-ob.forgerock.financial
+      AUTHORIZATION_URL: https://as.aspsp.ui-dev.forgerock.financial
+      AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
+      REMOVE_CONSENT_URL: https://rcs.aspsp.dev-ob.forgerock.financial:8074
+    volumes:
+      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
