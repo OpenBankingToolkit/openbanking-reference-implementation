@@ -40,18 +40,18 @@
 
     <organization>
         <name>ForgeRock</name>
-        <url>http://www.forgerock.org</url>
+        <url>http://www.forgerock.com</url>
     </organization>
-    <url>http://www.forgerock.org</url>
+    <url>http://www.forgerock.com</url>
 
     <properties>
-        <ob-analytics.version>1.1.35</ob-analytics.version>
-        <ob-jwkms.version>1.1.53</ob-jwkms.version>
+        <ob-analytics.version>1.1.36</ob-analytics.version>
+        <ob-jwkms.version>1.1.55</ob-jwkms.version>
         <ob-auth.version>1.0.55</ob-auth.version>
         <ob-directory.version>1.4.51</ob-directory.version>
         <ob-auth.version>1.0.53</ob-auth.version>
-        <ob-aspsp.version>1.0.60</ob-aspsp.version>
-        <ob-clients.version>1.0.23</ob-clients.version>
+        <ob-aspsp.version>1.0.61</ob-aspsp.version>
+        <ob-clients.version>1.0.25</ob-clients.version>
     </properties>
 
     <modules>
