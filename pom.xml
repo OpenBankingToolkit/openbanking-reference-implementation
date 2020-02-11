@@ -52,6 +52,7 @@
         <ob-auth.version>1.0.53</ob-auth.version>
         <ob-aspsp.version>1.0.61</ob-aspsp.version>
         <ob-clients.version>1.0.25</ob-clients.version>
+        <ob-extensions.version>1.0.4</ob-extensions.version>
     </properties>
 
     <modules>
@@ -130,6 +131,18 @@
             <dependency>
                 <groupId>com.forgerock.openbanking.aspsp</groupId>
                 <artifactId>forgerock-openbanking-uk-aspsp-rs-rcs-server</artifactId>
+                <version>${ob-aspsp.version}</version>
+            </dependency>
+            <!-- openbanking extensions -->
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-uk-extensions</artifactId>
+                <version>${ob-extensions.version}</version>
+            </dependency>
+            <!-- integration test -->
+            <dependency>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
+                <artifactId>integration-test-support</artifactId>
                 <version>${ob-aspsp.version}</version>
             </dependency>
         </dependencies>

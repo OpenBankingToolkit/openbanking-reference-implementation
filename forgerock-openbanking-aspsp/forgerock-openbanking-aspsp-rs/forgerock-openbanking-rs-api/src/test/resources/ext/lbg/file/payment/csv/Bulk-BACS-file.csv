@@ -1,0 +1,5 @@
+H,20180101,1,3,0.6,
+D,Test payments,301775-12345678,,,
+C,Freds no1 account,100000,12345678,ref 1,0.1
+C,Freds no1 account,100000,12345678,ref 1,0.2
+C,Freds no1 account,100000,12345678,ref 1,0.3
