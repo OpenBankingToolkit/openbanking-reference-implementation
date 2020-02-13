@@ -21,7 +21,13 @@
 package com.forgerock.openbanking.extensions.lbg.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentFactory;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentType;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVCreditIndicatorRow;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVDebitIndicatorSection;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFilePayment;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVHeaderIndicatorSection;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidation;
 import com.forgerock.openbanking.aspsp.rs.store.ForgerockOpenbankingRsStoreApplication;
 import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
 import com.forgerock.openbanking.aspsp.rs.store.repository.v3_1.payments.FileConsent2Repository;
@@ -29,11 +35,13 @@ import com.forgerock.openbanking.common.conf.RSConfiguration;
 import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatusCode;
 import com.forgerock.openbanking.common.model.openbanking.v3_1.payment.FRFileConsent2;
 import com.forgerock.openbanking.common.model.version.OBVersion;
+import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.integration.test.support.SpringSecForTest;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.github.jsonzou.jmockdata.JMockData;
 import kong.unirest.*;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.json.JSONArray;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,13 +60,17 @@ import uk.org.openbanking.datamodel.payment.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.UUID;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
@@ -66,9 +78,9 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = ForgerockOpenbankingRsStoreApplication.class)
-public class CSVFilePaymentConsentsRsStoreApiControllerTest {
+public class CSVFilePaymentConsentsRsStoreApiControllerIT {
 
-    final static String RESOURCES_PACK = "extensions/lgb/file/payment/csv";
+    private CSVFilePayment file;
 
     @LocalServerPort
     private int port;
@@ -87,6 +99,12 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
 
     @Before
     public void setUp() {
+        Exception error = catchThrowableOfType(
+                () -> setFile(),
+                Exception.class
+        );
+        assertThat(error).isNull();
+        assertThat(file).isNotNull();
         Unirest.config().setObjectMapper(new JacksonObjectMapper(objectMapper)).verifySsl(false);
     }
 
@@ -99,14 +117,8 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         // Given
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
-        OBWriteFileConsent2 consentRequest = JMockData.mock(OBWriteFileConsent2.class);
-        consentRequest.getData().getInitiation().fileHash("dslkjdslkfhsdlkfjlskdj");
-        consentRequest.getData().getInitiation().fileReference("Batch-001");
-        consentRequest.getData().getInitiation().fileType(CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType());
-        consentRequest.getData().getInitiation().numberOfTransactions("1");
-        consentRequest.getData().getInitiation().controlSum(new BigDecimal("10.00"));
-        consentRequest.getData().getInitiation().localInstrument("Local-instrument");
-        consentRequest.getData().getInitiation().supplementaryData(new OBSupplementaryData1());
+
+        OBWriteFileConsent2 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType());
 
         // When
         HttpResponse<OBWriteFileConsentResponse2> response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/")
@@ -144,19 +156,10 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
 
-        String csvFileContent = getContent(CSVFilePaymentConsentsRsStoreApiControllerTest.class.getClassLoader().getResource(RESOURCES_PACK + "/Batch-FPS-file.csv").getFile());
+        OBWriteFileConsent2 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType());
 
-        FRFileConsent2 existingConsent = JMockData.mock(FRFileConsent2.class);
-        existingConsent.setStatus(ConsentStatusCode.AWAITINGUPLOAD);
-        existingConsent.setId(fileConsentId);
-        existingConsent.setFileContent(null);
-        existingConsent.setPayments(Collections.emptyList());
-        existingConsent.setWriteFileConsent(new OBWriteFileConsent2().data(new OBWriteDataFileConsent2().initiation(new OBFile2()
-                .fileHash("kdjfklsdjflksjf")
-                .numberOfTransactions("3")
-                .controlSum(new BigDecimal("0.6"))
-                .fileType(CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType())
-        )));
+        FRFileConsent2 existingConsent = mockFileConsent(fileConsentId, "", consentRequest);
+
         repository.save(existingConsent);
 
         // When
@@ -168,7 +171,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
                 .header(CONTENT_TYPE, CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType())
                 .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
-                .body(csvFileContent)
+                .body(file.toString())
                 .asString();
 
         // Then
@@ -177,7 +180,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         FRFileConsent2 consent = repository.findById(fileConsentId).get();
         assertThat(consent.getId()).isEqualTo(fileConsentId);
         assertThat(consent.getStatus().toOBExternalConsentStatus2Code()).isEqualTo(OBExternalConsentStatus2Code.AWAITINGAUTHORISATION);
-        assertThat(consent.getFileContent()).isEqualTo(csvFileContent);
+        assertThat(consent.getFileContent()).isEqualTo(file.toString());
     }
 
     /**
@@ -192,19 +195,10 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
 
-        String csvFileContent = getContent(CSVFilePaymentConsentsRsStoreApiControllerTest.class.getClassLoader().getResource(RESOURCES_PACK + "/Bulk-BACS-file.csv").getFile());
+        OBWriteFileConsent2 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getFileType());
 
-        FRFileConsent2 existingConsent = JMockData.mock(FRFileConsent2.class);
-        existingConsent.setStatus(ConsentStatusCode.AWAITINGUPLOAD);
-        existingConsent.setId(fileConsentId);
-        existingConsent.setFileContent(null);
-        existingConsent.setPayments(Collections.emptyList());
-        existingConsent.setWriteFileConsent(new OBWriteFileConsent2().data(new OBWriteDataFileConsent2().initiation(new OBFile2()
-                .fileHash("kdjfklsdjflksjf")
-                .numberOfTransactions("3")
-                .controlSum(new BigDecimal("0.6"))
-                .fileType(CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getFileType())
-        )));
+        FRFileConsent2 existingConsent = mockFileConsent(fileConsentId, "", consentRequest);
+
         repository.save(existingConsent);
 
         // When
@@ -216,7 +210,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
                 .header(CONTENT_TYPE, CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType())
                 .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
-                .body(csvFileContent)
+                .body(file.toString())
                 .asString();
 
         // Then
@@ -225,7 +219,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         FRFileConsent2 consent = repository.findById(fileConsentId).get();
         assertThat(consent.getId()).isEqualTo(fileConsentId);
         assertThat(consent.getStatus().toOBExternalConsentStatus2Code()).isEqualTo(OBExternalConsentStatus2Code.AWAITINGAUTHORISATION);
-        assertThat(consent.getFileContent()).isEqualTo(csvFileContent);
+        assertThat(consent.getFileContent()).isEqualTo(file.toString());
     }
 
     /**
@@ -299,17 +293,10 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
 
-        FRFileConsent2 existingConsent = JMockData.mock(FRFileConsent2.class);
-        existingConsent.setStatus(ConsentStatusCode.AWAITINGUPLOAD);
-        existingConsent.setId(fileConsentId);
-        existingConsent.setFileContent(null);
-        existingConsent.setPayments(Collections.emptyList());
-        existingConsent.setWriteFileConsent(new OBWriteFileConsent2().data(new OBWriteDataFileConsent2().initiation(new OBFile2()
-                .fileHash("kdjfklsdjflksjf")
-                .numberOfTransactions("3")
-                .controlSum(new BigDecimal("0.6"))
-                .fileType(CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getFileType())
-        )));
+        OBWriteFileConsent2 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getFileType());
+
+        FRFileConsent2 existingConsent = mockFileConsent(fileConsentId, "", consentRequest);
+
         repository.save(existingConsent);
 
         HttpResponse response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/" + fileConsentId + "/file")
@@ -330,6 +317,102 @@ public class CSVFilePaymentConsentsRsStoreApiControllerTest {
         assertThat(response.getStatus()).isEqualTo(400);
         assertThat(jsonResponseBody.getObject().get("Code")).isEqualTo("OBRI.Request.Invalid");
         assertThat(jsonErrors.optJSONObject(0).get("ErrorCode")).isEqualTo("UK.OBIE.Resource.InvalidFormat");
+    }
+
+    /**
+     * Create the consent request object
+     * @param fileType
+     * @return
+     */
+    @Ignore
+    private static final OBWriteFileConsent2 mockConsent(String fileContent, String fileType){
+        OBWriteFileConsent2 consentRequest = JMockData.mock(OBWriteFileConsent2.class);
+        consentRequest.getData().getInitiation().fileHash(computeSHA256FullHash(fileContent));
+        consentRequest.getData().getInitiation().fileReference("ref-001");
+        consentRequest.getData().getInitiation().fileType(fileType);
+        consentRequest.getData().getInitiation().numberOfTransactions("1");
+        consentRequest.getData().getInitiation().controlSum(new BigDecimal("10.00"));
+        consentRequest.getData().getInitiation().localInstrument("Local-instrument");
+        consentRequest.getData().getInitiation().supplementaryData(new OBSupplementaryData1());
+        return consentRequest;
+    }
+
+    /**
+     * Create the file payment consent object
+     * @param fileConsentId
+     * @param csvFileContent
+     * @param consentRequest
+     * @return
+     */
+    @Ignore
+    private static final FRFileConsent2 mockFileConsent(String fileConsentId, String csvFileContent, OBWriteFileConsent2 consentRequest){
+        FRFileConsent2 frFileConsent2 = JMockData.mock(FRFileConsent2.class);
+        frFileConsent2.setStatus(ConsentStatusCode.AWAITINGAUTHORISATION);
+        frFileConsent2.setId(fileConsentId);
+        frFileConsent2.setFileContent(csvFileContent);
+        frFileConsent2.setPayments(Collections.emptyList());
+        frFileConsent2.setWriteFileConsent(consentRequest);
+        return frFileConsent2;
+    }
+
+    @Ignore
+    private static final String computeSHA256FullHash(final String content) {
+        try {
+            val digest = MessageDigest.getInstance("SHA-256");
+            val hash = digest.digest(content.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unknown algorithm for file hash: SHA-256");
+        }
+
+    }
+
+    /**
+     * Create a instance of CSVFilePayment
+     * or reset the fields values to reuse it on every test
+     *
+     * @throws OBErrorException
+     */
+    @Ignore
+    private void setFile() throws OBErrorException {
+        if (file == null) {
+            file = CSVFilePaymentFactory.create(CSVFilePaymentType.UK_LBG_FPS_BATCH_V10);
+        }
+        file.setHeaderIndicator(
+                CSVHeaderIndicatorSection.builder()
+                        .headerIndicator(CSVHeaderIndicatorSection.HEADER_IND_EXPECTED)
+                        .fileCreationDate(file.getDateTimeFormatter().format(LocalDate.now()))
+                        .uniqueId("ID001")
+                        .numCredits(1)
+                        .valueCreditsSum(new BigDecimal(10.10).setScale(2, RoundingMode.CEILING))
+                        .build()
+        );
+
+        file.setDebitIndicator(
+                CSVDebitIndicatorSection.builder()
+                        .debitIndicator(CSVDebitIndicatorSection.DEBIT_IND_EXPECTED)
+                        .paymentDate(file.getDateTimeFormatter().format(LocalDate.now().plusDays(2)))
+                        .batchReference("Payments")
+                        .debitAccountDetails("301775-12345678")
+                        .build()
+        );
+
+        List row = new ArrayList<CSVCreditIndicatorRow>();
+        row.add(
+                CSVCreditIndicatorRow.builder()
+                        .creditIndicator(CSVCreditIndicatorRow.CREDIT_IND_EXPECTED)
+                        .recipientName("Beneficiary name")
+                        .accNumber("12345678")
+                        .recipientSortCode("301763")
+                        .reference("Beneficiary ref.")
+                        .debitAmount(new BigDecimal(10.10).setScale(2, RoundingMode.CEILING))
+                        .paymentASAP(CSVValidation.PAYMENT_ASAP_VALUES[0])
+                        .paymentDate("")
+                        .eToEReference("EtoEReference")
+                        .build()
+        );
+
+        file.setCreditIndicatorRows(row);
     }
 
     /**
