@@ -53,6 +53,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -120,6 +121,7 @@ public class ForgerockOpenbankingRsApiApplication {
 
 
     @Configuration
+    @Order
     static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         private static String CLIENT_CERTIFICATE_HEADER_NAME = "x-client-jwk";
 

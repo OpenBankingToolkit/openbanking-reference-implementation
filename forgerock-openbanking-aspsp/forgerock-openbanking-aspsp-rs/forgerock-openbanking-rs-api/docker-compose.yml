@@ -1,0 +1,22 @@
+version: '2'
+services:
+ config-rs-api:
+  container_name: config-rs-api
+  image: r.cfcr.io/openbanking/obri/config
+  ports:
+   - "18888:8888"
+  environment:
+   - spring_profiles_active=native,console-logging
+  networks:
+   default:
+    aliases:
+    - config.dev-ob.forgerock.financial
+ mongo-rs-store:
+  container_name: mongo-rs-api
+  image: mongo
+  ports:
+  - "57019:27017"
+  networks:
+   default:
+    aliases:
+    - mongo
