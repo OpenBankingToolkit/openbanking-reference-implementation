@@ -54,7 +54,7 @@ public class AddInteractionIdHeaderGatewayFilter implements GatewayFilter {
         String xFapiInteractionId = request.getHeaders().getFirst(X_FAPI_INTERACTION_ID_HEADER_NAME);
         if (StringUtils.isEmpty(xFapiInteractionId)) {
             log.debug("Interaction ID is missing, generate ID '{}'", xFapiInteractionId);
-            xFapiInteractionId = UUID.randomUUID().toString();
+            xFapiInteractionId = tracer.currentSpan().context().traceIdString();
         }
         try{
             UUID.fromString(xFapiInteractionId);
