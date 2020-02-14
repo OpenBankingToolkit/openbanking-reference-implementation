@@ -22,7 +22,7 @@ RUN apt-get update && \
 FROM tomcat:9-jdk11-openjdk
 
 SHELL ["/bin/bash", "-c"]
-ENV AMSTER_KEY_PATH "/var/run/secrets/amster/id_rsa"
+ENV AMSTER_KEY_PATH "/var/run/secrets/amster"
 ENV FORGEROCK_HOME /home/forgerock
 ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
@@ -57,7 +57,7 @@ COPY forgerock-am/am/web.xml "$CATALINA_HOME"/webapps/ROOT/WEB-INF/web.xml
 ADD keystore/aspsp/keystore.jks /etc/ssl/certs/java/keystore.jks
 
 RUN mkdir -p /var/run/secrets/amster && \
-    ssh-keygen -t rsa -b 4096 -C "obri-amster@example.com" -f /var/run/secrets/amster/id_rsa -q -N "" && \
+    ssh-keygen -t rsa -b 4096 -C "obri-amster@example.com" -f ${AMSTER_KEY_PATH}/id_rsa -q -N "" && \
     if ! [ -f /etc/ssl/certs/java/cacerts ]; then ln -s $(find / -name cacerts | head -n1) /etc/ssl/certs/java/cacerts; fi && \
     keytool -import -alias obri-internal-ca -trustcacerts -noprompt \
             -keystore /etc/ssl/certs/java/cacerts -storepass changeit \
@@ -71,7 +71,13 @@ RUN mkdir -p /var/run/secrets/amster && \
     keytool -import -alias obsandboxissuingca -trustcacerts -noprompt \
             -keystore /etc/ssl/certs/java/cacerts -storepass changeit \
             -file /home/forgerock/OB_SandBox_PP_Issuing_CA.cer
-    
+
+# verify this is PEM format and convert from new OpenSSH format if not
+# https://github.com/ForgeCloud/ob-reference-implementation/issues/1671
+# Check for keys in new OpenSSH format
+RUN chmod 0600 ${AMSTER_KEY_PATH}/id_rsa && \
+    ssh-keygen -p -N "" -m PEM -f ${AMSTER_KEY_PATH}/id_rsa && \
+    chmod 0644 ${AMSTER_KEY_PATH}/id_rsa
 
 ADD forgerock-am/amster/ /opt/amster/
 ADD forgerock-am/am/*.sh $FORGEROCK_HOME/
