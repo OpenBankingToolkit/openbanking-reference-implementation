@@ -84,6 +84,7 @@
         <dependency>
             <groupId>com.forgerock.openbanking.aspsp</groupId>
             <artifactId>integration-test-support</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jsonzou</groupId>
