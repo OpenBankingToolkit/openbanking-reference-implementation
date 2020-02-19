@@ -28,7 +28,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>OASIS</version>
+    <version>queen</version>
     <packaging>pom</packaging>
 
     <parent>
