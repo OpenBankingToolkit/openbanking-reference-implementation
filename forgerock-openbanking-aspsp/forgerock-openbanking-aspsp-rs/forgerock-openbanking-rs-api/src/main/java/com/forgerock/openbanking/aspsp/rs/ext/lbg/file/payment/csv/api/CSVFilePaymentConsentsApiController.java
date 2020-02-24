@@ -158,7 +158,6 @@ public class CSVFilePaymentConsentsApiController {
                 .principal(principal)
                 .filters(f -> {
                     f.verifyFileHash(fileParam);
-                    f.verifyContentTypeHeader(contentTypeOfFile);
                     f.verifyIdempotencyKeyLength(xIdempotencyKey);
                 })
                 .execute(
