@@ -62,8 +62,8 @@ import static com.forgerock.openbanking.constants.OpenBankingConstants.HTTP_DATE
 
 
 @Api(value = "csv-file-payment-consents", description = "the CSV file-payment-consents API")
-@Controller("CSVFilePaymentConsentsApiV3.1")
-@RequestMapping({"/open-banking/v3.1/pisp"})
+@Controller("CSVFilePaymentConsentsApi")
+@RequestMapping({"/open-banking/v3.0/pisp","/open-banking/v3.1/pisp","/open-banking/v3.1.1/pisp","/open-banking/v3.1.2/pisp"})
 @Slf4j
 public class CSVFilePaymentConsentsRsStoreApiController {
 
