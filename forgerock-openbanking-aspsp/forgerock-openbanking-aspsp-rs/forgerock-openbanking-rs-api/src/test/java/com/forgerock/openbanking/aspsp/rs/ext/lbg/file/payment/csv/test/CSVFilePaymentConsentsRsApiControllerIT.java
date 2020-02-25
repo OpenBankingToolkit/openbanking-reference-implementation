@@ -93,6 +93,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {ForgerockOpenbankingRsApiApplication.class})
 public class CSVFilePaymentConsentsRsApiControllerIT {
 
+    private final static String _url = "/open-banking/v3.1.2/pisp/file-payment-consents/{ConsentId}/file";
     private CSVFilePayment file;
 
     private MockMvc mockMvc;
@@ -159,7 +160,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
         // then
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("https://rs-api:" + port + "/open-banking/v3.1/pisp/file-payment-consents/{ConsentId}/file", fileConsentId)
+                        .post("https://rs-api:" + port + _url, fileConsentId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType("text/csv")
                         .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
@@ -200,7 +201,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
         // then
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("https://rs-api:" + port + "/open-banking/v3.1/pisp/file-payment-consents/{ConsentId}/file", fileConsentId)
+                        .post("https://rs-api:" + port + _url, fileConsentId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType("text/csv")
                         .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)

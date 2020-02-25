@@ -80,6 +80,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 @ContextConfiguration(classes = ForgerockOpenbankingRsStoreApplication.class)
 public class CSVFilePaymentConsentsRsStoreApiControllerIT {
 
+    private static final String _URL = "/open-banking/v3.1.2/pisp/file-payment-consents/";
     private CSVFilePayment file;
 
     @LocalServerPort
@@ -163,7 +164,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         repository.save(existingConsent);
 
         // When
-        HttpResponse response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/" + fileConsentId + "/file")
+        HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
@@ -202,7 +203,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         repository.save(existingConsent);
 
         // When
-        HttpResponse response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/" + fileConsentId + "/file")
+        HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
@@ -232,7 +233,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         String fileConsentId = UUID.randomUUID().toString();
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
-        HttpResponse response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/" + fileConsentId + "/file")
+        HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
@@ -262,7 +263,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         String fileConsentId = UUID.randomUUID().toString();
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
-        HttpResponse response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/" + fileConsentId + "/file")
+        HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
@@ -299,7 +300,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
 
         repository.save(existingConsent);
 
-        HttpResponse response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/" + fileConsentId + "/file")
+        HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
