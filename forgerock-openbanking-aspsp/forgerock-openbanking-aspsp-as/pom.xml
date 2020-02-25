@@ -28,13 +28,13 @@
     <name>ForgeRock OpenBanking Reference Implementation - ASPSP - AS</name>
     <groupId>com.forgerock.openbanking.aspsp.as</groupId>
     <artifactId>forgerock-openbanking-aspsp-as</artifactId>
-     <version>queen</version>
+     <version>3.1.2-queen-rc3</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking.aspsp</groupId>
         <artifactId>forgerock-openbanking-aspsp</artifactId>
-         <version>queen</version>
+         <version>3.1.2-queen-rc3</version>
     </parent>
 
     <modules>
