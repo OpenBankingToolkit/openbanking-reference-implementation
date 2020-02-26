@@ -53,6 +53,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.org.openbanking.OBHeaders;
@@ -165,12 +166,12 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
 
         // When
         HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
+                .accept(MediaType.APPLICATION_JSON_UTF8.toString())
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
                 .header(CONTENT_TYPE, CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType())
-                .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
                 .body(file.toString())
                 .asString();
@@ -204,12 +205,12 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
 
         // When
         HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
+                .accept(MediaType.APPLICATION_JSON_UTF8.toString())
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
                 .header(CONTENT_TYPE, CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType())
-                .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
                 .body(file.toString())
                 .asString();
@@ -234,12 +235,12 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
         HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
+                .accept(MediaType.APPLICATION_JSON_UTF8.toString())
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
                 .header(CONTENT_TYPE, CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType())
-                .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
                 .body("csvFileContent")
                 .asJson();
@@ -264,12 +265,12 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         MockTppHelper.setupMockTpp(tppRepository);
         HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
+                .accept(MediaType.APPLICATION_JSON_UTF8.toString())
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
                 .header(CONTENT_TYPE, "CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType()")
-                .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
                 .body("csvFileContent")
                 .asJson();
@@ -301,12 +302,12 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         repository.save(existingConsent);
 
         HttpResponse response = Unirest.post("https://rs-store:" + port + _URL + fileConsentId + "/file")
+                .accept(MediaType.APPLICATION_JSON_UTF8.toString())
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
                 .header(CONTENT_TYPE, CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getContentType())
-                .header(ACCEPT, "application/json")
                 .header("x-ob-client-id", MockTppHelper.MOCK_CLIENT_ID)
                 .body("csvFileContent")
                 .asJson();

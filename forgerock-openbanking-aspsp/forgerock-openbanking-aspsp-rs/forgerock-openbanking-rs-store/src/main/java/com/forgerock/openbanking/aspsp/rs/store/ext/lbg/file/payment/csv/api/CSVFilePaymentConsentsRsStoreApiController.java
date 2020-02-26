@@ -101,8 +101,7 @@ public class CSVFilePaymentConsentsRsStoreApiController {
     )
     @RequestMapping(value = "/file-payment-consents/{ConsentId}/file",
             produces = {"application/json; charset=utf-8"},
-            headers = {"Content-Type=text/csv"},
-            consumes = {"*/*"},
+            consumes = {"text/csv; charset=utf-8"},
             method = RequestMethod.POST)
     ResponseEntity<Void> csvCreateFilePaymentConsentsConsentIdFile(
             @ApiParam(value = "Default", required = true)
