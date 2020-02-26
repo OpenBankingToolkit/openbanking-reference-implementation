@@ -161,14 +161,12 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("https://rs-api:" + port + _url, fileConsentId)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType("text/csv")
                         .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                         .header(OBHeaders.AUTHORIZATION, "Bearer " + jws)
                         .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                         .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
-                        .header(CONTENT_TYPE, "text/csv")
-                        .header(ACCEPT, "application/json")
                         .header("x-ob-client-id", "pispId123")
                         .content(file.toString()))
                 .andExpect(status().isCreated())
@@ -202,14 +200,12 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("https://rs-api:" + port + _url, fileConsentId)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType("text/csv")
                         .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                         .header(OBHeaders.AUTHORIZATION, "Bearer " + jws)
                         .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                         .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
-                        .header(CONTENT_TYPE, "text/csv")
-                        .header(ACCEPT, "application/json")
                         .header("x-ob-client-id", "pispId123")
                         .content(file.toString()))
                 .andExpect(status().isCreated())
