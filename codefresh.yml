@@ -250,6 +250,62 @@ steps:
               - rs.aspsp.dev-ob.forgerock.financial
               - matls.as.aspsp.dev-ob.forgerock.financial
               - as.aspsp.dev-ob.forgerock.financial
+  integration-test-rs-api:
+    type: composition
+    stage: "integration-test"
+    title: "RS-API integration tests"
+    description: "Start docker services via docker-compose and run rs-api integration tests"
+    composition: docker-compose.yml
+    composition_variables:
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+    working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
+    composition_candidates:
+      scgw-tests:
+        volumes:
+          - ${{CF_VOLUME}}:/codefresh/volume
+        image: r.cfcr.io/openbanking/ob-release:latest
+        environment: *global_env
+        command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/pom.xml
+        # Simulate DNS routing multiple hostnames
+        networks:
+          default:
+            aliases:
+              - jwkms
+              - rs-api
+              - as-api
+              - rs-store
+              - jwkms.dev-ob.forgerock.financial
+              - rs.aspsp.dev-ob.forgerock.financial
+              - matls.as.aspsp.dev-ob.forgerock.financial
+              - as.aspsp.dev-ob.forgerock.financial
+  integration-test-rs-store:
+    type: composition
+    stage: "integration-test"
+    title: "RS-STORE integration tests"
+    description: "Start docker services via docker-compose and run rs-store integration tests"
+    composition: docker-compose.yml
+    composition_variables:
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+    working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
+    composition_candidates:
+      scgw-tests:
+        volumes:
+          - ${{CF_VOLUME}}:/codefresh/volume
+        image: r.cfcr.io/openbanking/ob-release:latest
+        environment: *global_env
+        command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/pom.xml
+        # Simulate DNS routing multiple hostnames
+        networks:
+          default:
+            aliases:
+              - jwkms
+              - rs-api
+              - as-api
+              - rs-store
+              - jwkms.dev-ob.forgerock.financial
+              - rs.aspsp.dev-ob.forgerock.financial
+              - matls.as.aspsp.dev-ob.forgerock.financial
+              - as.aspsp.dev-ob.forgerock.financial
   upload-code-coverage:
     image: rkostrzewski/codecov
     stage: "integration-test"
