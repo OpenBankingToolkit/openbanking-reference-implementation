@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>3.1.2-queen-rc3</version>
+        <version>3.1.2-queen-rc4</version>
     </parent>
 
     <dependencies>
