@@ -40,10 +40,11 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jwt.JWT;
 import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Collector;
 import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import dev.openbanking4.spring.security.multiauth.model.authentication.AuthenticationWithEditableAuthorities;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import io.netty.handler.ssl.SslContext;
 import lombok.AllArgsConstructor;
@@ -79,6 +80,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -88,6 +90,7 @@ import javax.servlet.Filter;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -116,16 +119,16 @@ public class ForgerockOpenbankingDirectoryApplication {
     @Configuration
     static class AuthWebSecurity extends WebSecurityConfigurerAdapter {
 
-		private static String CLIENT_CERTIFICATE_HEADER_NAME = "x-client-jwk";
+        private static String CLIENT_CERTIFICATE_HEADER_NAME = "x-client-jwk";
 
-		@Autowired
-		private KeyStoreService keyStoreService;
+        @Autowired
+        private KeyStoreService keyStoreService;
         @Autowired
         private DirectoryUtilsService directoryUtilsService;
-		@Value("${matls.forgerock-internal-ca-alias}")
-		private String internalCaAlias;
-		@Value("${matls.forgerock-external-ca-alias}")
-		private String externalCaAlias;
+        @Value("${matls.forgerock-internal-ca-alias}")
+        private String internalCaAlias;
+        @Value("${matls.forgerock-external-ca-alias}")
+        private String externalCaAlias;
         @Autowired
         private CryptoApiClient cryptoApiClient;
         @Autowired
@@ -133,11 +136,12 @@ public class ForgerockOpenbankingDirectoryApplication {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-			X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
-			X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
+            X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
+            X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
 
-			OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
-			OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, directoryUtilsService);
+            JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
+            OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
+            OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, directoryUtilsService);
             http
 
                     .csrf().disable() // We don't need CSRF for JWT based authentication
@@ -156,9 +160,7 @@ public class ForgerockOpenbankingDirectoryApplication {
                             .collector(DecryptingJwtCookieCollector.builder()
                                     .cryptoApiClient(cryptoApiClient)
                                     .cookieName("obri-session")
-                                    .authoritiesCollector(t -> Sets.newHashSet(
-                                            OBRIRole.ROLE_SOFTWARE_STATEMENT,
-                                            OBRIRole.ROLE_USER))
+                                    .authoritiesCollector(jwtCookieAuthorityCollector)
                                     .build())
                             .collector(PSD2Collector.psd2Builder()
                                     .collectFromHeader(CertificateHeaderFormat.JWK)
@@ -192,8 +194,34 @@ public class ForgerockOpenbankingDirectoryApplication {
                     authoritiesCollector,
                     cookieName
             );
+
         }
 
+    }
+
+    /*
+     * Adding the default authorities.
+     * Adding the authorities coming from Forgerock AM JWT Cookie authentication if exist authorities.
+     * FYI: Additional Authorities setted on Claim 'group' set in 'identity / MSISDN Number'.
+     */
+    @Slf4j
+    @AllArgsConstructor
+    public static class JwtCookieAuthorityCollector implements CustomCookieCollector.AuthoritiesCollector<JWT> {
+
+        @Override
+        public Set<GrantedAuthority> getAuthorities(JWT token) throws ParseException {
+            Set<GrantedAuthority> authorities = Sets.newHashSet(
+                    OBRIRole.ROLE_SOFTWARE_STATEMENT,
+                    OBRIRole.ROLE_USER);
+            List<String> AMGroups = token.getJWTClaimsSet().getStringListClaim("group");
+            if (AMGroups != null && !AMGroups.isEmpty()) {
+                log.trace("AM Authorities founds: {}", AMGroups);
+                for (String AMgroup : AMGroups) {
+                    authorities.add(new SimpleGrantedAuthority(AMgroup));
+                }
+            }
+            return authorities;
+        }
     }
 
     @Slf4j
@@ -237,6 +265,7 @@ public class ForgerockOpenbankingDirectoryApplication {
         }
 
     }
+
     @Slf4j
     @AllArgsConstructor
     public static class OBRIExternalCertificates implements PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector {
@@ -244,6 +273,7 @@ public class ForgerockOpenbankingDirectoryApplication {
         private X509Certificate caCertificate;
 
         private DirectoryUtilsService directoryUtilsService;
+
         @Override
         public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
             Set<GrantedAuthority> authorities = new HashSet<>();
@@ -286,6 +316,7 @@ public class ForgerockOpenbankingDirectoryApplication {
         }
 
     }
+
     @Bean
     public RestTemplate restTemplate(@Qualifier("mappingJacksonHttpMessageConverter")
                                              MappingJackson2HttpMessageConverter converter) throws SslConfigurationFailure {
@@ -324,6 +355,7 @@ public class ForgerockOpenbankingDirectoryApplication {
         }
 
     }
+
     @Bean
     public Filter jsonSanitisationFilter(ErrorHandler errorHandler, Tracer tracer) {
         return new JsonRequestSanitisiationFilter(errorHandler, tracer);
