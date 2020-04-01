@@ -213,11 +213,11 @@ public class ForgerockOpenbankingDirectoryApplication {
             Set<GrantedAuthority> authorities = Sets.newHashSet(
                     OBRIRole.ROLE_SOFTWARE_STATEMENT,
                     OBRIRole.ROLE_USER);
-            List<String> AMGroups = token.getJWTClaimsSet().getStringListClaim("group");
-            if (AMGroups != null && !AMGroups.isEmpty()) {
-                log.trace("AM Authorities founds: {}", AMGroups);
-                for (String AMgroup : AMGroups) {
-                    authorities.add(new SimpleGrantedAuthority(AMgroup));
+            List<String> amGroups = token.getJWTClaimsSet().getStringListClaim("group");
+            if (amGroups != null && !amGroups.isEmpty()) {
+                log.trace("AM Authorities founds: {}", amGroups);
+                for (String amGroup : amGroups) {
+                    authorities.add(new SimpleGrantedAuthority(amGroup));
                 }
             }
             return authorities;
