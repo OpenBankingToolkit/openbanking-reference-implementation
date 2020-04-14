@@ -329,90 +329,105 @@ steps:
         candidate: ${{build-config-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-docs-docker-image-latest:
         type: push
         title: "Push docs service docker image to registry"
         candidate: ${{build-docs-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-register-docker-image-latest:
         type: push
         title: "Push register service docker image to registry"
         candidate: ${{build-register-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-directory-docker-image-latest:
         type: push
         title: "Push directory service docker image to registry"
         candidate: ${{build-directory-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-jwkms-image-latest:
         type: push
         title: "Push jwkms service docker image to registry"
         candidate: ${{build-jwkms-image}}
         tags:
           - latest
+        registry: gcr
       push-as-api-docker-image-latest:
         type: push
         title: "Push as-api service docker image to registry"
         candidate: ${{build-as-api-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-api-docker-image-latest:
         type: push
         title: "Push rs-api service docker image to registry"
         candidate: ${{build-rs-api-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-rcs-docker-image-latest:
         type: push
         title: "Push rs-rcs service docker image to registry"
         candidate: ${{build-rs-rcs-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-simulator-docker-image-latest:
         type: push
         title: "Push rs-simulator service docker image to registry"
         candidate: ${{build-rs-simulator-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-store-docker-image-latest:
         type: push
         title: "Push rs-store service docker image to registry"
         candidate: ${{build-rs-store-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-ui-docker-image-latest:
         type: push
         title: "Push rs-ui service docker image to registry"
         candidate: ${{build-rs-ui-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-admin-docker-image-latest:
         type: push
         title: "Push admin service docker image to registry"
         candidate: ${{build-admin-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-metrics-service-docker-image-latest:
         type: push
         title: "Push metrics service docker image to registry"
         candidate: ${{build-metrics-service-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-monitoring-service-docker-image-latest:
         type: push
         title: "Push monitoring service docker image to registry"
         candidate: ${{build-monitoring-service-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-scgw-docker-image-latest:
         type: push
         title: "Push SCGW service docker image to registry"
         candidate: ${{build-scgw-docker-image}}
         tags:
           - latest
+        registry: gcr
     when:
       branch:
         only:
