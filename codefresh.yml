@@ -27,14 +27,14 @@ steps:
     git: github-bot
   #  Prepare stage
   set-global-variables:
-    image: r.cfcr.io/openbanking/ob-release:latest
+    image: eu.gcr.io/openbanking-214714/ob-release:latest
     stage: "prepare"
     title: "Set up global variables"
     environment: *global_env
     commands:
       - cf_export PROJECT_VERSION=$(mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | tr '[:upper:]' '[:lower:]')
   check-copyright:
-    image: r.cfcr.io/openbanking/ob-release:latest
+    image: eu.gcr.io/openbanking-214714/ob-release:latest
     stage: "prepare"
     title: "Verify copyrights"
     working-directory: ${{main_clone}}
@@ -45,7 +45,7 @@ steps:
   build-stage:
     stage: "build"
     steps:
-    image: r.cfcr.io/openbanking/ob-release:latest
+    image: eu.gcr.io/openbanking-214714/ob-release:latest
     title: "Compile, build and install artifact"
     working-directory: ${{main_clone}}
     environment: *global_env
@@ -56,7 +56,7 @@ steps:
     stage: "unit-test"
     steps:
     # Unit-test stage
-    image: r.cfcr.io/openbanking/ob-release:latest
+    image: eu.gcr.io/openbanking-214714/ob-release:latest
     title: "Run unit tests"
     working-directory: ${{main_clone}}
     environment: *global_env
@@ -236,7 +236,7 @@ steps:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: r.cfcr.io/openbanking/ob-release:latest
+        image: eu.gcr.io/openbanking-214714/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-gateway/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -263,7 +263,7 @@ steps:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: r.cfcr.io/openbanking/ob-release:latest
+        image: eu.gcr.io/openbanking-214714/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -291,7 +291,7 @@ steps:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: r.cfcr.io/openbanking/ob-release:latest
+        image: eu.gcr.io/openbanking-214714/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/pom.xml
         # Simulate DNS routing multiple hostnames

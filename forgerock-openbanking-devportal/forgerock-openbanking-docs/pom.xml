@@ -169,7 +169,7 @@
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<configuration>
 					<skipPush>false</skipPush>
-					<repository>r.cfcr.io/openbanking/obri/docs</repository>
+					<repository>eu.gcr.io/openbanking-214714/obri/docs</repository>
 					<buildArgs>
 						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
 					</buildArgs>

@@ -2,7 +2,7 @@ version: '2'
 services:
  config-rs-api:
   container_name: config-rs-api
-  image: r.cfcr.io/openbanking/obri/config
+  image: eu.gcr.io/openbanking-214714/obri/config
   ports:
    - "28889:8888"
   environment:

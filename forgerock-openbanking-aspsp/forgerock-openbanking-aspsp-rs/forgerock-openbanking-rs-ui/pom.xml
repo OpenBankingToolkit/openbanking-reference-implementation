@@ -98,7 +98,7 @@
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<configuration>
 					<skipPush>false</skipPush>
-					<repository>r.cfcr.io/openbanking/obri/rs-ui</repository>
+					<repository>eu.gcr.io/openbanking-214714/obri/rs-ui</repository>
 					<buildArgs>
 						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
 					</buildArgs>
