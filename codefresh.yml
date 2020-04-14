@@ -1,4 +1,4 @@
-version: "2.0"
+version: "1.0"
 
 stages:
   - prepare
@@ -78,7 +78,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-docs-docker-image:
         type: build
         title: "Build docs service docker image"
@@ -89,7 +89,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-register-docker-image:
         type: build
         title: "Build register service docker image"
@@ -100,7 +100,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-directory-docker-image:
         type: build
         title: "Build directory service docker image"
@@ -111,7 +111,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-jwkms-image:
         type: build
         title: "Build jwkms service docker image"
@@ -122,7 +122,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-as-api-docker-image:
         type: build
         title: "Build as-api service docker image"
@@ -133,7 +133,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-rs-api-docker-image:
         type: build
         title: "Build rs-api service docker image"
@@ -144,7 +144,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-rs-rcs-docker-image:
         type: build
         title: "Build rs-rcs service docker image"
@@ -155,7 +155,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-rs-simulator-docker-image:
         type: build
         title: "Build rs-simulator service docker image"
@@ -166,7 +166,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
   docker-build-2:
     type: parallel
     stage: "docker-build"
@@ -181,7 +181,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-rs-ui-docker-image:
         type: build
         title: "Build rs-ui service docker image"
@@ -192,7 +192,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-admin-docker-image:
         type: build
         title: "Build admin service docker image"
@@ -203,7 +203,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-metrics-service-docker-image:
         type: build
         title: "Build metrics service docker image"
@@ -214,7 +214,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-monitoring-service-docker-image:
         type: build
         title: "Build monitoring service docker image"
@@ -225,7 +225,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
       build-scgw-docker-image:
         type: build
         title: "Build scgw service docker image"
@@ -236,7 +236,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-        registry: gcr
+
 
   integration-test-scgw:
     type: composition
@@ -344,105 +344,105 @@ steps:
         candidate: ${{build-config-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-docs-docker-image-latest:
         type: push
         title: "Push docs service docker image to registry"
         candidate: ${{build-docs-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-register-docker-image-latest:
         type: push
         title: "Push register service docker image to registry"
         candidate: ${{build-register-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-directory-docker-image-latest:
         type: push
         title: "Push directory service docker image to registry"
         candidate: ${{build-directory-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-jwkms-image-latest:
         type: push
         title: "Push jwkms service docker image to registry"
         candidate: ${{build-jwkms-image}}
         tags:
           - latest
-        registry: gcr
+
       push-as-api-docker-image-latest:
         type: push
         title: "Push as-api service docker image to registry"
         candidate: ${{build-as-api-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-rs-api-docker-image-latest:
         type: push
         title: "Push rs-api service docker image to registry"
         candidate: ${{build-rs-api-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-rs-rcs-docker-image-latest:
         type: push
         title: "Push rs-rcs service docker image to registry"
         candidate: ${{build-rs-rcs-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-rs-simulator-docker-image-latest:
         type: push
         title: "Push rs-simulator service docker image to registry"
         candidate: ${{build-rs-simulator-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-rs-store-docker-image-latest:
         type: push
         title: "Push rs-store service docker image to registry"
         candidate: ${{build-rs-store-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-rs-ui-docker-image-latest:
         type: push
         title: "Push rs-ui service docker image to registry"
         candidate: ${{build-rs-ui-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-admin-docker-image-latest:
         type: push
         title: "Push admin service docker image to registry"
         candidate: ${{build-admin-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-metrics-service-docker-image-latest:
         type: push
         title: "Push metrics service docker image to registry"
         candidate: ${{build-metrics-service-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-monitoring-service-docker-image-latest:
         type: push
         title: "Push monitoring service docker image to registry"
         candidate: ${{build-monitoring-service-docker-image}}
         tags:
           - latest
-        registry: gcr
+
       push-scgw-docker-image-latest:
         type: push
         title: "Push SCGW service docker image to registry"
         candidate: ${{build-scgw-docker-image}}
         tags:
           - latest
-        registry: gcr
+
     when:
       branch:
         only:
