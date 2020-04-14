@@ -78,7 +78,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-docs-docker-image:
         type: build
         title: "Build docs service docker image"
@@ -89,7 +89,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-register-docker-image:
         type: build
         title: "Build register service docker image"
@@ -100,7 +100,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-directory-docker-image:
         type: build
         title: "Build directory service docker image"
@@ -111,7 +111,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-jwkms-image:
         type: build
         title: "Build jwkms service docker image"
@@ -122,7 +122,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-as-api-docker-image:
         type: build
         title: "Build as-api service docker image"
@@ -133,7 +133,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-rs-api-docker-image:
         type: build
         title: "Build rs-api service docker image"
@@ -144,7 +144,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-rs-rcs-docker-image:
         type: build
         title: "Build rs-rcs service docker image"
@@ -155,7 +155,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-rs-simulator-docker-image:
         type: build
         title: "Build rs-simulator service docker image"
@@ -166,7 +166,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
   docker-build-2:
     type: parallel
     stage: "docker-build"
@@ -181,7 +181,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-rs-ui-docker-image:
         type: build
         title: "Build rs-ui service docker image"
@@ -192,7 +192,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-admin-docker-image:
         type: build
         title: "Build admin service docker image"
@@ -203,7 +203,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-metrics-service-docker-image:
         type: build
         title: "Build metrics service docker image"
@@ -214,7 +214,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-monitoring-service-docker-image:
         type: build
         title: "Build monitoring service docker image"
@@ -225,7 +225,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
       build-scgw-docker-image:
         type: build
         title: "Build scgw service docker image"
@@ -236,7 +236,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-
+        disable_push: true
 
   integration-test-scgw:
     type: composition
