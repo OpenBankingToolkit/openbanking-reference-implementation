@@ -78,6 +78,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-docs-docker-image:
         type: build
         title: "Build docs service docker image"
@@ -88,6 +89,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-register-docker-image:
         type: build
         title: "Build register service docker image"
@@ -98,6 +100,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-directory-docker-image:
         type: build
         title: "Build directory service docker image"
@@ -108,6 +111,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-jwkms-image:
         type: build
         title: "Build jwkms service docker image"
@@ -118,6 +122,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-as-api-docker-image:
         type: build
         title: "Build as-api service docker image"
@@ -128,6 +133,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-rs-api-docker-image:
         type: build
         title: "Build rs-api service docker image"
@@ -138,6 +144,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-rs-rcs-docker-image:
         type: build
         title: "Build rs-rcs service docker image"
@@ -148,6 +155,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-rs-simulator-docker-image:
         type: build
         title: "Build rs-simulator service docker image"
@@ -158,6 +166,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
   docker-build-2:
     type: parallel
     stage: "docker-build"
@@ -172,6 +181,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-rs-ui-docker-image:
         type: build
         title: "Build rs-ui service docker image"
@@ -182,6 +192,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-admin-docker-image:
         type: build
         title: "Build admin service docker image"
@@ -192,6 +203,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-metrics-service-docker-image:
         type: build
         title: "Build metrics service docker image"
@@ -202,6 +214,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-monitoring-service-docker-image:
         type: build
         title: "Build monitoring service docker image"
@@ -212,6 +225,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
       build-scgw-docker-image:
         type: build
         title: "Build scgw service docker image"
@@ -222,6 +236,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
 
   integration-test-scgw:
     type: composition
