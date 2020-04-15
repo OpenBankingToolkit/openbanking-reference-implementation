@@ -33,7 +33,7 @@ steps:
     environment: *global_env
     commands:
       - cf_export PROJECT_VERSION=$(mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | tr '[:upper:]' '[:lower:]')
-      - cf_export REGISTRY_CONTEXT=${{REGISTRY_CONTEXT}}
+      - cf_export REGISTRY_CONTEXT=eu.gcr.io/openbanking-214714
   check-copyright:
     image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     stage: "prepare"
