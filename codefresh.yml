@@ -33,8 +33,9 @@ steps:
     environment: *global_env
     commands:
       - cf_export PROJECT_VERSION=$(mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | tr '[:upper:]' '[:lower:]')
+      - cf_export REGISTRY_CONTEXT=${{REGISTRY_CONTEXT}}
   check-copyright:
-    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     stage: "prepare"
     title: "Verify copyrights"
     working-directory: ${{main_clone}}
@@ -45,7 +46,7 @@ steps:
   build-stage:
     stage: "build"
     steps:
-    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     title: "Compile, build and install artifact"
     working-directory: ${{main_clone}}
     environment: *global_env
@@ -56,7 +57,7 @@ steps:
     stage: "unit-test"
     steps:
     # Unit-test stage
-    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     title: "Run unit tests"
     working-directory: ${{main_clone}}
     environment: *global_env
@@ -71,7 +72,7 @@ steps:
       build-config-docker-image:
         type: build
         title: "Build config service docker image"
-        image_name: obri/config
+        image_name: ${{REGISTRY_CONTEXT}}/obri/config
         working-directory: ${{main_clone}}/forgerock-openbanking-config
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -82,7 +83,7 @@ steps:
       build-docs-docker-image:
         type: build
         title: "Build docs service docker image"
-        image_name: obri/docs
+        image_name: ${{REGISTRY_CONTEXT}}/obri/docs
         working-directory: ${{main_clone}}/forgerock-openbanking-devportal/forgerock-openbanking-docs
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -93,7 +94,7 @@ steps:
       build-register-docker-image:
         type: build
         title: "Build register service docker image"
-        image_name: obri/register
+        image_name: ${{REGISTRY_CONTEXT}}/obri/register
         working-directory: ${{main_clone}}/forgerock-openbanking-devportal/forgerock-openbanking-register
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -104,7 +105,7 @@ steps:
       build-directory-docker-image:
         type: build
         title: "Build directory service docker image"
-        image_name: obri/directory-services
+        image_name: ${{REGISTRY_CONTEXT}}/obri/directory-services
         working-directory: ${{main_clone}}/forgerock-openbanking-directory-services
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -115,7 +116,7 @@ steps:
       build-jwkms-image:
         type: build
         title: "Build jwkms service docker image"
-        image_name: obri/jwkms
+        image_name: ${{REGISTRY_CONTEXT}}/obri/jwkms
         working-directory: ${{main_clone}}/forgerock-openbanking-jwkms
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -126,7 +127,7 @@ steps:
       build-as-api-docker-image:
         type: build
         title: "Build as-api service docker image"
-        image_name: obri/as-api
+        image_name: ${{REGISTRY_CONTEXT}}/obri/as-api
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -137,7 +138,7 @@ steps:
       build-rs-api-docker-image:
         type: build
         title: "Build rs-api service docker image"
-        image_name: obri/rs-api
+        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-api
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -148,7 +149,7 @@ steps:
       build-rs-rcs-docker-image:
         type: build
         title: "Build rs-rcs service docker image"
-        image_name: obri/rs-rcs
+        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-rcs
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-rcs
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -159,7 +160,7 @@ steps:
       build-rs-simulator-docker-image:
         type: build
         title: "Build rs-simulator service docker image"
-        image_name: obri/rs-simulator
+        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-simulator
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-simulator
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -174,7 +175,7 @@ steps:
       build-rs-store-docker-image:
         type: build
         title: "Build rs-store service docker image"
-        image_name: obri/rs-store
+        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-store
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -185,7 +186,7 @@ steps:
       build-rs-ui-docker-image:
         type: build
         title: "Build rs-ui service docker image"
-        image_name: obri/rs-ui
+        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-ui
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-ui
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -196,7 +197,7 @@ steps:
       build-admin-docker-image:
         type: build
         title: "Build admin service docker image"
-        image_name: obri/admin
+        image_name: ${{REGISTRY_CONTEXT}}/obri/admin
         working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-admin
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -207,7 +208,7 @@ steps:
       build-metrics-service-docker-image:
         type: build
         title: "Build metrics service docker image"
-        image_name: obri/metrics-service
+        image_name: ${{REGISTRY_CONTEXT}}/obri/metrics-service
         working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-metrics/forgerock-openbanking-metrics-services
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -218,7 +219,7 @@ steps:
       build-monitoring-service-docker-image:
         type: build
         title: "Build monitoring service docker image"
-        image_name: obri/monitoring
+        image_name: ${{REGISTRY_CONTEXT}}/obri/monitoring
         working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-monitoring
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -251,7 +252,7 @@ steps:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: eu.gcr.io/openbanking-214714/ob-release:latest
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-gateway/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -278,7 +279,7 @@ steps:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: eu.gcr.io/openbanking-214714/ob-release:latest
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -306,7 +307,7 @@ steps:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: eu.gcr.io/openbanking-214714/ob-release:latest
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/pom.xml
         # Simulate DNS routing multiple hostnames
