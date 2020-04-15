@@ -72,7 +72,7 @@ steps:
       build-config-docker-image:
         type: build
         title: "Build config service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/config
+        image_name: obri/config
         working-directory: ${{main_clone}}/forgerock-openbanking-config
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -83,7 +83,7 @@ steps:
       build-docs-docker-image:
         type: build
         title: "Build docs service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/docs
+        image_name: obri/docs
         working-directory: ${{main_clone}}/forgerock-openbanking-devportal/forgerock-openbanking-docs
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -94,7 +94,7 @@ steps:
       build-register-docker-image:
         type: build
         title: "Build register service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/register
+        image_name: obri/register
         working-directory: ${{main_clone}}/forgerock-openbanking-devportal/forgerock-openbanking-register
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -105,7 +105,7 @@ steps:
       build-directory-docker-image:
         type: build
         title: "Build directory service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/directory-services
+        image_name: obri/directory-services
         working-directory: ${{main_clone}}/forgerock-openbanking-directory-services
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -116,7 +116,7 @@ steps:
       build-jwkms-image:
         type: build
         title: "Build jwkms service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/jwkms
+        image_name: obri/jwkms
         working-directory: ${{main_clone}}/forgerock-openbanking-jwkms
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -127,7 +127,7 @@ steps:
       build-as-api-docker-image:
         type: build
         title: "Build as-api service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/as-api
+        image_name: obri/as-api
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -138,7 +138,7 @@ steps:
       build-rs-api-docker-image:
         type: build
         title: "Build rs-api service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-api
+        image_name: obri/rs-api
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -149,7 +149,7 @@ steps:
       build-rs-rcs-docker-image:
         type: build
         title: "Build rs-rcs service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-rcs
+        image_name: obri/rs-rcs
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-rcs
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -160,7 +160,7 @@ steps:
       build-rs-simulator-docker-image:
         type: build
         title: "Build rs-simulator service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-simulator
+        image_name: obri/rs-simulator
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-simulator
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -175,7 +175,7 @@ steps:
       build-rs-store-docker-image:
         type: build
         title: "Build rs-store service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-store
+        image_name: obri/rs-store
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -186,7 +186,7 @@ steps:
       build-rs-ui-docker-image:
         type: build
         title: "Build rs-ui service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/rs-ui
+        image_name: obri/rs-ui
         working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-ui
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -197,7 +197,7 @@ steps:
       build-admin-docker-image:
         type: build
         title: "Build admin service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/admin
+        image_name: obri/admin
         working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-admin
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -208,7 +208,7 @@ steps:
       build-metrics-service-docker-image:
         type: build
         title: "Build metrics service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/metrics-service
+        image_name: obri/metrics-service
         working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-metrics/forgerock-openbanking-metrics-services
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -219,7 +219,7 @@ steps:
       build-monitoring-service-docker-image:
         type: build
         title: "Build monitoring service docker image"
-        image_name: ${{REGISTRY_CONTEXT}}/obri/monitoring
+        image_name: obri/monitoring
         working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-monitoring
         build_arguments:
           - JAR_FILE=target/forgerock-openbanking-*.jar
@@ -246,8 +246,8 @@ steps:
     description: "Start docker services via docker-compose and run scgw integration tests"
     composition: docker-compose.yml
     composition_variables:
-      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
-      - IMAGE=${{build-scgw-docker-image}}
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-gateway
     composition_candidates:
       scgw-tests:
@@ -274,7 +274,8 @@ steps:
     description: "Start docker services via docker-compose and run rs-api integration tests"
     composition: docker-compose.yml
     composition_variables:
-      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
     composition_candidates:
       scgw-tests:
@@ -302,7 +303,8 @@ steps:
     description: "Start docker services via docker-compose and run rs-store integration tests"
     composition: docker-compose.yml
     composition_variables:
-      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
     composition_candidates:
       scgw-tests:
