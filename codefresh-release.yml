@@ -38,7 +38,7 @@ steps:
          - ENFORCE_ADMINS=false      
    set-ob-ui-version:
       title: set ob-ui package version
-      image: r.cfcr.io/openbanking/forgecloud/openbanking/obdeployhelper:master
+      image: eu.gcr.io/openbanking-214714/forgecloud/openbanking/obdeployhelper:master
       stage: ob-ui
       commands:
          - ./ci/release-a-package.sh ob-ui .
@@ -69,7 +69,7 @@ steps:
          - ENFORCE_ADMINS=false
    set-ob-analytics-version:
       title: set ob-analytics package version
-      image: r.cfcr.io/openbanking/forgecloud/openbanking/obdeployhelper:master
+      image: eu.gcr.io/openbanking-214714/forgecloud/openbanking/obdeployhelper:master
       stage: ob-analytics
       commands:
          - ./ci/release-a-package.sh ob-analytics ./forgerock-openbanking-analytics-ui
@@ -93,7 +93,7 @@ steps:
        - ENFORCE_ADMINS=false
    set-ob-reference-implemenation-version:
       title: set ob-analytics package version
-      image: r.cfcr.io/openbanking/ob-release:latest
+      image: eu.gcr.io/openbanking-214714/ob-release:latest
       stage: openbanking-reference-implementation
       commands:
          - ./ci/release-mvn-project.sh openbanking-reference-implementation

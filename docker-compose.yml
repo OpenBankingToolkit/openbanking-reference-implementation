@@ -15,7 +15,7 @@ services:
       obref:
   config:
     container_name: config
-    image: r.cfcr.io/openbanking/obri/config
+    image: eu.gcr.io/openbanking-214714/obri/config
     ports:
       - "8888:8888"
     environment:
@@ -33,7 +33,7 @@ services:
       start_period: 40s
   jwkms:
     container_name: jwkms
-    image: r.cfcr.io/openbanking/obri/jwkms
+    image: eu.gcr.io/openbanking-214714/obri/jwkms
     ports:
       - "8097:8097"
       - "9097:9097"
@@ -57,7 +57,7 @@ services:
       start_period: 40s
   directory-services:
     container_name: directory-services
-    image: r.cfcr.io/openbanking/obri/directory-services
+    image: eu.gcr.io/openbanking-214714/obri/directory-services
     ports:
       - "8076:8076"
       - "9076:9076"
@@ -81,7 +81,7 @@ services:
       start_period: 40s
   scgw:
     container_name: scgw
-    image: r.cfcr.io/openbanking/obri/scgw
+    image: eu.gcr.io/openbanking-214714/obri/scgw
     ports:
       - "8074:8074"
       - "9074:9074"
@@ -118,7 +118,7 @@ services:
       start_period: 40s
   as-api:
     container_name: as-api
-    image: r.cfcr.io/openbanking/obri/as-api
+    image: eu.gcr.io/openbanking-214714/obri/as-api
     ports:
       - "8066:8066"
       - "9066:9066"
@@ -142,7 +142,7 @@ services:
       start_period: 40s
   rs-api:
     container_name: rs-api
-    image: r.cfcr.io/openbanking/obri/rs-api
+    image: eu.gcr.io/openbanking-214714/obri/rs-api
     ports:
       - "8094:8094"
       - "9094:9094"
@@ -166,7 +166,7 @@ services:
       start_period: 40s
   rs-rcs:
     container_name: rs-rcs
-    image: r.cfcr.io/openbanking/obri/rs-rcs
+    image: eu.gcr.io/openbanking-214714/obri/rs-rcs
     ports:
       - "8084:8084"
       - "9084:9084"
@@ -190,7 +190,7 @@ services:
       start_period: 40s
   rs-store:
     container_name: rs-store
-    image: r.cfcr.io/openbanking/obri/rs-store
+    image: eu.gcr.io/openbanking-214714/obri/rs-store
     ports:
       - "8086:8086"
       - "9086:9086"
@@ -214,7 +214,7 @@ services:
       start_period: 40s
   rs-ui:
     container_name: rs-ui
-    image: r.cfcr.io/openbanking/obri/rs-ui
+    image: eu.gcr.io/openbanking-214714/obri/rs-ui
     ports:
       - "8092:8092"
       - "9092:9092"
@@ -238,7 +238,7 @@ services:
       start_period: 40s
   monitoring:
     container_name: monitoring
-    image: r.cfcr.io/openbanking/obri/monitoring
+    image: eu.gcr.io/openbanking-214714/obri/monitoring
     ports:
       - "8073:8073"
       - "9073:9073"

@@ -1,4 +1,4 @@
-FROM r.cfcr.io/openbanking/obri/basems
+FROM eu.gcr.io/openbanking-214714/obri/basems
 
 ARG JAR_FILE
 ARG VERSION_FILE
