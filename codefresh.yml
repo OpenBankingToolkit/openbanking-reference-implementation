@@ -247,6 +247,7 @@ steps:
     composition: docker-compose.yml
     composition_variables:
       - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+      - IMAGE=${{build-scgw-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-gateway
     composition_candidates:
       scgw-tests:

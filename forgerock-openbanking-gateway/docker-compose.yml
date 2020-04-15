@@ -2,7 +2,8 @@ version: '2'
 services:
  config-rs-rcs:
   container_name: config-scgw
-  image: eu.gcr.io/openbanking-214714/obri/config$TAG
+  # image: eu.gcr.io/openbanking-214714/obri/config$TAG
+  image: $IMAGE
   ports:
    - "18887:8888"
   environment:
