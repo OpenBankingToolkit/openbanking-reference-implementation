@@ -33,8 +33,9 @@ steps:
     environment: *global_env
     commands:
       - cf_export PROJECT_VERSION=$(mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | tr '[:upper:]' '[:lower:]')
+      - cf_export REGISTRY_CONTEXT=eu.gcr.io/openbanking-214714
   check-copyright:
-    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     stage: "prepare"
     title: "Verify copyrights"
     working-directory: ${{main_clone}}
@@ -45,7 +46,7 @@ steps:
   build-stage:
     stage: "build"
     steps:
-    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     title: "Compile, build and install artifact"
     working-directory: ${{main_clone}}
     environment: *global_env
@@ -56,7 +57,7 @@ steps:
     stage: "unit-test"
     steps:
     # Unit-test stage
-    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
     title: "Run unit tests"
     working-directory: ${{main_clone}}
     environment: *global_env
@@ -78,6 +79,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-docs-docker-image:
         type: build
         title: "Build docs service docker image"
@@ -88,6 +90,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-register-docker-image:
         type: build
         title: "Build register service docker image"
@@ -98,6 +101,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-directory-docker-image:
         type: build
         title: "Build directory service docker image"
@@ -108,6 +112,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-jwkms-image:
         type: build
         title: "Build jwkms service docker image"
@@ -118,6 +123,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-as-api-docker-image:
         type: build
         title: "Build as-api service docker image"
@@ -128,6 +134,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-rs-api-docker-image:
         type: build
         title: "Build rs-api service docker image"
@@ -138,6 +145,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-rs-rcs-docker-image:
         type: build
         title: "Build rs-rcs service docker image"
@@ -148,6 +156,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-rs-simulator-docker-image:
         type: build
         title: "Build rs-simulator service docker image"
@@ -158,6 +167,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
   docker-build-2:
     type: parallel
     stage: "docker-build"
@@ -172,6 +182,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-rs-ui-docker-image:
         type: build
         title: "Build rs-ui service docker image"
@@ -182,6 +193,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-admin-docker-image:
         type: build
         title: "Build admin service docker image"
@@ -192,6 +204,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-metrics-service-docker-image:
         type: build
         title: "Build metrics service docker image"
@@ -202,6 +215,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-monitoring-service-docker-image:
         type: build
         title: "Build monitoring service docker image"
@@ -212,6 +226,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
       build-scgw-docker-image:
         type: build
         title: "Build scgw service docker image"
@@ -222,6 +237,7 @@ steps:
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
         tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
 
   integration-test-scgw:
     type: composition
@@ -230,13 +246,14 @@ steps:
     description: "Start docker services via docker-compose and run scgw integration tests"
     composition: docker-compose.yml
     composition_variables:
-      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-gateway
     composition_candidates:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: eu.gcr.io/openbanking-214714/ob-release:latest
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-gateway/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -257,13 +274,14 @@ steps:
     description: "Start docker services via docker-compose and run rs-api integration tests"
     composition: docker-compose.yml
     composition_variables:
-      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
     composition_candidates:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: eu.gcr.io/openbanking-214714/ob-release:latest
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -285,13 +303,14 @@ steps:
     description: "Start docker services via docker-compose and run rs-store integration tests"
     composition: docker-compose.yml
     composition_variables:
-      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
     working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
     composition_candidates:
       scgw-tests:
         volumes:
           - ${{CF_VOLUME}}:/codefresh/volume
-        image: eu.gcr.io/openbanking-214714/ob-release:latest
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
         environment: *global_env
         command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/pom.xml
         # Simulate DNS routing multiple hostnames
@@ -329,90 +348,105 @@ steps:
         candidate: ${{build-config-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-docs-docker-image-latest:
         type: push
         title: "Push docs service docker image to registry"
         candidate: ${{build-docs-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-register-docker-image-latest:
         type: push
         title: "Push register service docker image to registry"
         candidate: ${{build-register-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-directory-docker-image-latest:
         type: push
         title: "Push directory service docker image to registry"
         candidate: ${{build-directory-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-jwkms-image-latest:
         type: push
         title: "Push jwkms service docker image to registry"
         candidate: ${{build-jwkms-image}}
         tags:
           - latest
+        registry: gcr
       push-as-api-docker-image-latest:
         type: push
         title: "Push as-api service docker image to registry"
         candidate: ${{build-as-api-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-api-docker-image-latest:
         type: push
         title: "Push rs-api service docker image to registry"
         candidate: ${{build-rs-api-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-rcs-docker-image-latest:
         type: push
         title: "Push rs-rcs service docker image to registry"
         candidate: ${{build-rs-rcs-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-simulator-docker-image-latest:
         type: push
         title: "Push rs-simulator service docker image to registry"
         candidate: ${{build-rs-simulator-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-store-docker-image-latest:
         type: push
         title: "Push rs-store service docker image to registry"
         candidate: ${{build-rs-store-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-rs-ui-docker-image-latest:
         type: push
         title: "Push rs-ui service docker image to registry"
         candidate: ${{build-rs-ui-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-admin-docker-image-latest:
         type: push
         title: "Push admin service docker image to registry"
         candidate: ${{build-admin-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-metrics-service-docker-image-latest:
         type: push
         title: "Push metrics service docker image to registry"
         candidate: ${{build-metrics-service-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-monitoring-service-docker-image-latest:
         type: push
         title: "Push monitoring service docker image to registry"
         candidate: ${{build-monitoring-service-docker-image}}
         tags:
           - latest
+        registry: gcr
       push-scgw-docker-image-latest:
         type: push
         title: "Push SCGW service docker image to registry"
         candidate: ${{build-scgw-docker-image}}
         tags:
           - latest
+        registry: gcr
     when:
       branch:
         only:
