@@ -39,6 +39,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.forgerock.openbanking.common</groupId>
+			<artifactId>forgerock-openbanking-common</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.forgerock.openbanking.directory</groupId>
 			<artifactId>forgerock-openbanking-directory-server</artifactId>
 		</dependency>

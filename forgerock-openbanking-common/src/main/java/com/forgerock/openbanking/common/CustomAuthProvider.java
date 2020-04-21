@@ -18,23 +18,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.docs;
+package com.forgerock.openbanking.common;
 
-import com.forgerock.openbanking.common.EnableAuthWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 
-@EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.forgerock"})
-@SpringBootApplication(scanBasePackages = {"com.forgerock"})
-@EnableAuthWebSecurityConfiguration
-@EnableSslClientConfiguration
-public class ForgerockOpenbankingDocsApplication {
+/**
+ * A default {@link AuthenticationProvider} for the OBRI applications.
+ */
+public class CustomAuthProvider implements AuthenticationProvider {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ForgerockOpenbankingDocsApplication.class, args);
-	}
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        //You can load more GrantedAuthority based on the user subject, like loading the TPP details from the software ID
+        return authentication;
+    }
+
+    @Override
+    public boolean supports(Class<?> aClass) {
+        return true;
+    }
 }

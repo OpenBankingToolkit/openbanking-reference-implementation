@@ -18,23 +18,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.docs;
+package com.forgerock.openbanking.common;
 
-import com.forgerock.openbanking.common.EnableAuthWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Collector;
 
-@EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.forgerock"})
-@SpringBootApplication(scanBasePackages = {"com.forgerock"})
-@EnableAuthWebSecurityConfiguration
-@EnableSslClientConfiguration
-public class ForgerockOpenbankingDocsApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(ForgerockOpenbankingDocsApplication.class, args);
-	}
+/**
+ * A common interface for internal and external OBRI certificates which must implement {@link PSD2Collector.AuthoritiesCollector} and {@link X509Collector.UsernameCollector}.
+ */
+public interface OBRICertificates extends PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector{
 }

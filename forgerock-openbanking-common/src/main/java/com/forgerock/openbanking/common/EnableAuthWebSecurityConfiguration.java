@@ -18,23 +18,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.docs;
+package com.forgerock.openbanking.common;
 
-import com.forgerock.openbanking.common.EnableAuthWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
-@EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.forgerock"})
-@SpringBootApplication(scanBasePackages = {"com.forgerock"})
-@EnableAuthWebSecurityConfiguration
-@EnableSslClientConfiguration
-public class ForgerockOpenbankingDocsApplication {
+import java.lang.annotation.*;
 
-	public static void main(String[] args) {
-		SpringApplication.run(ForgerockOpenbankingDocsApplication.class, args);
-	}
+/**
+ * An annotation that can be applied to any Spring Boot application that requires the common {@link AuthWebSecurityConfiguration} setup.
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(AuthWebSecurityConfiguration.class)
+public @interface EnableAuthWebSecurityConfiguration {
 }
