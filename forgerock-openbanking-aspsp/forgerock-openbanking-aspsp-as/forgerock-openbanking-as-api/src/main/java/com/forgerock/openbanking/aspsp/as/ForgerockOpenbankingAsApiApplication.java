@@ -23,6 +23,7 @@ package com.forgerock.openbanking.aspsp.as;
 import com.forgerock.openbanking.common.EnableSslClientConfiguration;
 import com.forgerock.openbanking.common.OBRIInternalCertificates;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
+import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,11 +75,13 @@ public class ForgerockOpenbankingAsApiApplication {
 
         private final KeyStoreService keyStoreService;
         private final TppStoreService tppStoreService;
+        private final CryptoApiClient cryptoApiClient;
 
         @Autowired
-        CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService) {
+        CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService, CryptoApiClient cryptoApiClient) {
             this.keyStoreService = keyStoreService;
             this.tppStoreService = tppStoreService;
+            this.cryptoApiClient = cryptoApiClient;
         }
 
         @Override
@@ -90,7 +93,7 @@ public class ForgerockOpenbankingAsApiApplication {
             OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
             AsApiOBRIExternalCertificates obriExternalCertificates = new AsApiOBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
 
-            configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates);
+            configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
         }
 
         private X509Certificate[] loadOBCertificates() throws CertificateException, IOException {

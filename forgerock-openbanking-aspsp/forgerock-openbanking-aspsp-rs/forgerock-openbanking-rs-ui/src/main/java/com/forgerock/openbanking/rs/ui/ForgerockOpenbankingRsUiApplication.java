@@ -28,7 +28,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @EnableDiscoveryClient
-
 @SpringBootApplication(scanBasePackages = {"com.forgerock"})
 @EnableMongoRepositories(basePackages = "com.forgerock")
 @EnableCookieWebSecurityConfiguration
@@ -38,5 +37,4 @@ public class ForgerockOpenbankingRsUiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ForgerockOpenbankingRsUiApplication.class, args);
 	}
-
 }

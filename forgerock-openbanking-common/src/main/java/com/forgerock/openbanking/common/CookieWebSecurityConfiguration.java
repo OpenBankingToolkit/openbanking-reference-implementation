@@ -21,6 +21,7 @@
 package com.forgerock.openbanking.common;
 
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
+import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,11 +60,13 @@ public class CookieWebSecurityConfiguration extends WebSecurityConfigurerAdapter
 
     private final KeyStoreService keyStoreService;
     private final TppStoreService tppStoreService;
+    private final CryptoApiClient cryptoApiClient;
 
     @Autowired
-    CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService) {
+    CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService, CryptoApiClient cryptoApiClient) {
         this.keyStoreService = keyStoreService;
         this.tppStoreService = tppStoreService;
+        this.cryptoApiClient = cryptoApiClient;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class CookieWebSecurityConfiguration extends WebSecurityConfigurerAdapter
         OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
         OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
 
-        configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates);
+        configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
     }
 
     protected X509Certificate[] loadOBCertificates() throws CertificateException, IOException {

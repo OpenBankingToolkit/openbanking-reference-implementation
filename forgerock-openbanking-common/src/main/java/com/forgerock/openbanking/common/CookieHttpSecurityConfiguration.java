@@ -20,6 +20,7 @@
  */
 package com.forgerock.openbanking.common;
 
+import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
@@ -35,8 +36,17 @@ import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFIC
  */
 public class CookieHttpSecurityConfiguration {
 
-    public static void configureHttpSecurity(HttpSecurity http, OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates) throws Exception {
-        http
+    /**
+     * Configures the instance of {@link HttpSecurity} with the internal and external OBRI certificates, plus the {@link DecryptingJwtCookieCollector}.
+     *
+     * @param httpSecurity the {@link HttpSecurity} to configure.
+     * @param obriInternalCertificates the {@link OBRIInternalCertificates} to add as a collector.
+     * @param obriExternalCertificates the {@link OBRIExternalCertificates} to add as a collector.
+     * @param cryptoApiClient the {@link CryptoApiClient} for the {@link DecryptingJwtCookieCollector} collector.
+     */
+    public static void configureHttpSecurity(HttpSecurity httpSecurity, OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates, CryptoApiClient cryptoApiClient) throws Exception {
+        JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
+        httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest()
@@ -60,6 +70,10 @@ public class CookieHttpSecurityConfiguration {
                                 .grantedAuthorities(Collections.emptySet())
                                 .usernameCollector(() -> "Anonymous")
                                 .build())
-                );
+                        .collector(DecryptingJwtCookieCollector.builder()
+                                .cryptoApiClient(cryptoApiClient)
+                                .cookieName("obri-session")
+                                .authoritiesCollector(jwtCookieAuthorityCollector)
+                                .build()));
     }
 }

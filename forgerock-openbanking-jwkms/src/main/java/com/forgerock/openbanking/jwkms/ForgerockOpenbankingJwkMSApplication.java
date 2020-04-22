@@ -22,6 +22,7 @@ package com.forgerock.openbanking.jwkms;
 
 import com.forgerock.openbanking.common.EnableSslClientConfiguration;
 import com.forgerock.openbanking.jwkms.service.application.ApplicationService;
+import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import com.mongodb.MongoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -72,11 +73,13 @@ public class ForgerockOpenbankingJwkMSApplication  {
 
         private final ApplicationService applicationService;
         private final KeyStoreService keyStoreService;
+        private final CryptoApiClient cryptoApiClient;
 
         @Autowired
-        CookieWebSecurityConfigurerAdapter(ApplicationService applicationService, KeyStoreService keyStoreService) {
+        CookieWebSecurityConfigurerAdapter(ApplicationService applicationService, KeyStoreService keyStoreService, CryptoApiClient cryptoApiClient) {
             this.applicationService = applicationService;
             this.keyStoreService = keyStoreService;
+            this.cryptoApiClient = cryptoApiClient;
         }
 
         @Override
@@ -87,7 +90,7 @@ public class ForgerockOpenbankingJwkMSApplication  {
             JwkMsOBRIInternalCertificates obriInternalCertificates = new JwkMsOBRIInternalCertificates(internalCACertificate, applicationService);
             JwkMsOBRIExternalCertificates obriExternalCertificates = new JwkMsOBRIExternalCertificates(externalCACertificate, applicationService);
 
-            configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates);
+            configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
         }
     }
 

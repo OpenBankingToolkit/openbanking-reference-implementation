@@ -20,23 +20,16 @@
  */
 package com.forgerock.openbanking.register;
 
-import com.forgerock.openbanking.common.CustomAuthProvider;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
-import com.forgerock.openbanking.common.OBRIExternalCertificates;
-import com.forgerock.openbanking.common.OBRIInternalCertificates;
+import com.forgerock.openbanking.common.*;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import com.google.common.collect.Sets;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jwt.JWT;
 import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomJwtCookieCollector;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
 import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
-import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -46,7 +39,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -124,13 +116,14 @@ public class ForgerockOpenbankingRegisterApplication {
 									.usernameCollector(obriExternalCertificates)
 									.authoritiesCollector(obriExternalCertificates)
 									.build())
-							.collector(DecryptingJwtCookieCollector.jwtBuilder()
+							// TODO - the common DecryptingJwtCookieCollector passes token.getJWTClaimsSet().getSubject() to the parent CustomCookieCollector, whereas the previous one in this class didn't - is this ok?
+							.collector(DecryptingJwtCookieCollector.builder()
 									.cryptoApiClient(cryptoApiClient)
 									.cookieName("obri-session")
 									.authoritiesCollector(t -> Sets.newHashSet(
 											OBRIRole.ROLE_SOFTWARE_STATEMENT,
 											OBRIRole.ROLE_USER,
-											OBRIRole.ROLE_TPP))
+											OBRIRole.ROLE_TPP)) // different implementation and additional TPP role to JwtCookieAuthorityCollector in common
 									.build())
 							.collector(StaticUserCollector.builder()
 									.grantedAuthorities(Collections.emptySet())
@@ -162,25 +155,5 @@ public class ForgerockOpenbankingRegisterApplication {
 				}
 			}
 		}
-	}
-
-	static class DecryptingJwtCookieCollector extends CustomJwtCookieCollector { // N.B. the common DecryptingJwtCookieCollector extends CustomCookieCollector
-
-		@Builder(builderMethodName = "jwtBuilder")
-		public DecryptingJwtCookieCollector(CustomJwtCookieCollector.AuthoritiesCollector<JWT> authoritiesCollector, String cookieName, CryptoApiClient cryptoApiClient) {
-			super(
-					"jwt-cookie",
-					tokenSerialised -> {
-						try {
-							return cryptoApiClient.decryptJwe(tokenSerialised);
-						} catch (JOSEException e) {
-							throw new BadCredentialsException("Invalid cookie");
-						}
-					},
-					authoritiesCollector,
-					cookieName
-			);
-		}
-
 	}
 }
