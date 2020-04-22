@@ -24,7 +24,9 @@ import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
@@ -32,12 +34,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
+import static com.forgerock.openbanking.common.CertificateHelper.loadOBCertificates;
 import static com.forgerock.openbanking.common.CookieHttpSecurityConfiguration.configureHttpSecurity;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
@@ -46,8 +45,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  */
 @Configuration
 @EnableWebSecurity
-@Order(LOWEST_PRECEDENCE-1)
-public class CookieWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+class CookieWebSecurityConfiguration {
 
     @Value("${matls.forgerock-internal-ca-alias}")
     private String internalCaAlias;
@@ -60,48 +58,52 @@ public class CookieWebSecurityConfiguration extends WebSecurityConfigurerAdapter
 
     private final KeyStoreService keyStoreService;
     private final TppStoreService tppStoreService;
-    private final CryptoApiClient cryptoApiClient;
 
     @Autowired
-    CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService, CryptoApiClient cryptoApiClient) {
+    CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService) {
         this.keyStoreService = keyStoreService;
         this.tppStoreService = tppStoreService;
-        this.cryptoApiClient = cryptoApiClient;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        X509Certificate[] obCA = loadOBCertificates();
+    @Bean
+    @Qualifier("obriInternalCertificates")
+    public OBRICertificates obriInternalCertificates() throws Exception {
         X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
-        X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
 
         OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
-        OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
-
-        configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
+        return obriInternalCertificates;
     }
 
-    protected X509Certificate[] loadOBCertificates() throws CertificateException, IOException {
-        CertificateFactory fact = CertificateFactory.getInstance("X.509");
-        InputStream rootCertStream = null;
-        InputStream issuingCertStream = null;
-        try {
-            rootCertStream = obRootCertificatePem.getURL().openStream();
-            X509Certificate obRootCert = (X509Certificate) fact.generateCertificate(rootCertStream);
+    @Bean
+    @Qualifier("obriExternalCertificates")
+    public OBRICertificates obriExternalCertificates() throws Exception {
+        X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
 
-            issuingCertStream = obIssuingCertificatePem.getURL().openStream();
-            X509Certificate obIssuingCert = (X509Certificate) fact.generateCertificate(issuingCertStream);
-            X509Certificate[] obCA = new X509Certificate[2];
-            obCA[0] = obIssuingCert;
-            obCA[1] = obRootCert;
-            return obCA;
-        } finally {
-            if (rootCertStream != null) {
-                rootCertStream.close();
-            }
-            if (issuingCertStream != null) {
-                issuingCertStream.close();
-            }
+        X509Certificate[] obCA = loadOBCertificates(obRootCertificatePem, obIssuingCertificatePem);
+        OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
+        return obriExternalCertificates;
+    }
+
+    @Configuration
+    @Order(LOWEST_PRECEDENCE - 1)
+    static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+        private final OBRICertificates obriInternalCertificates;
+        private final OBRICertificates obriExternalCertificates;
+        private final CryptoApiClient cryptoApiClient;
+
+        @Autowired
+        CookieWebSecurityConfigurerAdapter(@Qualifier("obriInternalCertificates") OBRICertificates obriInternalCertificates,
+                                           @Qualifier("obriExternalCertificates") OBRICertificates obriExternalCertificates,
+                                           CryptoApiClient cryptoApiClient) {
+            this.obriInternalCertificates = obriInternalCertificates;
+            this.obriExternalCertificates = obriExternalCertificates;
+            this.cryptoApiClient = cryptoApiClient;
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
         }
     }
 }

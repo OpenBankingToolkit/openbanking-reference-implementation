@@ -51,9 +51,9 @@ import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIs
 @AllArgsConstructor
 public class DirectoryORBIExternalCertificates implements OBRICertificates {
 
-    private X509Certificate caCertificate;
+    private final X509Certificate caCertificate;
 
-    private DirectoryUtilsService directoryUtilsService;
+    private final DirectoryUtilsService directoryUtilsService;
 
     @Override
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {

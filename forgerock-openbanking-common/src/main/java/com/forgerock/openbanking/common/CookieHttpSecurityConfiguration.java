@@ -66,14 +66,14 @@ public class CookieHttpSecurityConfiguration {
                                 .usernameCollector(obriExternalCertificates)
                                 .authoritiesCollector(obriExternalCertificates)
                                 .build())
-                        .collector(StaticUserCollector.builder()
-                                .grantedAuthorities(Collections.emptySet())
-                                .usernameCollector(() -> "Anonymous")
-                                .build())
                         .collector(DecryptingJwtCookieCollector.builder()
                                 .cryptoApiClient(cryptoApiClient)
                                 .cookieName("obri-session")
                                 .authoritiesCollector(jwtCookieAuthorityCollector)
+                                .build())
+                        .collector(StaticUserCollector.builder()
+                                .grantedAuthorities(Collections.emptySet())
+                                .usernameCollector(() -> "Anonymous")
                                 .build()));
     }
 }

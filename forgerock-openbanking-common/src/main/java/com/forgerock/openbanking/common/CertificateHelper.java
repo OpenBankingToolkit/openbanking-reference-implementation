@@ -26,8 +26,13 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.springframework.core.io.Resource;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 /**
@@ -52,5 +57,30 @@ public class CertificateHelper {
     public static boolean isCertificateIssuedByCA(X509Certificate caCertificate, X509Certificate[] certificatesChain) {
         return (certificatesChain.length > 1 && caCertificate.equals(certificatesChain[1]))
                 || (certificatesChain.length == 1 && caCertificate.getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()));
+    }
+
+    public static X509Certificate[] loadOBCertificates(Resource obRootCertificatePem, Resource obIssuingCertificatePem) throws CertificateException, IOException {
+        CertificateFactory fact = CertificateFactory.getInstance("X.509");
+        InputStream rootCertStream = null;
+        InputStream issuingCertStream = null;
+        try {
+            rootCertStream = obRootCertificatePem.getURL().openStream();
+            X509Certificate obRootCert = (X509Certificate) fact.generateCertificate(rootCertStream);
+
+            issuingCertStream = obIssuingCertificatePem.getURL().openStream();
+            X509Certificate obIssuingCert = (X509Certificate) fact.generateCertificate(issuingCertStream);
+            X509Certificate[] obCA = new X509Certificate[2];
+            obCA[0] = obIssuingCert;
+            obCA[1] = obRootCert;
+            return obCA;
+        } finally {
+            if (rootCertStream != null) {
+                rootCertStream.close();
+            }
+            if (issuingCertStream != null) {
+                issuingCertStream.close();
+            }
+        }
+
     }
 }

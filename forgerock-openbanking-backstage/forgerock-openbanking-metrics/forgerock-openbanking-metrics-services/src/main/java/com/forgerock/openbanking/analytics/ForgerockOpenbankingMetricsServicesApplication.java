@@ -42,6 +42,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -53,6 +54,7 @@ import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFIC
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
+@EnableWebSecurity
 @Slf4j
 @ComponentScan(basePackages = {"com.forgerock"})
 @EnableMongoRepositories(basePackages = "com.forgerock")
