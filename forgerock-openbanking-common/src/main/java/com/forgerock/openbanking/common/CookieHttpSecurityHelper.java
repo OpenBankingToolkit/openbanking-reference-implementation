@@ -34,7 +34,7 @@ import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFIC
 /**
  * A utility class providing helper methods related to certificates.
  */
-public class CookieHttpSecurityConfiguration {
+public class CookieHttpSecurityHelper {
 
     /**
      * Configures the instance of {@link HttpSecurity} with the internal and external OBRI certificates, plus the {@link DecryptingJwtCookieCollector}.

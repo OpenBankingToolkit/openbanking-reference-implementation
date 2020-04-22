@@ -37,7 +37,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import java.security.cert.X509Certificate;
 
 import static com.forgerock.openbanking.common.CertificateHelper.loadOBCertificates;
-import static com.forgerock.openbanking.common.CookieHttpSecurityConfiguration.configureHttpSecurity;
+import static com.forgerock.openbanking.common.CookieHttpSecurityHelper.configureHttpSecurity;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 /**

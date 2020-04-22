@@ -28,8 +28,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@SpringBootApplication(scanBasePackages = "com.forgerock")
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
+@EnableMongoRepositories
 @EnableDiscoveryClient
 @EnableSslClient
 @Import(CookieWebSecurityConfiguration.class)

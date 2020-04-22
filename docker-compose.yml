@@ -2,6 +2,7 @@ version: '3.7'
 networks:
   obref:
 services:
+
   mongo-mongodb:
     container_name: mongo-mongodb
     image: mongo
@@ -13,6 +14,7 @@ services:
     hostname: mongo-mongodb
     networks:
       obref:
+
   config:
     container_name: config
     image: eu.gcr.io/openbanking-214714/obri/config
@@ -31,6 +33,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   jwkms:
     container_name: jwkms
     image: eu.gcr.io/openbanking-214714/obri/jwkms
@@ -55,6 +58,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   directory-services:
     container_name: directory-services
     image: eu.gcr.io/openbanking-214714/obri/directory-services
@@ -79,6 +83,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   scgw:
     container_name: scgw
     image: eu.gcr.io/openbanking-214714/obri/scgw
@@ -116,6 +121,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   as-api:
     container_name: as-api
     image: eu.gcr.io/openbanking-214714/obri/as-api
@@ -140,6 +146,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   rs-api:
     container_name: rs-api
     image: eu.gcr.io/openbanking-214714/obri/rs-api
@@ -164,6 +171,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   rs-rcs:
     container_name: rs-rcs
     image: eu.gcr.io/openbanking-214714/obri/rs-rcs
@@ -188,6 +196,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   rs-store:
     container_name: rs-store
     image: eu.gcr.io/openbanking-214714/obri/rs-store
@@ -212,6 +221,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   rs-ui:
     container_name: rs-ui
     image: eu.gcr.io/openbanking-214714/obri/rs-ui
@@ -236,6 +246,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   monitoring:
     container_name: monitoring
     image: eu.gcr.io/openbanking-214714/obri/monitoring
@@ -260,6 +271,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
   openam:
     build:
       context: .
@@ -284,6 +296,7 @@ services:
       - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
       - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
+
   directory-ui:
     image: openbankingtoolkit/openbanking-directory-ui
     ports:
@@ -297,6 +310,7 @@ services:
       - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
       - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
+
   bank-ui:
     image: openbankingtoolkit/openbanking-bank-ui
     ports:

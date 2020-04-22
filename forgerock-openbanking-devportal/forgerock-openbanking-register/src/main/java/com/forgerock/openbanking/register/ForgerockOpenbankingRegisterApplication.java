@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-@SpringBootApplication(scanBasePackages = "com.forgerock")
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
+@EnableMongoRepositories
 @EnableDiscoveryClient
 @EnableWebSecurity
 @EnableSslClient

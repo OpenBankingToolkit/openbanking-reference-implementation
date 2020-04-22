@@ -30,7 +30,6 @@
 	<name>directory-services</name>
 	<description>ForgeRock OpenBanking Directory services</description>
 
-
 	<parent>
 		<groupId>com.forgerock.openbanking</groupId>
 		<artifactId>forgerock-openbanking-reference-implementation</artifactId>

@@ -26,5 +26,5 @@ import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Col
 /**
  * A common interface for internal and external OBRI certificates which must implement {@link PSD2Collector.AuthoritiesCollector} and {@link X509Collector.UsernameCollector}.
  */
-public interface OBRICertificates extends PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector{
+public interface OBRICertificates extends PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector {
 }

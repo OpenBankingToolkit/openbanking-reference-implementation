@@ -29,8 +29,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication(scanBasePackages = "com.forgerock")
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
+@EnableMongoRepositories
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling

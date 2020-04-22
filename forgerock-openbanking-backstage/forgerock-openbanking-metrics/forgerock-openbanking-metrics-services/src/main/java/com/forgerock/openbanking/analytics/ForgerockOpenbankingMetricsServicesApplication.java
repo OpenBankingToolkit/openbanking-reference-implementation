@@ -20,25 +20,21 @@
  */
 package com.forgerock.openbanking.analytics;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableWebSecurity
-@Slf4j
-@ComponentScan(basePackages = {"com.forgerock"})
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@EnableMongoRepositories
 @Import(MetricsApplicationSecurityConfiguration.class)
 public class ForgerockOpenbankingMetricsServicesApplication {
 

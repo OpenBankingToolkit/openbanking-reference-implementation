@@ -29,6 +29,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -38,8 +40,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.Filter;
 
-@SpringBootApplication(scanBasePackages = "com.forgerock")
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@SpringBootApplication
+@ComponentScan(
+        basePackages = "com.forgerock.openbanking",
+        // beans under com.forgerock.openbanking.common (such as AspspApiClientImpl) clash with equivalent ones in com.forgerock.openbanking.directory
+        excludeFilters = @ComponentScan.Filter(type= FilterType.REGEX, pattern="com\\.forgerock\\.openbanking\\.common\\..*"))
+@EnableMongoRepositories
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling

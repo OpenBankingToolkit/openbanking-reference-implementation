@@ -24,7 +24,6 @@ import com.forgerock.openbanking.model.OBRIRole;
 import com.google.common.collect.Sets;
 import com.nimbusds.jwt.JWT;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -39,7 +38,6 @@ import java.util.Set;
  * FYI: Additional Authorities setted on Claim 'group' set in 'identity / MSISDN Number'.
  */
 @Slf4j
-@AllArgsConstructor
 public class JwtCookieAuthorityCollector implements CustomCookieCollector.AuthoritiesCollector<JWT> {
 
     @Override

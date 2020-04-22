@@ -37,8 +37,8 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 
-@SpringBootApplication(scanBasePackages = "com.forgerock")
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
+@EnableMongoRepositories
 @EnableMongoAuditing
 @EnableDiscoveryClient
 @EnableSslClient

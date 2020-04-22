@@ -31,7 +31,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 import java.security.cert.X509Certificate;
 
-import static com.forgerock.openbanking.common.CookieHttpSecurityConfiguration.configureHttpSecurity;
+import static com.forgerock.openbanking.common.CookieHttpSecurityHelper.configureHttpSecurity;
 
 @Configuration
 class JwkMSApplicationSecurityConfiguration {

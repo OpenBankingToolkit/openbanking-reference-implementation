@@ -30,7 +30,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -38,13 +37,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.concurrent.TimeUnit;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableCaching
-@ComponentScan(basePackages = {"com.forgerock"})
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@EnableMongoRepositories
 @EnableSslClient
 @Import(AuthWebSecurityConfiguration.class)
 public class ForgerockOpenbankingMonitoringApplication {

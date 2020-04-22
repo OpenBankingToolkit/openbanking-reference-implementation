@@ -34,8 +34,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication(scanBasePackages = "com.forgerock")
-@EnableMongoRepositories(basePackages = "com.forgerock")
+@SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
+@EnableMongoRepositories(basePackages = "com.forgerock.openbanking")
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
