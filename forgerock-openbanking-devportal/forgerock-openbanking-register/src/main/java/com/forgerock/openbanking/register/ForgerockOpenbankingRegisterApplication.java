@@ -20,168 +20,23 @@
  */
 package com.forgerock.openbanking.register;
 
-import com.forgerock.openbanking.common.CustomAuthProvider;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
-import com.forgerock.openbanking.common.OBRIExternalCertificates;
-import com.forgerock.openbanking.common.OBRIInternalCertificates;
-import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
-import com.forgerock.openbanking.jwt.services.CryptoApiClient;
-import com.forgerock.openbanking.model.OBRIRole;
-import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
-import com.google.common.collect.Sets;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jwt.JWT;
-import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomJwtCookieCollector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
-import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
-import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.forgerock.openbanking.common.EnableSslClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Collections;
-
-import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFICATE_HEADER_NAME;
-
+@SpringBootApplication(scanBasePackages = "com.forgerock")
+@EnableMongoRepositories(basePackages = "com.forgerock")
 @EnableDiscoveryClient
 @EnableWebSecurity
-@ComponentScan(basePackages = {"com.forgerock"})
-@EnableMongoRepositories(basePackages = "com.forgerock")
-@SpringBootApplication(scanBasePackages = {"com.forgerock"})
-@EnableSslClientConfiguration
+@EnableSslClient
+@Import(RegisterApplicationSecurityConfiguration.class)
 public class ForgerockOpenbankingRegisterApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ForgerockOpenbankingRegisterApplication.class, args);
-	}
-
-	@Configuration
-	static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
-		@Value("${matls.forgerock-internal-ca-alias}")
-		private String internalCaAlias;
-		@Value("${matls.forgerock-external-ca-alias}")
-		private String externalCaAlias;
-		@Value("${openbankingdirectory.certificates.ob.root}")
-		private Resource obRootCertificatePem;
-		@Value("${openbankingdirectory.certificates.ob.issuing}")
-		private Resource obIssuingCertificatePem;
-
-		private final CryptoApiClient cryptoApiClient;
-		private final KeyStoreService keyStoreService;
-		private final TppStoreService tppStoreService;
-
-		@Autowired
-		CookieWebSecurityConfigurerAdapter(CryptoApiClient cryptoApiClient, KeyStoreService keyStoreService, TppStoreService tppStoreService) {
-			this.cryptoApiClient = cryptoApiClient;
-			this.keyStoreService = keyStoreService;
-			this.tppStoreService = tppStoreService;
-		}
-
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			X509Certificate[] obCA = loadOBCertificates();
-			X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
-			X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
-
-			OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
-			OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
-
-			http
-					.csrf().disable()
-					.authorizeRequests()
-					.anyRequest()
-					.permitAll()//.authenticated()
-					.and()
-					.authenticationProvider(new CustomAuthProvider())
-					.apply(new MultiAuthenticationCollectorConfigurer<HttpSecurity>()
-							.collector(PSD2Collector.psd2Builder()
-									.collectFromHeader(CertificateHeaderFormat.JWK)
-									.headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-									.usernameCollector(obriInternalCertificates)
-									.authoritiesCollector(obriInternalCertificates)
-									.build())
-							.collector(PSD2Collector.psd2Builder()
-									.collectFromHeader(CertificateHeaderFormat.JWK)
-									.headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-									.usernameCollector(obriExternalCertificates)
-									.authoritiesCollector(obriExternalCertificates)
-									.build())
-							.collector(DecryptingJwtCookieCollector.jwtBuilder()
-									.cryptoApiClient(cryptoApiClient)
-									.cookieName("obri-session")
-									.authoritiesCollector(t -> Sets.newHashSet(
-											OBRIRole.ROLE_SOFTWARE_STATEMENT,
-											OBRIRole.ROLE_USER,
-											OBRIRole.ROLE_TPP)) // different implementation and additional TPP role to JwtCookieAuthorityCollector in common
-									.build())
-							.collector(StaticUserCollector.builder()
-									.grantedAuthorities(Collections.emptySet())
-									.usernameCollector(() -> "Anonymous")
-									.build())
-					);
-		}
-
-		private X509Certificate[] loadOBCertificates() throws CertificateException, IOException {
-			CertificateFactory fact = CertificateFactory.getInstance("X.509");
-			InputStream rootCertStream = null;
-			InputStream issuingCertStream = null;
-			try {
-				rootCertStream = obRootCertificatePem.getURL().openStream();
-				X509Certificate obRootCert = (X509Certificate) fact.generateCertificate(rootCertStream);
-
-				issuingCertStream = obIssuingCertificatePem.getURL().openStream();
-				X509Certificate obIssuingCert = (X509Certificate) fact.generateCertificate(issuingCertStream);
-				X509Certificate[] obCA = new X509Certificate[2];
-				obCA[0] = obIssuingCert;
-				obCA[1] = obRootCert;
-				return obCA;
-			} finally {
-				if (rootCertStream != null) {
-					rootCertStream.close();
-				}
-				if (issuingCertStream != null) {
-					issuingCertStream.close();
-				}
-			}
-		}
-	}
-
-	// N.B. the common DecryptingJwtCookieCollector extends CustomCookieCollector
-	static class DecryptingJwtCookieCollector extends CustomJwtCookieCollector {
-
-		@Builder(builderMethodName = "jwtBuilder")
-		public DecryptingJwtCookieCollector(CustomJwtCookieCollector.AuthoritiesCollector<JWT> authoritiesCollector, String cookieName, CryptoApiClient cryptoApiClient) {
-			super(
-					"jwt-cookie",
-					tokenSerialised -> {
-						try {
-							return cryptoApiClient.decryptJwe(tokenSerialised);
-						} catch (JOSEException e) {
-							throw new BadCredentialsException("Invalid cookie");
-						}
-					},
-					authoritiesCollector,
-					cookieName
-			);
-		}
-
 	}
 }

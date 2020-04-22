@@ -20,8 +20,8 @@
  */
 package com.forgerock.openbanking.monitoring;
 
-import com.forgerock.openbanking.common.EnableAuthWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
+import com.forgerock.openbanking.common.AuthWebSecurityConfiguration;
+import com.forgerock.openbanking.common.EnableSslClient;
 import com.google.common.cache.CacheBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,6 +31,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -44,8 +45,8 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 @ComponentScan(basePackages = {"com.forgerock"})
 @EnableMongoRepositories(basePackages = "com.forgerock")
-@EnableAuthWebSecurityConfiguration
-@EnableSslClientConfiguration
+@EnableSslClient
+@Import(AuthWebSecurityConfiguration.class)
 public class ForgerockOpenbankingMonitoringApplication {
 
     public static final String MONITORING_CERTIFICATE_CACHE = "monitoringCertificate";

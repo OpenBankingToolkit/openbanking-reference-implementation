@@ -20,24 +20,23 @@
  */
 package com.forgerock.openbanking.aspsp.rs;
 
-import com.forgerock.openbanking.common.EnableCookieWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
+import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
+import com.forgerock.openbanking.common.EnableSslClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.forgerock")
+@EnableMongoRepositories(basePackages = "com.forgerock")
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
-@ComponentScan(basePackages = {"com.forgerock"})
-@EnableMongoRepositories(basePackages = "com.forgerock")
-@EnableCookieWebSecurityConfiguration
-@EnableSslClientConfiguration
+@EnableSslClient
+@Import(CookieWebSecurityConfiguration.class)
 public class ForgerockOpenbankingRsApiApplication {
 
     public static void main(String[] args) {

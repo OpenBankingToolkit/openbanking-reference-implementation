@@ -20,18 +20,17 @@
  */
 package com.forgerock.openbanking.docs;
 
-import com.forgerock.openbanking.common.EnableAuthWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
+import com.forgerock.openbanking.common.AuthWebSecurityConfiguration;
+import com.forgerock.openbanking.common.EnableSslClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
+@SpringBootApplication(scanBasePackages = "com.forgerock")
 @EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.forgerock"})
-@SpringBootApplication(scanBasePackages = {"com.forgerock"})
-@EnableAuthWebSecurityConfiguration
-@EnableSslClientConfiguration
+@EnableSslClient
+@Import(AuthWebSecurityConfiguration.class)
 public class ForgerockOpenbankingDocsApplication {
 
 	public static void main(String[] args) {

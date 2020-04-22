@@ -20,18 +20,19 @@
  */
 package com.forgerock.openbanking.rs.ui;
 
-import com.forgerock.openbanking.common.EnableCookieWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
+import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
+import com.forgerock.openbanking.common.EnableSslClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@EnableDiscoveryClient
-@SpringBootApplication(scanBasePackages = {"com.forgerock"})
+@SpringBootApplication(scanBasePackages = "com.forgerock")
 @EnableMongoRepositories(basePackages = "com.forgerock")
-@EnableCookieWebSecurityConfiguration
-@EnableSslClientConfiguration
+@EnableDiscoveryClient
+@EnableSslClient
+@Import(CookieWebSecurityConfiguration.class)
 public class ForgerockOpenbankingRsUiApplication {
 
 	public static void main(String[] args) {

@@ -45,7 +45,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  */
 @Configuration
 @EnableWebSecurity
-class CookieWebSecurityConfiguration {
+public class CookieWebSecurityConfiguration {
 
     @Value("${matls.forgerock-internal-ca-alias}")
     private String internalCaAlias;

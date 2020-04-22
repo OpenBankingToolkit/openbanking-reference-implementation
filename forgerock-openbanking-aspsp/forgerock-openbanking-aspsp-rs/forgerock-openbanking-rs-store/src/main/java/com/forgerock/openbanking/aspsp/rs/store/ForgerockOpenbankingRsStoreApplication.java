@@ -22,28 +22,27 @@ package com.forgerock.openbanking.aspsp.rs.store;
 
 import com.forgerock.openbanking.aspsp.rs.store.repository.ManualRegistrationApplicationRepository;
 import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
-import com.forgerock.openbanking.common.EnableCookieWebSecurityConfiguration;
-import com.forgerock.openbanking.common.EnableSslClientConfiguration;
+import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
+import com.forgerock.openbanking.common.EnableSslClient;
 import com.forgerock.openbanking.common.model.onboarding.ManualRegistrationApplication;
 import com.forgerock.openbanking.model.Tpp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 
-@EnableDiscoveryClient
-@SpringBootApplication
-@EnableMongoAuditing
-@ComponentScan(basePackages = {"com.forgerock"})
+@SpringBootApplication(scanBasePackages = "com.forgerock")
 @EnableMongoRepositories(basePackages = "com.forgerock")
-@EnableCookieWebSecurityConfiguration
-@EnableSslClientConfiguration
+@EnableMongoAuditing
+@EnableDiscoveryClient
+@EnableSslClient
+@Import(CookieWebSecurityConfiguration.class)
 public class ForgerockOpenbankingRsStoreApplication{
 
     public static void main(String[] args) {

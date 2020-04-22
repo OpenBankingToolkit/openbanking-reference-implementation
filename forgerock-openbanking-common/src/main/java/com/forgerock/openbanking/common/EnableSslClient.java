@@ -25,12 +25,12 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
- * An annotation that can be applied to any Spring Boot application that requires the common {@link AuthWebSecurityConfiguration} setup.
+ * An annotation that can be applied to any Spring Boot application that requires SSL related client configurations, including a {@link org.springframework.web.client.RestTemplate}.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(AuthWebSecurityConfiguration.class)
-public @interface EnableAuthWebSecurityConfiguration {
+@Import(SslClientConfiguration.class)
+public @interface EnableSslClient {
 }
