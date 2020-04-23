@@ -37,6 +37,18 @@ import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFIC
 public class CookieHttpSecurityHelper {
 
     /**
+     * Configures the instance of {@link HttpSecurity} with the internal and external OBRI certificates, but without the {@link DecryptingJwtCookieCollector}.
+     *
+     * @param httpSecurity the {@link HttpSecurity} to configure.
+     * @param obriInternalCertificates the {@link OBRIInternalCertificates} to add as a collector.
+     * @param obriExternalCertificates the {@link OBRIExternalCertificates} to add as a collector.
+     */
+    public static void configureHttpSecurity(HttpSecurity httpSecurity, OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates) throws Exception {
+        httpSecurity(httpSecurity)
+                .apply(collectors(obriInternalCertificates, obriExternalCertificates, null));
+    }
+
+    /**
      * Configures the instance of {@link HttpSecurity} with the internal and external OBRI certificates, plus the {@link DecryptingJwtCookieCollector}.
      *
      * @param httpSecurity the {@link HttpSecurity} to configure.
@@ -45,35 +57,48 @@ public class CookieHttpSecurityHelper {
      * @param cryptoApiClient the {@link CryptoApiClient} for the {@link DecryptingJwtCookieCollector} collector.
      */
     public static void configureHttpSecurity(HttpSecurity httpSecurity, OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates, CryptoApiClient cryptoApiClient) throws Exception {
-        JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
-        httpSecurity
+        httpSecurity(httpSecurity)
+                .apply(collectors(obriInternalCertificates, obriExternalCertificates, cryptoApiClient));
+    }
+
+    private static HttpSecurity httpSecurity(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest()
                 .permitAll()//.authenticated()
                 .and()
-                .authenticationProvider(new CustomAuthProvider())
-                .apply(new MultiAuthenticationCollectorConfigurer<HttpSecurity>()
-                        .collector(PSD2Collector.psd2Builder()
-                                .collectFromHeader(CertificateHeaderFormat.JWK)
-                                .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                                .usernameCollector(obriInternalCertificates)
-                                .authoritiesCollector(obriInternalCertificates)
-                                .build())
-                        .collector(PSD2Collector.psd2Builder()
-                                .collectFromHeader(CertificateHeaderFormat.JWK)
-                                .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                                .usernameCollector(obriExternalCertificates)
-                                .authoritiesCollector(obriExternalCertificates)
-                                .build())
-                        .collector(DecryptingJwtCookieCollector.builder()
-                                .cryptoApiClient(cryptoApiClient)
-                                .cookieName("obri-session")
-                                .authoritiesCollector(jwtCookieAuthorityCollector)
-                                .build())
-                        .collector(StaticUserCollector.builder()
-                                .grantedAuthorities(Collections.emptySet())
-                                .usernameCollector(() -> "Anonymous")
-                                .build()));
+                .authenticationProvider(new CustomAuthProvider());
+    }
+
+    private static MultiAuthenticationCollectorConfigurer<HttpSecurity> collectors(OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates, CryptoApiClient cryptoApiClient) {
+        MultiAuthenticationCollectorConfigurer<HttpSecurity> configurer = new MultiAuthenticationCollectorConfigurer<>();
+        configurer
+                .collector(PSD2Collector.psd2Builder()
+                        .collectFromHeader(CertificateHeaderFormat.JWK)
+                        .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
+                        .usernameCollector(obriInternalCertificates)
+                        .authoritiesCollector(obriInternalCertificates)
+                        .build())
+                .collector(PSD2Collector.psd2Builder()
+                        .collectFromHeader(CertificateHeaderFormat.JWK)
+                        .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
+                        .usernameCollector(obriExternalCertificates)
+                        .authoritiesCollector(obriExternalCertificates)
+                        .build())
+                .collector(StaticUserCollector.builder()
+                        .grantedAuthorities(Collections.emptySet())
+                        .usernameCollector(() -> "Anonymous")
+                        .build());
+
+        if (cryptoApiClient != null) {
+            JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
+            configurer.collector(DecryptingJwtCookieCollector.builder()
+                    .cryptoApiClient(cryptoApiClient)
+                    .cookieName("obri-session")
+                    .authoritiesCollector(jwtCookieAuthorityCollector)
+                    .build());
+        }
+        return configurer;
     }
 }

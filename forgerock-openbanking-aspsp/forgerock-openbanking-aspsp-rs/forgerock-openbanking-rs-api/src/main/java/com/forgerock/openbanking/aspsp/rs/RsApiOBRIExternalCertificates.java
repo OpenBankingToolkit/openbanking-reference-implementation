@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.aspsp.as;
+package com.forgerock.openbanking.aspsp.rs;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
@@ -39,18 +39,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.forgerock.openbanking.common.CertificateHelper.getCn;
-import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 /**
- * A specific variation of {@link com.forgerock.openbanking.common.OBRIExternalCertificates} for the as-api application.
+ * A specific variation of {@link com.forgerock.openbanking.common.OBRIExternalCertificates} for the rs-api application.
  */
 @Slf4j
 @AllArgsConstructor
-class AsApiOBRIExternalCertificates implements OBRICertificates {
+class RsApiOBRIExternalCertificates implements OBRICertificates {
 
-    private final X509Certificate caCertificate;
-    private final TppStoreService tppStoreService;
-    private final X509Certificate[] obCA;
+    private X509Certificate caCertificate;
+    private TppStoreService tppStoreService;
+    private X509Certificate[] obCA;
 
     @Override
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
@@ -62,11 +61,11 @@ class AsApiOBRIExternalCertificates implements OBRICertificates {
             authorities.add(OBRIRole.ROLE_EIDAS);
         }
 
-        if (isCertificateIssuedByCA(caCertificate, certificatesChain)) {
+        if (isCertificateIssuedByCA(certificatesChain)) {
             authorities.add(OBRIRole.ROLE_FORGEROCK_EXTERNAL_APP);
             authorities.add(OBRIRole.ROLE_TPP);
         }
-        if (isCertificateIssuedByCA(obCA[0], certificatesChain)) {
+        if (isCertificateIssuedByCA(obCA)) {
             authorities.add(OBRIRole.ROLE_TPP);
         }
 
@@ -86,8 +85,7 @@ class AsApiOBRIExternalCertificates implements OBRICertificates {
 
     @Override
     public String getUserName(X509Certificate[] certificatesChain) {
-        // this class has additional check of obCA[0] compared to the common OBRIExternalCertificate class
-        if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {
+        if (!isCertificateIssuedByCA(certificatesChain)) {
             return null;
         }
 
@@ -96,9 +94,16 @@ class AsApiOBRIExternalCertificates implements OBRICertificates {
         Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
         if (!optionalTpp.isPresent()) {
             log.debug("TPP not found. This TPP {} is not on board yet", cn);
-            return cn;
+            return getCn(certificatesChain[0]);
         } else {
             return optionalTpp.get().getClientId();
         }
+    }
+
+    private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
+        return (certificatesChain.length > 1 && caCertificate.equals(certificatesChain[1]))
+                || (certificatesChain.length == 1 && caCertificate.getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()))
+                // this class has this extra check compared to the common OBRIExternalCertificates
+                || (certificatesChain.length == 1 && obCA[0].getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()));
     }
 }

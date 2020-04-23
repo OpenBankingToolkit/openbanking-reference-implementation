@@ -65,8 +65,6 @@ public class AdminApplicationSecurityConfiguration {
     private String keyPassword;
     @Value("${server.ssl.client-certs-key-alias}")
     private String keyAlias;
-    @Value("${server.ssl.enabled}")
-    private boolean sslEnabled;
 
     private final AdminServerProperties adminServerProperties;
 
