@@ -35,7 +35,7 @@
 	<parent>
 		<groupId>com.forgerock.openbanking.devportal</groupId>
 		<artifactId>forgerock-openbanking-devportal</artifactId>
-		<version>3.1.2-smiths-SNAPSHOT</version>
+		<version>3.1.2-queen-rc6</version>
 	</parent>
 
 	<properties>
