@@ -20,19 +20,16 @@
  */
 package com.forgerock.openbanking.common;
 
-import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
 import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-import java.security.cert.X509Certificate;
 
 import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFICATE_HEADER_NAME;
 
@@ -42,23 +39,18 @@ import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFIC
 @Configuration
 @EnableWebSecurity
 @Order
+@Import(OBRICertificateConfiguration.class)
 public class AuthWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Value("${matls.forgerock-internal-ca-alias}")
-    private String internalCaAlias;
-
-    private final KeyStoreService keyStoreService;
+    private final OBRIInternalCertificates obriInternalCertificates;
 
     @Autowired
-    AuthWebSecurityConfiguration(KeyStoreService keyStoreService) {
-        this.keyStoreService = keyStoreService;
+    public AuthWebSecurityConfiguration(OBRIInternalCertificates obriInternalCertificates) {
+        this.obriInternalCertificates = obriInternalCertificates;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
-
-        OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
         http
                 .csrf().disable() // We don't need CSRF for JWT based authentication
                 .authorizeRequests()

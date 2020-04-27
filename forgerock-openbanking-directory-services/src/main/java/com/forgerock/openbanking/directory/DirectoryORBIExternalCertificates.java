@@ -22,14 +22,13 @@ package com.forgerock.openbanking.directory;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.OBRICertificates;
+import com.forgerock.openbanking.common.OBRIExternalCertificates;
 import com.forgerock.openbanking.directory.service.DirectoryUtilsService;
 import com.forgerock.openbanking.model.ApplicationIdentity;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -48,12 +47,16 @@ import java.util.stream.Collectors;
 import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 @Slf4j
-@AllArgsConstructor
-public class DirectoryORBIExternalCertificates implements OBRICertificates {
+public class DirectoryORBIExternalCertificates extends OBRIExternalCertificates {
 
     private final X509Certificate caCertificate;
-
     private final DirectoryUtilsService directoryUtilsService;
+
+    public DirectoryORBIExternalCertificates(X509Certificate caCertificate, DirectoryUtilsService directoryUtilsService) {
+        super(caCertificate, null, null);
+        this.caCertificate = caCertificate;
+        this.directoryUtilsService = directoryUtilsService;
+    }
 
     @Override
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {

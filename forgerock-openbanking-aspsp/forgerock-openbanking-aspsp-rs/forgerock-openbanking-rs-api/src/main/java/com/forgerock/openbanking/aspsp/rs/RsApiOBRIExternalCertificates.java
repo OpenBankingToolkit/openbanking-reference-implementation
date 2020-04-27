@@ -22,12 +22,11 @@ package com.forgerock.openbanking.aspsp.rs;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.OBRICertificates;
+import com.forgerock.openbanking.common.OBRIExternalCertificates;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -44,12 +43,18 @@ import static com.forgerock.openbanking.common.CertificateHelper.getCn;
  * A specific variation of {@link com.forgerock.openbanking.common.OBRIExternalCertificates} for the rs-api application.
  */
 @Slf4j
-@AllArgsConstructor
-class RsApiOBRIExternalCertificates implements OBRICertificates {
+class RsApiOBRIExternalCertificates extends OBRIExternalCertificates {
 
-    private X509Certificate caCertificate;
-    private TppStoreService tppStoreService;
-    private X509Certificate[] obCA;
+    private final X509Certificate caCertificate;
+    private final TppStoreService tppStoreService;
+    private final X509Certificate[] obCA;
+
+    RsApiOBRIExternalCertificates(X509Certificate caCertificate, TppStoreService tppStoreService, X509Certificate[] obCA) {
+        super(caCertificate, tppStoreService, obCA);
+        this.caCertificate = caCertificate;
+        this.tppStoreService = tppStoreService;
+        this.obCA = obCA;
+    }
 
     @Override
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
@@ -103,7 +108,7 @@ class RsApiOBRIExternalCertificates implements OBRICertificates {
     private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
         return (certificatesChain.length > 1 && caCertificate.equals(certificatesChain[1]))
                 || (certificatesChain.length == 1 && caCertificate.getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()))
-                // this class has this extra check compared to the common OBRIExternalCertificates
+                // extra check compared to the common OBRIExternalCertificates
                 || (certificatesChain.length == 1 && obCA[0].getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()));
     }
 }

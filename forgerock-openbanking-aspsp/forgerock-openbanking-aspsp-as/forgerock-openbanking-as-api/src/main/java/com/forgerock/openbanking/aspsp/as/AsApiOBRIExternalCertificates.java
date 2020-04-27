@@ -22,12 +22,11 @@ package com.forgerock.openbanking.aspsp.as;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.OBRICertificates;
+import com.forgerock.openbanking.common.OBRIExternalCertificates;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -45,12 +44,18 @@ import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIs
  * A specific variation of {@link com.forgerock.openbanking.common.OBRIExternalCertificates} for the as-api application.
  */
 @Slf4j
-@AllArgsConstructor
-class AsApiOBRIExternalCertificates implements OBRICertificates {
+class AsApiOBRIExternalCertificates extends OBRIExternalCertificates {
 
     private final X509Certificate caCertificate;
     private final TppStoreService tppStoreService;
     private final X509Certificate[] obCA;
+
+    AsApiOBRIExternalCertificates(X509Certificate caCertificate, TppStoreService tppStoreService, X509Certificate[] obCA) {
+        super(caCertificate, tppStoreService, obCA);
+        this.caCertificate = caCertificate;
+        this.tppStoreService = tppStoreService;
+        this.obCA = obCA;
+    }
 
     @Override
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
@@ -66,7 +71,7 @@ class AsApiOBRIExternalCertificates implements OBRICertificates {
             authorities.add(OBRIRole.ROLE_FORGEROCK_EXTERNAL_APP);
             authorities.add(OBRIRole.ROLE_TPP);
         }
-        if (isCertificateIssuedByCA(obCA[0], certificatesChain)) {
+        if (isCertificateIssuedByCA(obCA[0], certificatesChain)) { // checks obCA[0] rather than caCertificate in the common OBRIExternalCertificate class
             authorities.add(OBRIRole.ROLE_TPP);
         }
 
@@ -86,7 +91,7 @@ class AsApiOBRIExternalCertificates implements OBRICertificates {
 
     @Override
     public String getUserName(X509Certificate[] certificatesChain) {
-        // this class has additional check of obCA[0] compared to the common OBRIExternalCertificate class
+        // additional check of obCA[0] compared to the common OBRIExternalCertificate class
         if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {
             return null;
         }

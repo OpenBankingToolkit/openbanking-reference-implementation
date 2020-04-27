@@ -43,7 +43,10 @@ public class CookieHttpSecurityHelper {
      * @param obriInternalCertificates the {@link OBRIInternalCertificates} to add as a collector.
      * @param obriExternalCertificates the {@link OBRIExternalCertificates} to add as a collector.
      */
-    public static void configureHttpSecurity(HttpSecurity httpSecurity, OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates) throws Exception {
+    public static void configureHttpSecurity(HttpSecurity httpSecurity,
+                                             OBRIInternalCertificates obriInternalCertificates,
+                                             OBRIExternalCertificates obriExternalCertificates) throws Exception {
+        // TODO - we have an implementation within CookieHttpSecurityHelper that doesn't use cookies!
         httpSecurity(httpSecurity)
                 .apply(collectors(obriInternalCertificates, obriExternalCertificates, null));
     }
@@ -56,7 +59,10 @@ public class CookieHttpSecurityHelper {
      * @param obriExternalCertificates the {@link OBRIExternalCertificates} to add as a collector.
      * @param cryptoApiClient the {@link CryptoApiClient} for the {@link DecryptingJwtCookieCollector} collector.
      */
-    public static void configureHttpSecurity(HttpSecurity httpSecurity, OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates, CryptoApiClient cryptoApiClient) throws Exception {
+    public static void configureHttpSecurity(HttpSecurity httpSecurity,
+                                             OBRIInternalCertificates obriInternalCertificates,
+                                             OBRIExternalCertificates obriExternalCertificates,
+                                             CryptoApiClient cryptoApiClient) throws Exception {
         httpSecurity(httpSecurity)
                 .apply(collectors(obriInternalCertificates, obriExternalCertificates, cryptoApiClient));
     }
@@ -71,7 +77,9 @@ public class CookieHttpSecurityHelper {
                 .authenticationProvider(new CustomAuthProvider());
     }
 
-    private static MultiAuthenticationCollectorConfigurer<HttpSecurity> collectors(OBRICertificates obriInternalCertificates, OBRICertificates obriExternalCertificates, CryptoApiClient cryptoApiClient) {
+    private static MultiAuthenticationCollectorConfigurer<HttpSecurity> collectors(OBRIInternalCertificates obriInternalCertificates,
+                                                                                   OBRIExternalCertificates obriExternalCertificates,
+                                                                                   CryptoApiClient cryptoApiClient) {
         MultiAuthenticationCollectorConfigurer<HttpSecurity> configurer = new MultiAuthenticationCollectorConfigurer<>();
         configurer
                 .collector(PSD2Collector.psd2Builder()

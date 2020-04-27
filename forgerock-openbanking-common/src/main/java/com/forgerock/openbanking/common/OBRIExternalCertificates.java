@@ -25,6 +25,8 @@ import com.forgerock.cert.psd2.RolesOfPsp;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Collector;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +47,7 @@ import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIs
  */
 @Slf4j
 @AllArgsConstructor
-public class OBRIExternalCertificates implements OBRICertificates {
+public class OBRIExternalCertificates implements PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector {
 
     private final X509Certificate caCertificate;
     private final TppStoreService tppStoreService;

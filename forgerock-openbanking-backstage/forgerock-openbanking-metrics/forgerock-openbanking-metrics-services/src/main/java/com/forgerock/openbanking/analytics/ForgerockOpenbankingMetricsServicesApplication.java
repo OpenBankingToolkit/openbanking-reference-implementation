@@ -38,7 +38,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Import(MetricsApplicationSecurityConfiguration.class)
 public class ForgerockOpenbankingMetricsServicesApplication {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		new SpringApplication(ForgerockOpenbankingMetricsServicesApplication.class).run(args);
 	}
 

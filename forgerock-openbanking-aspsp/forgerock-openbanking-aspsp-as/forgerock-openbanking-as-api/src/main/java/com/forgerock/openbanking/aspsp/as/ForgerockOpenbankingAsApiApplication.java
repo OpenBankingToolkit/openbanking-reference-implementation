@@ -20,27 +20,14 @@
  */
 package com.forgerock.openbanking.aspsp.as;
 
-import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
 import com.forgerock.openbanking.common.EnableSslClient;
-import com.forgerock.openbanking.common.OBRICertificates;
-import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
-import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.security.cert.X509Certificate;
-
-import static com.forgerock.openbanking.common.CertificateHelper.loadOBCertificates;
 
 @SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
 @EnableMongoRepositories
@@ -48,35 +35,11 @@ import static com.forgerock.openbanking.common.CertificateHelper.loadOBCertifica
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableSslClient
-@Import(CookieWebSecurityConfiguration.class)
+@Import(AsApiSecurityConfiguration.class)
 public class ForgerockOpenbankingAsApiApplication {
-
-    @Value("${matls.forgerock-external-ca-alias}")
-    private String externalCaAlias;
-    @Value("${openbankingdirectory.certificates.ob.root}")
-    private Resource obRootCertificatePem;
-    @Value("${openbankingdirectory.certificates.ob.issuing}")
-    private Resource obIssuingCertificatePem;
-
-    private final KeyStoreService keyStoreService;
-    private final TppStoreService tppStoreService;
 
     public static void main(String[] args) {
         new SpringApplication(ForgerockOpenbankingAsApiApplication.class).run(args);
     }
 
-    public ForgerockOpenbankingAsApiApplication(KeyStoreService keyStoreService, TppStoreService tppStoreService) {
-        this.keyStoreService = keyStoreService;
-        this.tppStoreService = tppStoreService;
-    }
-
-    @Bean
-    @Primary
-    @Qualifier("obriExternalCertificates")
-    public OBRICertificates obriExternalCertificates() throws Exception  {
-        X509Certificate[] obCA = loadOBCertificates(obRootCertificatePem, obIssuingCertificatePem);
-        X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
-
-        return new AsApiOBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
-    }
 }

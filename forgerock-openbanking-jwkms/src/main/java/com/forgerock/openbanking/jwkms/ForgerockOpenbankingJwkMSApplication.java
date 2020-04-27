@@ -44,7 +44,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Import(JwkMSApplicationSecurityConfiguration.class)
 public class ForgerockOpenbankingJwkMSApplication  {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new SpringApplication(ForgerockOpenbankingJwkMSApplication.class).run(args);
     }
 

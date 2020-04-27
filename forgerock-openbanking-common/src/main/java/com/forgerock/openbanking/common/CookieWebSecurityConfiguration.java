@@ -20,23 +20,15 @@
  */
 package com.forgerock.openbanking.common;
 
-import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
-import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.Resource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import java.security.cert.X509Certificate;
-
-import static com.forgerock.openbanking.common.CertificateHelper.loadOBCertificates;
 import static com.forgerock.openbanking.common.CookieHttpSecurityHelper.configureHttpSecurity;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
@@ -45,65 +37,23 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  */
 @Configuration
 @EnableWebSecurity
-public class CookieWebSecurityConfiguration {
+@Order(LOWEST_PRECEDENCE - 1)
+@Import(OBRICertificateConfiguration.class)
+public class CookieWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Value("${matls.forgerock-internal-ca-alias}")
-    private String internalCaAlias;
-    @Value("${matls.forgerock-external-ca-alias}")
-    private String externalCaAlias;
-    @Value("${openbankingdirectory.certificates.ob.root}")
-    private Resource obRootCertificatePem;
-    @Value("${openbankingdirectory.certificates.ob.issuing}")
-    private Resource obIssuingCertificatePem;
-
-    private final KeyStoreService keyStoreService;
-    private final TppStoreService tppStoreService;
+    private final OBRIInternalCertificates obriInternalCertificates;
+    private final OBRIExternalCertificates obriExternalCertificates;
+    private final CryptoApiClient cryptoApiClient;
 
     @Autowired
-    CookieWebSecurityConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService) {
-        this.keyStoreService = keyStoreService;
-        this.tppStoreService = tppStoreService;
+    CookieWebSecurityConfiguration(OBRIInternalCertificates obriInternalCertificates, OBRIExternalCertificates obriExternalCertificates, CryptoApiClient cryptoApiClient) {
+        this.obriInternalCertificates = obriInternalCertificates;
+        this.obriExternalCertificates = obriExternalCertificates;
+        this.cryptoApiClient = cryptoApiClient;
     }
 
-    @Bean
-    @Qualifier("obriInternalCertificates")
-    public OBRICertificates obriInternalCertificates() throws Exception {
-        X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
-
-        OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
-        return obriInternalCertificates;
-    }
-
-    @Bean
-    @Qualifier("obriExternalCertificates")
-    public OBRICertificates obriExternalCertificates() throws Exception {
-        X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
-
-        X509Certificate[] obCA = loadOBCertificates(obRootCertificatePem, obIssuingCertificatePem);
-        OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
-        return obriExternalCertificates;
-    }
-
-    @Configuration
-    @Order(LOWEST_PRECEDENCE - 1)
-    static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
-        private final OBRICertificates obriInternalCertificates;
-        private final OBRICertificates obriExternalCertificates;
-        private final CryptoApiClient cryptoApiClient;
-
-        @Autowired
-        CookieWebSecurityConfigurerAdapter(@Qualifier("obriInternalCertificates") OBRICertificates obriInternalCertificates,
-                                           @Qualifier("obriExternalCertificates") OBRICertificates obriExternalCertificates,
-                                           CryptoApiClient cryptoApiClient) {
-            this.obriInternalCertificates = obriInternalCertificates;
-            this.obriExternalCertificates = obriExternalCertificates;
-            this.cryptoApiClient = cryptoApiClient;
-        }
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
-        }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        configureHttpSecurity(http, obriInternalCertificates, obriExternalCertificates, cryptoApiClient);
     }
 }

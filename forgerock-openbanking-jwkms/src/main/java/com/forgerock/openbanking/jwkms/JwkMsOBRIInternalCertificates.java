@@ -22,11 +22,10 @@ package com.forgerock.openbanking.jwkms;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.OBRICertificates;
+import com.forgerock.openbanking.common.OBRIInternalCertificates;
 import com.forgerock.openbanking.jwkms.service.application.ApplicationService;
 import com.forgerock.openbanking.model.OBRIRole;
 import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -42,11 +41,16 @@ import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIs
  * A specific variation of {@link com.forgerock.openbanking.common.OBRIInternalCertificates} for the jwkms application.
  */
 @Slf4j
-@AllArgsConstructor
-class JwkMsOBRIInternalCertificates implements OBRICertificates {
+class JwkMsOBRIInternalCertificates extends OBRIInternalCertificates {
 
-    private X509Certificate caCertificate;
-    private ApplicationService applicationService;
+    private final X509Certificate caCertificate;
+    private final ApplicationService applicationService;
+
+    JwkMsOBRIInternalCertificates(X509Certificate caCertificate, ApplicationService applicationService) {
+        super(caCertificate);
+        this.caCertificate = caCertificate;
+        this.applicationService = applicationService;
+    }
 
     @Override
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
