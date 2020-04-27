@@ -20,6 +20,7 @@
  */
 package com.forgerock.openbanking.aspsp.rs;
 
+import com.forgerock.openbanking.common.ApiOBRIExternalCertificates;
 import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
 import com.forgerock.openbanking.common.OBRIExternalCertificates;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
@@ -62,6 +63,6 @@ public class RsApiSecurityConfiguration {
         X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
 
         X509Certificate[] obCA = loadOBCertificates(obRootCertificatePem, obIssuingCertificatePem);
-        return new RsApiOBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
+        return new ApiOBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
     }
 }

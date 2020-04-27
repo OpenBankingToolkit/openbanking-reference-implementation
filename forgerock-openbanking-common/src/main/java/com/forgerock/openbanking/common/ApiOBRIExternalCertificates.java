@@ -18,11 +18,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.aspsp.rs;
+package com.forgerock.openbanking.common;
 
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.OBRIExternalCertificates;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
@@ -41,16 +40,16 @@ import static com.forgerock.openbanking.common.CertificateHelper.getCn;
 import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 /**
- * A specific variation of {@link com.forgerock.openbanking.common.OBRIExternalCertificates} for the rs-api application.
+ * A specific variation of {@link OBRIExternalCertificates} for the as-api and rs-api applications.
  */
 @Slf4j
-class RsApiOBRIExternalCertificates extends OBRIExternalCertificates {
+public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
 
     private final X509Certificate caCertificate;
     private final TppStoreService tppStoreService;
     private final X509Certificate[] obCA;
 
-    RsApiOBRIExternalCertificates(X509Certificate caCertificate, TppStoreService tppStoreService, X509Certificate[] obCA) {
+    public ApiOBRIExternalCertificates(X509Certificate caCertificate, TppStoreService tppStoreService, X509Certificate[] obCA) {
         super(caCertificate, tppStoreService, obCA);
         this.caCertificate = caCertificate;
         this.tppStoreService = tppStoreService;
