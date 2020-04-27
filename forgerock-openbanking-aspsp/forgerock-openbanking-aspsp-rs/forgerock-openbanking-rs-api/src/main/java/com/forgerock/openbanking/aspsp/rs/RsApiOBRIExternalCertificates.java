@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.forgerock.openbanking.common.CertificateHelper.getCn;
+import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 /**
  * A specific variation of {@link com.forgerock.openbanking.common.OBRIExternalCertificates} for the rs-api application.
@@ -66,11 +67,11 @@ class RsApiOBRIExternalCertificates extends OBRIExternalCertificates {
             authorities.add(OBRIRole.ROLE_EIDAS);
         }
 
-        if (isCertificateIssuedByCA(certificatesChain)) {
+        if (isCertificateIssuedByCA(caCertificate, certificatesChain)) {
             authorities.add(OBRIRole.ROLE_FORGEROCK_EXTERNAL_APP);
             authorities.add(OBRIRole.ROLE_TPP);
         }
-        if (isCertificateIssuedByCA(obCA)) {
+        if (isCertificateIssuedByCA(obCA[0], certificatesChain)) { // checks obCA[0] rather than caCertificate in the common OBRIExternalCertificate class
             authorities.add(OBRIRole.ROLE_TPP);
         }
 
@@ -90,7 +91,8 @@ class RsApiOBRIExternalCertificates extends OBRIExternalCertificates {
 
     @Override
     public String getUserName(X509Certificate[] certificatesChain) {
-        if (!isCertificateIssuedByCA(certificatesChain)) {
+        // additional check of obCA[0] compared to the common OBRIExternalCertificate class
+        if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {
             return null;
         }
 
@@ -103,12 +105,5 @@ class RsApiOBRIExternalCertificates extends OBRIExternalCertificates {
         } else {
             return optionalTpp.get().getClientId();
         }
-    }
-
-    private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
-        return (certificatesChain.length > 1 && caCertificate.equals(certificatesChain[1]))
-                || (certificatesChain.length == 1 && caCertificate.getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()))
-                // extra check compared to the common OBRIExternalCertificates
-                || (certificatesChain.length == 1 && obCA[0].getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()));
     }
 }
