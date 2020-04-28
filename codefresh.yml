@@ -78,9 +78,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-docs-docker-image:
         type: build
@@ -91,9 +89,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-register-docker-image:
         type: build
@@ -104,9 +100,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-directory-docker-image:
         type: build
@@ -117,9 +111,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-jwkms-image:
         type: build
@@ -130,9 +122,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-as-api-docker-image:
         type: build
@@ -143,9 +133,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-rs-api-docker-image:
         type: build
@@ -156,9 +144,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-rs-rcs-docker-image:
         type: build
@@ -169,9 +155,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-rs-simulator-docker-image:
         type: build
@@ -182,9 +166,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
   docker-build-2:
     type: parallel
@@ -199,9 +181,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-rs-ui-docker-image:
         type: build
@@ -212,9 +192,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-admin-docker-image:
         type: build
@@ -225,9 +203,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-metrics-service-docker-image:
         type: build
@@ -238,9 +214,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-monitoring-service-docker-image:
         type: build
@@ -251,9 +225,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
       build-scgw-docker-image:
         type: build
@@ -264,9 +236,7 @@ steps:
           - JAR_FILE=target/forgerock-openbanking-*.jar
           - VERSION_FILE=target/VERSION
           - SERVICE_FILE=target/SERVICE
-        tags:
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         disable_push: true
 
   integration-test-scgw:
@@ -378,8 +348,7 @@ steps:
         candidate: ${{build-config-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-docs-docker-image-latest:
         type: push
@@ -387,8 +356,7 @@ steps:
         candidate: ${{build-docs-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-register-docker-image-latest:
         type: push
@@ -396,8 +364,7 @@ steps:
         candidate: ${{build-register-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-directory-docker-image-latest:
         type: push
@@ -405,8 +372,7 @@ steps:
         candidate: ${{build-directory-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-jwkms-image-latest:
         type: push
@@ -414,8 +380,7 @@ steps:
         candidate: ${{build-jwkms-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-as-api-docker-image-latest:
         type: push
@@ -423,8 +388,7 @@ steps:
         candidate: ${{build-as-api-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-rs-api-docker-image-latest:
         type: push
@@ -432,8 +396,7 @@ steps:
         candidate: ${{build-rs-api-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-rs-rcs-docker-image-latest:
         type: push
@@ -441,8 +404,7 @@ steps:
         candidate: ${{build-rs-rcs-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-rs-simulator-docker-image-latest:
         type: push
@@ -450,8 +412,7 @@ steps:
         candidate: ${{build-rs-simulator-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-rs-store-docker-image-latest:
         type: push
@@ -459,8 +420,7 @@ steps:
         candidate: ${{build-rs-store-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-rs-ui-docker-image-latest:
         type: push
@@ -468,8 +428,7 @@ steps:
         candidate: ${{build-rs-ui-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-admin-docker-image-latest:
         type: push
@@ -477,8 +436,7 @@ steps:
         candidate: ${{build-admin-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-metrics-service-docker-image-latest:
         type: push
@@ -486,8 +444,7 @@ steps:
         candidate: ${{build-metrics-service-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-monitoring-service-docker-image-latest:
         type: push
@@ -495,8 +452,7 @@ steps:
         candidate: ${{build-monitoring-service-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
       push-scgw-docker-image-latest:
         type: push
@@ -504,8 +460,7 @@ steps:
         candidate: ${{build-scgw-docker-image}}
         tags:
           - latest
-          - ${{PROJECT_VERSION}}
-          - ${{CF_SHORT_REVISION}}
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
         registry: gcr
     when:
       branch:
@@ -555,12 +510,12 @@ steps:
     fail_fast: false
     commands:
       - apt update && apt install jq
-      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}'" else . end ]' client_releases/master-dev/releases.json > client_releases/master-dev/releases.json.tmp
+      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}-${CF_SHORT_REVISION}'" else . end ]' client_releases/master-dev/releases.json > client_releases/master-dev/releases.json.tmp
       - mv client_releases/master-dev/releases.json.tmp client_releases/master-dev/releases.json
       - git config --global user.email "codefresh@codefresh.io"
       - git config --global user.name "Codefresh"
       - git add client_releases/master-dev/releases.json
-      - git commit --allow-empty -m "Bumping master-dev to deploy spring apps with version ${{PROJECT_VERSION}}"
+      - git commit --allow-empty -m "Bumping master-dev to deploy spring apps with version ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}"
       - git push https://${{GITHUB_USERNAME}}:${{GITHUB_ACCESS_TOKEN}}@github.com/ForgeCloud/ob-deploy.git "master"
     when:
       branch:
