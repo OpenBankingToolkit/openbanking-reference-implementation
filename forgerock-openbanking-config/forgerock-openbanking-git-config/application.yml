@@ -65,7 +65,7 @@ rcs:
 #The RS discovery endpoint
 rs:
   detached-signature:
-    enable: false
+    enable: true
   tan: openbanking.org.uk
   issuerid: forgerock-rcs
   financial_id: 0015800001041REAAY

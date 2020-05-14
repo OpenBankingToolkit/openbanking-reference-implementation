@@ -36,7 +36,7 @@ am:
     jwksuri: ${am.internal.root}/oauth2/realms/root/realms/openbanking/connect/jwk_uri
 rs:
   detached-signature:
-    enable: false
+    enable: true
 
 rs-discovery:
   base-url: https://${rs-discovery.hostname}:8074
