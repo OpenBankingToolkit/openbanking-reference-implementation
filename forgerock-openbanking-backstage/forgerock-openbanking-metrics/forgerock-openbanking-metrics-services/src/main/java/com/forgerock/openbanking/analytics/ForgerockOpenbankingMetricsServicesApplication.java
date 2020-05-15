@@ -69,6 +69,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -76,6 +77,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,194 +93,216 @@ import java.util.stream.Collectors;
 @EnableMongoRepositories(basePackages = "com.forgerock")
 public class ForgerockOpenbankingMetricsServicesApplication {
 
-	public static void main(String[] args) throws Exception {
-		new SpringApplication(ForgerockOpenbankingMetricsServicesApplication.class).run(args);
-	}
+    public static void main(String[] args) throws Exception {
+        new SpringApplication(ForgerockOpenbankingMetricsServicesApplication.class).run(args);
+    }
 
-	@Autowired
-	private KeyStoreService keyStoreService;
-	@Value("${matls.forgerock-internal-ca-alias}")
-	private String internalCaAlias;
-	@Value("${matls.forgerock-external-ca-alias}")
-	private String externalCaAlias;
-	@Autowired
-	private SslConfiguration sslConfiguration;
-	@Value("${server.ssl.client-certs-key-alias}")
-	private String keyAlias;
+    @Autowired
+    private KeyStoreService keyStoreService;
+    @Value("${matls.forgerock-internal-ca-alias}")
+    private String internalCaAlias;
+    @Value("${matls.forgerock-external-ca-alias}")
+    private String externalCaAlias;
+    @Autowired
+    private SslConfiguration sslConfiguration;
+    @Value("${server.ssl.client-certs-key-alias}")
+    private String keyAlias;
 
-	private static String getCn(X509Certificate x509Certificate) {
-		try {
-			X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getSubject();
-			RDN cn = x500name.getRDNs(BCStyle.CN)[0];
-			return IETFUtils.valueToString(cn.getFirst().getValue());
-		} catch (CertificateEncodingException e) {
-			return null;
-		}
-	}
+    private static String getCn(X509Certificate x509Certificate) {
+        try {
+            X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getSubject();
+            RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+            return IETFUtils.valueToString(cn.getFirst().getValue());
+        } catch (CertificateEncodingException e) {
+            return null;
+        }
+    }
 
-	@Configuration
-	static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-		private static String CLIENT_CERTIFICATE_HEADER_NAME = "x-client-jwk";
+    @Configuration
+    static class CookieWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+        private static String CLIENT_CERTIFICATE_HEADER_NAME = "x-client-jwk";
 
-		@Autowired
-		private KeyStoreService keyStoreService;
-		@Value("${matls.forgerock-internal-ca-alias}")
-		private String internalCaAlias;
-		@Value("${matls.forgerock-external-ca-alias}")
-		private String externalCaAlias;
-		@Autowired
-		private CryptoApiClient cryptoApiClient;
+        @Autowired
+        private KeyStoreService keyStoreService;
+        @Value("${matls.forgerock-internal-ca-alias}")
+        private String internalCaAlias;
+        @Value("${matls.forgerock-external-ca-alias}")
+        private String externalCaAlias;
+        @Autowired
+        private CryptoApiClient cryptoApiClient;
 
 
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
+            X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
+            OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
 
-			OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
+            http
+                    .csrf().disable() // We don't need CSRF for JWT based authentication
+                    .authorizeRequests()
+                    .antMatchers(HttpMethod.POST, "/api/kpi/**").hasAuthority(AnalyticsAuthority.PUSH_KPI.getAuthority())
+                    .antMatchers(HttpMethod.GET, "/api/kpi/**").hasAuthority(AnalyticsAuthority.READ_KPI.getAuthority())
+                    .antMatchers(HttpMethod.GET, "/api/user/initiate-login").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/metrics/keys/jwk_uri").permitAll()
+                    .antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                    .antMatchers(HttpMethod.GET, "/actuator/info").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .authenticationProvider(new CustomAuthProvider())
+                    .apply(new MultiAuthenticationCollectorConfigurer<HttpSecurity>()
+                            .collector(PSD2Collector.psd2Builder()
+                                    .collectFromHeader(CertificateHeaderFormat.JWK)
+                                    .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
+                                    .usernameCollector(obriInternalCertificates)
+                                    .authoritiesCollector(obriInternalCertificates)
+                                    .build())
+                            .collector(DecryptingJwtCookieCollector.builder()
+                                    .cryptoApiClient(cryptoApiClient)
+                                    .cookieName("obri-session")
+                                    .authoritiesCollector(jwtCookieAuthorityCollector)
+                                    .build())
+                    );
+        }
+    }
 
-			http
-					.csrf().disable() // We don't need CSRF for JWT based authentication
-					.authorizeRequests()
-					.antMatchers(HttpMethod.POST, "/api/kpi/**").hasAuthority(AnalyticsAuthority.PUSH_KPI.getAuthority())
-					.antMatchers(HttpMethod.GET, "/api/kpi/**").hasAuthority(AnalyticsAuthority.READ_KPI.getAuthority())
-					.antMatchers(HttpMethod.GET, "/api/user/initiate-login").permitAll()
-					.antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-					.antMatchers(HttpMethod.GET, "/api/metrics/keys/jwk_uri").permitAll()
-					.antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
-					.antMatchers(HttpMethod.GET, "/actuator/info").permitAll()
-					.anyRequest().authenticated()
-					.and()
-					.authenticationProvider(new CustomAuthProvider())
-					.apply(new MultiAuthenticationCollectorConfigurer<HttpSecurity>()
-							.collector(PSD2Collector.psd2Builder()
-									.collectFromHeader(CertificateHeaderFormat.JWK)
-									.headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-									.usernameCollector(obriInternalCertificates)
-									.authoritiesCollector(obriInternalCertificates)
-									.build())
-							.collector(DecryptingJwtCookieCollector.builder()
-									.cryptoApiClient(cryptoApiClient)
-									.cookieName("obri-session")
-									.authoritiesCollector(t -> Sets.newHashSet(
-											AnalyticsAuthority.READ_KPI,
-											AnalyticsAuthority.PUSH_KPI
-									))
-									.build())
-					);
-		}
-	}
+    public static class DecryptingJwtCookieCollector extends CustomCookieCollector<JWT> {
 
-	public static class DecryptingJwtCookieCollector extends CustomCookieCollector<JWT> {
-
-		@Builder
+        @Builder
         public DecryptingJwtCookieCollector(CustomCookieCollector.AuthoritiesCollector<JWT> authoritiesCollector, String cookieName, CryptoApiClient cryptoApiClient) {
-			super(
-					"JWTCookie",
-					tokenSerialised -> {
-						try {
-							return cryptoApiClient.decryptJwe(tokenSerialised);
-						} catch (JOSEException e) {
-							throw new RuntimeException(e);
-						}
-					},
-					token -> token.getJWTClaimsSet().getSubject(),
-					authoritiesCollector,
-					cookieName
-			);
-		}
-	}
+            super(
+                    "JWTCookie",
+                    tokenSerialised -> {
+                        try {
+                            return cryptoApiClient.decryptJwe(tokenSerialised);
+                        } catch (JOSEException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    token -> token.getJWTClaimsSet().getSubject(),
+                    authoritiesCollector,
+                    cookieName
+            );
+        }
+    }
 
-	@Slf4j
-	@AllArgsConstructor
-	public static class OBRIInternalCertificates implements PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector {
+    /*
+     * Adding the default authorities.
+     * Adding the authorities coming from Forgerock AM JWT Cookie authentication if exist authorities.
+     * FYI: Additional Authorities setted on Claim 'group' set in 'identity / MSISDN Number'.
+     */
+    @Slf4j
+    @AllArgsConstructor
+    public static class JwtCookieAuthorityCollector implements CustomCookieCollector.AuthoritiesCollector<JWT> {
 
-		private X509Certificate caCertificate;
+        @Override
+        public Set<GrantedAuthority> getAuthorities(JWT token) throws ParseException {
+            Set<GrantedAuthority> authorities = Sets.newHashSet(
+                    AnalyticsAuthority.READ_KPI,
+                    AnalyticsAuthority.PUSH_KPI);
+            List<String> amGroups = token.getJWTClaimsSet().getStringListClaim("group");
+            if (amGroups != null && !amGroups.isEmpty()) {
+                log.trace("AM Authorities founds: {}", amGroups);
+                for (String amGroup : amGroups) {
+                    authorities.add(new SimpleGrantedAuthority(amGroup));
+                }
+            }
+            return authorities;
+        }
+    }
 
-		@Override
-		public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
-			Set<GrantedAuthority> authorities = new HashSet<>();
+    @Slf4j
+    @AllArgsConstructor
+    public static class OBRIInternalCertificates implements PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector {
 
-			if (roles != null) {
-				authorities.addAll(roles.getRolesOfPsp().stream().map(r -> new PSD2GrantType(r)).collect(Collectors.toSet()));
-			}
+        private X509Certificate caCertificate;
 
-			if (isCertificateIssuedByCA(certificatesChain)) {
-				authorities.add(OBRIRole.ROLE_FORGEROCK_INTERNAL_APP);
-				authorities.add(AnalyticsAuthority.PUSH_KPI);
-				authorities.add(AnalyticsAuthority.READ_KPI);
-			}
-			return authorities;
-		}
+        @Override
+        public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
+            Set<GrantedAuthority> authorities = new HashSet<>();
 
-		@Override
-		public String getUserName(X509Certificate[] certificatesChain) {
-			if (!isCertificateIssuedByCA(certificatesChain)) {
-				return null;
-			}
-			return getCn(certificatesChain[0]);
-		}
+            if (roles != null) {
+                authorities.addAll(roles.getRolesOfPsp().stream().map(r -> new PSD2GrantType(r)).collect(Collectors.toSet()));
+            }
 
-		private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
-			return (certificatesChain.length > 1 && caCertificate.equals(certificatesChain[1]))
-					|| (certificatesChain.length == 1 && caCertificate.getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()));
-		}
-	}
+            if (isCertificateIssuedByCA(certificatesChain)) {
+                authorities.add(OBRIRole.ROLE_FORGEROCK_INTERNAL_APP);
+                authorities.add(AnalyticsAuthority.PUSH_KPI);
+                authorities.add(AnalyticsAuthority.READ_KPI);
+            }
+            return authorities;
+        }
 
-	public static class CustomAuthProvider implements AuthenticationProvider {
-		@Override
-		public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-			//You can load more GrantedAuthority based on the user subject, like loading the TPP details from the software ID
-			return authentication;
-		}
+        @Override
+        public String getUserName(X509Certificate[] certificatesChain) {
+            if (!isCertificateIssuedByCA(certificatesChain)) {
+                return null;
+            }
+            return getCn(certificatesChain[0]);
+        }
 
-		@Override
-		public boolean supports(Class<?> aClass) {
-			return true;
-		}
-	}
+        private boolean isCertificateIssuedByCA(X509Certificate[] certificatesChain) {
+            return (certificatesChain.length > 1 && caCertificate.equals(certificatesChain[1]))
+                    || (certificatesChain.length == 1 && caCertificate.getSubjectX500Principal().equals(certificatesChain[0].getIssuerX500Principal()));
+        }
+    }
 
-	@Bean
-	public RestTemplate restTemplate(@Qualifier("mappingJacksonHttpMessageConverter")
-											 MappingJackson2HttpMessageConverter converter) throws SslConfigurationFailure {
-		RestTemplate restTemplate = new RestTemplate(sslConfiguration.factory(keyAlias, true));
-		customiseRestTemplate(converter, restTemplate);
-		return restTemplate;
-	}
+    public static class CustomAuthProvider implements AuthenticationProvider {
+        @Override
+        public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+            //You can load more GrantedAuthority based on the user subject, like loading the TPP details from the software ID
+            return authentication;
+        }
 
-	@Bean
-	public WebClient webClient() throws Exception {
+        @Override
+        public boolean supports(Class<?> aClass) {
+            return true;
+        }
+    }
 
-		SslContext sslContext = sslConfiguration.getSslContextForReactor(keyAlias);
-		HttpClient httpClient = HttpClient.create()
-				.secure(sslContextSpec -> sslContextSpec.sslContext(sslContext));
-		ReactorClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-		return WebClient.builder().clientConnector(connector).build();
-	}
+    @Bean
+    public RestTemplate restTemplate(@Qualifier("mappingJacksonHttpMessageConverter")
+                                             MappingJackson2HttpMessageConverter converter) throws SslConfigurationFailure {
+        RestTemplate restTemplate = new RestTemplate(sslConfiguration.factory(keyAlias, true));
+        customiseRestTemplate(converter, restTemplate);
+        return restTemplate;
+    }
 
-	private void customiseRestTemplate(@Qualifier("mappingJacksonHttpMessageConverter") MappingJackson2HttpMessageConverter converter, RestTemplate restTemplate) {
-		List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
-		messageConverters.removeIf(c -> c instanceof MappingJackson2HttpMessageConverter);
-		messageConverters.add(converter);
-		restTemplate.setErrorHandler(new ClientResponseErrorHandler());
-	}
+    @Bean
+    public WebClient webClient() throws Exception {
 
-	@Bean
-	public MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter(@Qualifier("objectMapperBuilderCustomizer") Jackson2ObjectMapperBuilderCustomizer objectMapperBuilderCustomizer) {
-		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-		Jackson2ObjectMapperBuilder objectMapperBuilder = new Jackson2ObjectMapperBuilder();
-		objectMapperBuilderCustomizer.customize(objectMapperBuilder);
-		converter.setObjectMapper(objectMapperBuilder.build());
-		return converter;
-	}
+        SslContext sslContext = sslConfiguration.getSslContextForReactor(keyAlias);
+        HttpClient httpClient = HttpClient.create()
+                .secure(sslContextSpec -> sslContextSpec.sslContext(sslContext));
+        ReactorClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+        return WebClient.builder().clientConnector(connector).build();
+    }
 
-	public enum AnalyticsAuthority implements GrantedAuthority {
-		PUSH_KPI,
-		READ_KPI;
+    private void customiseRestTemplate(@Qualifier("mappingJacksonHttpMessageConverter") MappingJackson2HttpMessageConverter converter, RestTemplate restTemplate) {
+        List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
+        messageConverters.removeIf(c -> c instanceof MappingJackson2HttpMessageConverter);
+        messageConverters.add(converter);
+        restTemplate.setErrorHandler(new ClientResponseErrorHandler());
+    }
 
-		@Override
-		public String getAuthority() {
-			return name();
-		}
-	}
+    @Bean
+    public MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter(@Qualifier("objectMapperBuilderCustomizer") Jackson2ObjectMapperBuilderCustomizer objectMapperBuilderCustomizer) {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        Jackson2ObjectMapperBuilder objectMapperBuilder = new Jackson2ObjectMapperBuilder();
+        objectMapperBuilderCustomizer.customize(objectMapperBuilder);
+        converter.setObjectMapper(objectMapperBuilder.build());
+        return converter;
+    }
+
+    public enum AnalyticsAuthority implements GrantedAuthority {
+        PUSH_KPI,
+        READ_KPI;
+
+        @Override
+        public String getAuthority() {
+            return name();
+        }
+    }
 }
