@@ -78,6 +78,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -199,9 +200,8 @@ public class ForgerockOpenbankingMetricsServicesApplication {
 
         @Override
         public Set<GrantedAuthority> getAuthorities(JWT token) throws ParseException {
-            Set<GrantedAuthority> authorities = Sets.newHashSet(
-                    AnalyticsAuthority.READ_KPI,
-                    AnalyticsAuthority.PUSH_KPI);
+
+            Set<GrantedAuthority> authorities = Sets.newHashSet(Collections.EMPTY_SET);
             List<String> amGroups = token.getJWTClaimsSet().getStringListClaim("group");
             if (amGroups != null && !amGroups.isEmpty()) {
                 log.trace("AM Authorities founds: {}", amGroups);
