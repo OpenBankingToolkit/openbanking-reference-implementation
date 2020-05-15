@@ -28,7 +28,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>3.1.2-queen-rc6</version>
+    <version>3.1.2-queen-rc7</version>
     <packaging>pom</packaging>
 
     <parent>
