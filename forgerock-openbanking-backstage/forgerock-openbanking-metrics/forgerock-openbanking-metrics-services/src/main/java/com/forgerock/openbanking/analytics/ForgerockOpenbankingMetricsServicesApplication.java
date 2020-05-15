@@ -190,7 +190,10 @@ public class ForgerockOpenbankingMetricsServicesApplication {
     }
 
     /*
-     * Adding the default authorities.
+     * User authority privilege permission is required to access the analytics app.
+     * It is important for users/customers of the analytics app that the competitive information within is kept private.
+     * And then only the users with the authority READ_KPI can access to analytics.
+     * Adding the restricted authorities.
      * Adding the authorities coming from Forgerock AM JWT Cookie authentication if exist authorities.
      * FYI: Additional Authorities setted on Claim 'group' set in 'identity / MSISDN Number'.
      */
