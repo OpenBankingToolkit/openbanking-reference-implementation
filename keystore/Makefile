@@ -887,6 +887,7 @@ create-scgw-key:
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_AS_TOP_REALM))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_AS_TOP_REALM_MATLS))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_CONFIG))
+	$(eval SAN=$(SAN),dns:$(HOSTNAME_ADMIN))
 
 	$(eval SAN=$(SAN),dns:$(APP_SCGW))
 
