@@ -152,6 +152,7 @@ public class ForgerockOpenbankingGatewayApplication {
                 .route(rewriteExternalActuatorToInternal("matls.service.bank." + dnsHostRoot + "**", "https://rs-ui:" + rsUiPort))
                 .route(rewriteExternalActuatorToInternal("docs." + dnsHostRoot + "**", "https://docs:" + docsPort))
                 .route(rewriteExternalActuatorToInternal("admin." + dnsHostRoot + "**", "https://admin:" + adminPort))
+                .route(rewriteExternalActuatorToInternal("config." + dnsHostRoot + "**", "http://config:" + configPort))
                 .route(rewriteExternalActuatorToInternal("monitoring." + dnsHostRoot + "**", "https://monitoring:" + monitoringPort))
                 .route(rewriteExternalActuatorToInternal("service.register." + dnsHostRoot + "**", "https://register:" + registerPort))
                 .route(rewriteExternalActuatorToInternal("rs-simulator.aspsp." + dnsHostRoot + "**", "https://rs-simulator:" + rsSimulatorPort))

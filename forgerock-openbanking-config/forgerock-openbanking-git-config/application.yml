@@ -743,6 +743,10 @@ config:
   port: 443
   internal-port: 8888
 
+admin:
+  port: 443
+  internal-port: 8082
+
 #Logging
 logging:
   file: /opt/openbanking/${spring.application.name}/logs/${spring.application.name}.log
