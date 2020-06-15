@@ -39,10 +39,10 @@
             <groupId>com.forgerock.openbanking.common</groupId>
             <artifactId>forgerock-openbanking-common</artifactId>
         </dependency>
-		<dependency>
-			<groupId>dev.openbanking4.spring.security</groupId>
-			<artifactId>spring-security-multi-auth-starter</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>dev.openbanking4.spring.security</groupId>
+            <artifactId>spring-security-multi-auth-starter</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.forgerock.openbanking.jwkms</groupId>
             <artifactId>forgerock-openbanking-jwkms-server</artifactId>
@@ -100,7 +100,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
-                 <configuration>
+                <configuration>
                     <skipPush>false</skipPush>
                     <repository>eu.gcr.io/openbanking-214714/obri/jwkms</repository>
                     <buildArgs>

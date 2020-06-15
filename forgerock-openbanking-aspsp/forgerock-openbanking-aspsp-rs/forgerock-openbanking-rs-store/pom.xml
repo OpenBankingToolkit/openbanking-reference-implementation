@@ -35,7 +35,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.aspsp.rs</groupId>
         <artifactId>forgerock-openbanking-aspsp-rs</artifactId>
-         <version>3.1.2-queen-rc7</version>
+        <version>3.1.2-queen-rc7</version>
     </parent>
 
     <dependencies>
@@ -51,10 +51,10 @@
             <groupId>com.forgerock.openbanking.clients</groupId>
             <artifactId>forgerock-openbanking-analytics-webclient</artifactId>
         </dependency>
-		<dependency>
-			<groupId>dev.openbanking4.spring.security</groupId>
-			<artifactId>spring-security-multi-auth-starter</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>dev.openbanking4.spring.security</groupId>
+            <artifactId>spring-security-multi-auth-starter</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -172,7 +172,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
-                 <configuration>
+                <configuration>
                     <skipPush>false</skipPush>
                     <repository>eu.gcr.io/openbanking-214714/obri/rs-store</repository>
                     <buildArgs>

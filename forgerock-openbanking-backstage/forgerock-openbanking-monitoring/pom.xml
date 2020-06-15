@@ -130,10 +130,10 @@
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
         </dependency>
-		<dependency>
-			<groupId>dev.openbanking4.spring.security</groupId>
-			<artifactId>spring-security-multi-auth-starter</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>dev.openbanking4.spring.security</groupId>
+            <artifactId>spring-security-multi-auth-starter</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.forgerock.openbanking</groupId>
             <artifactId>forgerock-openbanking-auth</artifactId>
