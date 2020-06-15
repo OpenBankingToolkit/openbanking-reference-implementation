@@ -27,17 +27,27 @@ import com.forgerock.openbanking.common.EnableSslClient;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import com.google.common.collect.Sets;
+import com.nimbusds.jwt.JWT;
 import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
+import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
 import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
 import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFICATE_HEADER_NAME;
 
@@ -62,6 +72,7 @@ class MetricsApplicationSecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
             X509Certificate internalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(internalCaAlias);
 
             MetricsOBRIInternalCertificates obriInternalCertificates = new MetricsOBRIInternalCertificates(internalCACertificate);
@@ -89,12 +100,36 @@ class MetricsApplicationSecurityConfiguration {
                             .collector(DecryptingJwtCookieCollector.builder()
                                     .cryptoApiClient(cryptoApiClient)
                                     .cookieName("obri-session")
-                                    .authoritiesCollector(t -> Sets.newHashSet(
-                                            AnalyticsAuthority.READ_KPI,
-                                            AnalyticsAuthority.PUSH_KPI
-                                    ))
+                                    .authoritiesCollector(jwtCookieAuthorityCollector)
                                     .build())
                     );
+        }
+    }
+
+    /*
+     * User authority privilege permission is required to access the analytics app.
+     * It is important for users/customers of the analytics app that the competitive information within is kept private.
+     * And then only the users with the authority READ_KPI can access to analytics.
+     * Adding the restricted authorities.
+     * Adding the authorities coming from Forgerock AM JWT Cookie authentication if exist authorities.
+     * FYI: Additional Authorities setted on Claim 'group' set in 'identity / MSISDN Number'.
+     */
+    @Slf4j
+    @AllArgsConstructor
+    public static class JwtCookieAuthorityCollector implements CustomCookieCollector.AuthoritiesCollector<JWT> {
+
+        @Override
+        public Set<GrantedAuthority> getAuthorities(JWT token) throws ParseException {
+
+            Set<GrantedAuthority> authorities = Sets.newHashSet(Collections.EMPTY_SET);
+            List<String> amGroups = token.getJWTClaimsSet().getStringListClaim("group");
+            if (amGroups != null && !amGroups.isEmpty()) {
+                log.trace("AM Authorities founds: {}", amGroups);
+                for (String amGroup : amGroups) {
+                    authorities.add(new SimpleGrantedAuthority(amGroup));
+                }
+            }
+            return authorities;
         }
     }
 }

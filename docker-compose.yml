@@ -34,6 +34,28 @@ services:
       retries: 3
       start_period: 40s
 
+  admin:
+    container_name: admin
+    image: eu.gcr.io/openbanking-214714/obri/admin
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
+      SPRING_PROFILES_ACTIVE: native,console-logging
+      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8082
+      HOSTNAME: admin
+    volumes:
+      - ./forgerock-openbanking-backstage/forgerock-openbanking-admin/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
+      - ./forgerock-openbanking-backstage/forgerock-openbanking-admin/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
+    networks:
+      obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8082/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   jwkms:
     container_name: jwkms
     image: eu.gcr.io/openbanking-214714/obri/jwkms
@@ -115,6 +137,7 @@ services:
           - swagger.dev-ob.forgerock.financial
           - scgw.dev-ob.forgerock.financial
           - rcs.aspsp.dev-ob.forgerock.financial
+          - admin.dev-ob.forgerock.financial
     healthcheck:
       test: ["CMD", "curl", "-f", "-k", "https://localhost:8074/actuator/health"]
       interval: 1m30s
