@@ -34,8 +34,8 @@
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-starter-parent</artifactId>
-        <version>1.0.69</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <version>1.0.71</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <organization>
@@ -50,12 +50,13 @@
         <ob-auth.version>1.0.57</ob-auth.version>
         <ob-directory.version>1.4.73</ob-directory.version>
         <ob-auth.version>1.0.57</ob-auth.version>
-        <ob-aspsp.version>1.0.81</ob-aspsp.version>
+        <ob-aspsp.version>1.0.82</ob-aspsp.version>
         <ob-clients.version>1.0.34</ob-clients.version>
         <ob-extensions.version>1.0.8</ob-extensions.version>
     </properties>
 
     <modules>
+        <module>forgerock-openbanking-common</module>
         <module>forgerock-openbanking-config</module>
         <module>forgerock-openbanking-aspsp</module>
         <module>forgerock-openbanking-jwkms</module>
@@ -68,6 +69,11 @@
     <dependencyManagement>
         <dependencies>
             <!-- OpenBanking -->
+            <dependency>
+                <groupId>com.forgerock.openbanking.common</groupId>
+                <artifactId>forgerock-openbanking-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking.analytics</groupId>
                 <artifactId>forgerock-openbanking-analytics-core</artifactId>
@@ -97,6 +103,11 @@
                 <groupId>com.forgerock.openbanking.directory</groupId>
                 <artifactId>forgerock-openbanking-directory-server</artifactId>
                 <version>${ob-directory.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.forgerock.openbanking.aspsp</groupId>
+                <artifactId>forgerock-openbanking-uk-aspsp-common</artifactId>
+                <version>${ob-aspsp.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.forgerock.openbanking.aspsp</groupId>
@@ -150,7 +161,8 @@
 
     <scm>
         <connection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</connection>
-        <developerConnection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git
+        </developerConnection>
         <url>https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</url>
         <tag>HEAD</tag>
     </scm>
@@ -159,7 +171,9 @@
         <repository>
             <id>bintray-openbankingtoolkit-OpenBankingToolkit</id>
             <name>OpenBankingToolkit Reference Implementation</name>
-            <url>https://api.bintray.com/maven/openbanking-toolkit/OpenBankingToolKit/openbanking-reference-implementation/;publish=1</url>
+            <url>
+                https://api.bintray.com/maven/openbanking-toolkit/OpenBankingToolKit/openbanking-reference-implementation/;publish=1
+            </url>
         </repository>
         <!--repository>
             <id>maven.forgerock.org-community</id>
