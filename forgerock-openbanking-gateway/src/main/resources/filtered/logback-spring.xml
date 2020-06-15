@@ -19,7 +19,7 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
     <logger name="com.forgerock" level="DEBUG"/>
-    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework" level="TRACE"/>
     <logger name="org.forgerock.openbanking.commons.auth" level="TRACE"/>
 
 
