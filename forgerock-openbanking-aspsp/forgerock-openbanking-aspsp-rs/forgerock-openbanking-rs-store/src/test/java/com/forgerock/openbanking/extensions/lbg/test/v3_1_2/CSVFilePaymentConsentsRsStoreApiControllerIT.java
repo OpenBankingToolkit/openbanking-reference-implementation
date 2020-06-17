@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.extensions.lbg.test;
+package com.forgerock.openbanking.extensions.lbg.test.v3_1_2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentFactory;
@@ -36,6 +36,7 @@ import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatu
 import com.forgerock.openbanking.common.model.openbanking.v3_1.payment.FRFileConsent2;
 import com.forgerock.openbanking.common.model.version.OBVersion;
 import com.forgerock.openbanking.exceptions.OBErrorException;
+import com.forgerock.openbanking.extensions.lbg.test.MockTppHelper;
 import com.forgerock.openbanking.integration.test.support.SpringSecForTest;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.github.jsonzou.jmockdata.JMockData;
@@ -123,7 +124,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         OBWriteFileConsent2 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType());
 
         // When
-        HttpResponse<OBWriteFileConsentResponse2> response = Unirest.post("https://rs-store:" + port + "/open-banking/v3.1/pisp/file-payment-consents/")
+        HttpResponse<OBWriteFileConsentResponse2> response = Unirest.post("https://rs-store:" + port + _URL)
                 .header(OBHeaders.X_FAPI_FINANCIAL_ID, rsConfiguration.financialId)
                 .header(OBHeaders.AUTHORIZATION, "token")
                 .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
@@ -143,7 +144,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         assertThat(consent.getId()).isEqualTo(consentResponse.getData().getConsentId());
         assertThat(consent.getInitiation()).isEqualTo(consentResponse.getData().getInitiation());
         assertThat(consent.getStatus().toOBExternalConsentStatus2Code()).isEqualTo(consentResponse.getData().getStatus());
-        assertThat(consent.getObVersion()).isEqualTo(OBVersion.v3_1);
+        assertThat(consent.getObVersion()).isEqualTo(OBVersion.v3_1_2);
     }
 
     /**
