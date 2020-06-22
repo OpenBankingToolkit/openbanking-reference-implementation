@@ -86,8 +86,8 @@ class GatewayRouteLocatorConfiguration {
     private String rsSimulatorPort;
     @Value("${config.internal-port}")
     private String configPort;
-    @Value("${forgerock.whitelist:0.0.0.0/0}")
-    private String forgerockWhitelist;
+    @Value("#{'${forgerock.whitelist:0.0.0.0/0}'.split('\\s*,\\s*')}")
+    private String[] forgerockWhitelist;
     @Value("${dynamic-registration.enable}")
     private boolean isDynamicRegistrationEnable;
     @Value("${dns.hosts.root}")
@@ -102,7 +102,7 @@ class GatewayRouteLocatorConfiguration {
 
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
-        String dynamicRegWhitelist = isDynamicRegistrationEnable ? "0.0.0.0/0" : forgerockWhitelist;
+        String[] dynamicRegWhitelist = isDynamicRegistrationEnable ? new String[]{"0.0.0.0/0"} : forgerockWhitelist;
         return builder.routes()
                 .route(rewriteExternalActuatorToInternal("jwkms." + dnsHostRoot + "**", "https://jwkms:" + jwkmsPort))
                 .route(rewriteExternalActuatorToInternal("matls.rs.aspsp." + dnsHostRoot + "**", "https://rs-api:" + rsApiPort))
