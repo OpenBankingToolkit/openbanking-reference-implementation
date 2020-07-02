@@ -18,23 +18,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.api.v3_x;
+package com.forgerock.openbanking.aspsp.rs.store.ext.lbg.file.payment.csv.api.v3_0;
 
 import com.forgerock.openbanking.analytics.model.openbanking.OBReference;
 import com.forgerock.openbanking.analytics.model.openbanking.OpenBankingAPI;
+import com.forgerock.openbanking.analytics.services.ConsentMetricService;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.exception.CSVErrorException;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentType;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVParserFactory;
+import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVValidationFactory;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFilePayment;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.parser.CSVParser;
-import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidationService;
-import com.forgerock.openbanking.aspsp.rs.wrappper.RSEndpointWrapperService;
+import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
+import com.forgerock.openbanking.aspsp.rs.store.repository.v3_1.payments.FileConsent2Repository;
+import com.forgerock.openbanking.common.conf.discovery.ResourceLinkService;
+import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatusCode;
 import com.forgerock.openbanking.common.model.openbanking.v3_1.payment.FRFileConsent2;
-import com.forgerock.openbanking.common.services.store.RsStoreGateway;
-import com.forgerock.openbanking.common.services.store.payment.FilePaymentService;
 import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.exceptions.OBErrorResponseException;
 import com.forgerock.openbanking.model.error.OBRIErrorResponseCategory;
+import com.forgerock.openbanking.model.error.OBRIErrorType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,12 +47,13 @@ import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -61,23 +65,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Date;
 
+import static com.forgerock.openbanking.common.services.openbanking.IdempotencyService.validateIdempotencyRequest;
 import static com.forgerock.openbanking.constants.OpenBankingConstants.HTTP_DATE_FORMAT;
 
 @Api(value = "csv-file-payment-consents", description = "the CSV file-payment-consents API")
 @Controller("CSVFilePaymentConsentsApiV3.0")
 @RequestMapping({"/open-banking/v3.0/pisp","/open-banking/v3.1/pisp","/open-banking/v3.1.1/pisp","/open-banking/v3.1.2/pisp"})
 @Slf4j
-public class CSVFilePaymentConsentsApiController {
+public class CSVFilePaymentConsentsRsStoreApiController {
 
-    private final RSEndpointWrapperService rsEndpointWrapperService;
-    private final RsStoreGateway rsStoreGateway;
-    private final FilePaymentService filePaymentService;
+    private final TppRepository tppRepository;
+    private final FileConsent2Repository fileConsentRepository;
+    private final ResourceLinkService resourceLinkService;
+    private ConsentMetricService consentMetricService;
 
-    public CSVFilePaymentConsentsApiController(RSEndpointWrapperService rsEndpointWrapperService, RsStoreGateway rsStoreGateway, FilePaymentService filePaymentService) {
-        this.rsEndpointWrapperService = rsEndpointWrapperService;
-        this.rsStoreGateway = rsStoreGateway;
-        this.filePaymentService = filePaymentService;
+    public CSVFilePaymentConsentsRsStoreApiController(@Qualifier("webClientConsentMetricService") ConsentMetricService consentMetricService, TppRepository tppRepository, FileConsent2Repository fileConsentRepository, ResourceLinkService resourceLinkService) {
+        this.tppRepository = tppRepository;
+        this.fileConsentRepository = fileConsentRepository;
+        this.resourceLinkService = resourceLinkService;
+        this.consentMetricService = consentMetricService;
     }
 
     @ApiOperation(value = "Create CSV File Payment Consents", nickname = "csvCreateFilePaymentConsentsConsentIdFile", notes = "", authorizations = {
@@ -141,38 +149,57 @@ public class CSVFilePaymentConsentsApiController {
 
             Principal principal
     ) throws OBErrorResponseException {
-        log.trace("CVS controller.");
+        log.trace("CVS store controller.");
         log.trace("Received '{}'.", fileParam);
-        FRFileConsent2 consent = filePaymentService.getPayment(consentId);
-        try {
-            CSVParser parser = CSVParserFactory.parse(CSVFilePaymentType.fromStringType(consent.getFileType().getFileType()), fileParam);
-            CSVFilePayment filePayment = parser.parse().getCsvFilePayment();
-            CSVValidationService.Consent.numTransactions(consent, filePayment);
-            CSVValidationService.Consent.controlSum(consent, filePayment);
-        } catch (OBErrorException | CSVErrorException e) {
-            if (e instanceof CSVErrorException) {
-                throw new OBErrorResponseException(((CSVErrorException) e).getCsvErrorType().getHttpStatus(), OBRIErrorResponseCategory.REQUEST_INVALID, "csv error", ((CSVErrorException) e).getOBError());
+
+        final FRFileConsent2 fileConsent = fileConsentRepository.findById(consentId)
+                .orElseThrow(() -> new OBErrorResponseException(
+                        HttpStatus.BAD_REQUEST,
+                        OBRIErrorResponseCategory.REQUEST_INVALID,
+                        OBRIErrorType.PAYMENT_ID_NOT_FOUND
+                                .toOBError1(consentId)
+                ));
+
+        // If file already exists it could be idempotent request
+        if (!StringUtils.isEmpty(fileConsent.getFileContent())) {
+            if (xIdempotencyKey.equals(fileConsent.getIdempotencyKey())) {
+                validateIdempotencyRequest(xIdempotencyKey, fileConsent);
+                log.info("File already exists for consent: '{}' and has matching idempotent key: '{}'. No action taken but returning 200/OK", fileConsent.id, fileConsent.idempotencyKey);
+                return ResponseEntity.ok().build();
             } else {
-                throw new OBErrorResponseException(((OBErrorException) e).getObriErrorType().getHttpStatus(), OBRIErrorResponseCategory.REQUEST_INVALID, "ob csv error", ((OBErrorException) e).getOBError());
+                log.debug("This consent already has a file uploaded and the idempotency key does not match the previous upload so rejecting.");
+                throw new OBErrorResponseException(
+                        HttpStatus.FORBIDDEN,
+                        OBRIErrorResponseCategory.REQUEST_INVALID, "cvs store error",
+                        OBRIErrorType.PAYMENT_ALREADY_SUBMITTED
+                                .toOBError1(fileConsent.getStatus().toOBExternalConsentStatus2Code())
+                );
             }
         }
-        return rsEndpointWrapperService.filePaymentEndpoint()
-                .authorization(authorization)
-                .payment(consent)
-                .xFapiFinancialId(xFapiFinancialId)
-                .principal(principal)
-                .filters(f -> {
-                    f.verifyFileHash(fileParam);
-                    f.verifyIdempotencyKeyLength(xIdempotencyKey);
-                })
-                .execute(
-                        (String tppId) -> {
-                            HttpHeaders additionalHttpHeaders = new HttpHeaders();
-                            additionalHttpHeaders.add("x-ob-client-id", tppId);
-                            ParameterizedTypeReference<String> ptr = new ParameterizedTypeReference<String>() {};
 
-                            return rsStoreGateway.toRsStore(request, additionalHttpHeaders, Collections.emptyMap(), String.class, fileParam);
-                        }
-                );
+        // We parse the file and check metadata against the parsed file
+        try {
+            CSVParser parser = CSVParserFactory.parse(CSVFilePaymentType.fromStringType(fileConsent.getFileType().getFileType()), fileParam);
+            CSVFilePayment paymentFile = parser.parse().getCsvFilePayment();
+            CSVValidationFactory.getValidationServiceInstance(paymentFile).validate();
+
+            //PaymentFile paymentFile = PaymentFileFactory.createPaymentFile(fileConsent.getFileType(), fileParam);
+            log.info("Successfully parsed file of type: '{}' for consent: '{}'", fileConsent.getFileType(), fileConsent.getId());
+
+            fileConsent.setPayments(Collections.EMPTY_LIST);
+            fileConsent.setFileContent(fileParam);
+            fileConsent.setUpdated(new Date());
+            fileConsent.setStatus(ConsentStatusCode.AWAITINGAUTHORISATION);
+            fileConsent.setStatusUpdate(DateTime.now());
+            fileConsentRepository.save(fileConsent);
+        } catch (OBErrorException | CSVErrorException e) {
+            if (e instanceof CSVErrorException) {
+                throw new OBErrorResponseException(((CSVErrorException) e).getCsvErrorType().getHttpStatus(), OBRIErrorResponseCategory.REQUEST_INVALID, "csv store error", ((CSVErrorException) e).getOBError());
+            } else {
+                throw new OBErrorResponseException(((OBErrorException) e).getObriErrorType().getHttpStatus(), OBRIErrorResponseCategory.REQUEST_INVALID, "ob csv store error", ((OBErrorException) e).getOBError());
+            }
+        }
+
+        return ResponseEntity.ok().build();
     }
 }
