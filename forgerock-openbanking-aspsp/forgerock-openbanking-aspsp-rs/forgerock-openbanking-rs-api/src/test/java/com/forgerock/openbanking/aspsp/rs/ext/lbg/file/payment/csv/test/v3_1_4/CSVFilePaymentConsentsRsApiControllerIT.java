@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.test.v3_1_3;
+package com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.test.v3_1_4;
 
 import com.forgerock.openbanking.am.services.AMResourceServerService;
 import com.forgerock.openbanking.aspsp.rs.ForgerockOpenbankingRsApiApplication;
@@ -95,7 +95,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {ForgerockOpenbankingRsApiApplication.class})
 public class CSVFilePaymentConsentsRsApiControllerIT {
 
-    private final static String _url = "/open-banking/v3.1.3/pisp/file-payment-consents/{ConsentId}/file";
+    private final static String _url = "/open-banking/v3.1.4/pisp/file-payment-consents/{ConsentId}/file";
     private CSVFilePayment file;
 
     private MockMvc mockMvc;
