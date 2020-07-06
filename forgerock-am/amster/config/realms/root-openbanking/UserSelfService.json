@@ -46,7 +46,7 @@
       "userRegistrationTokenTTL" : 300,
       "userRegistrationEmailSubject" : [ "en|Registration email" ],
       "userRegistrationCaptchaEnabled" : false,
-      "userRegistrationValidUserAttributes" : [ "userPassword", "mail", "givenName", "kbaInfo", "inetUserStatus", "sn", "username" ]
+      "userRegistrationValidUserAttributes" : [ "userPassword", "mail", "givenName", "kbaInfo", "inetUserStatus", "sn", "username", "sunIdentityMSISDNNumber" ]
     },
     "generalConfig" : {
       "minimumAnswersToDefine" : 1,

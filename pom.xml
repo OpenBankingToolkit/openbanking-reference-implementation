@@ -45,8 +45,8 @@
     <url>http://www.forgerock.com</url>
 
     <properties>
-        <ob-analytics.version>1.1.48</ob-analytics.version>
-        <ob-jwkms.version>1.1.67</ob-jwkms.version>
+        <ob-analytics.version>1.1.49-SNAPSHOT</ob-analytics.version>
+        <ob-jwkms.version>1.1.70-SNAPSHOT</ob-jwkms.version>
         <ob-auth.version>1.0.57</ob-auth.version>
         <ob-directory.version>1.4.73</ob-directory.version>
         <ob-auth.version>1.0.57</ob-auth.version>
@@ -74,6 +74,11 @@
                 <artifactId>forgerock-openbanking-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!--<dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-upgrade</artifactId>
+                <version>1.0.77-SNAPSHOT</version>
+            </dependency>-->
             <dependency>
                 <groupId>com.forgerock.openbanking.analytics</groupId>
                 <artifactId>forgerock-openbanking-analytics-core</artifactId>

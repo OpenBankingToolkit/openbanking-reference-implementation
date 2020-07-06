@@ -43,6 +43,10 @@
             <groupId>com.forgerock.openbanking.common</groupId>
             <artifactId>forgerock-openbanking-common</artifactId>
         </dependency>
+<!--        <dependency>
+            <groupId>com.forgerock.openbanking</groupId>
+            <artifactId>forgerock-openbanking-upgrade</artifactId>
+        </dependency>-->
         <dependency>
             <groupId>com.forgerock.openbanking.analytics</groupId>
             <artifactId>forgerock-openbanking-analytics-core</artifactId>
@@ -106,7 +110,7 @@
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <configuration>
                     <skipPush>false</skipPush>
-                    <repository>eu.gcr.io/openbanking-214714/obri/metrics</repository>
+                    <repository>eu.gcr.io/openbanking-214714/obri/metrics-service</repository>
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>

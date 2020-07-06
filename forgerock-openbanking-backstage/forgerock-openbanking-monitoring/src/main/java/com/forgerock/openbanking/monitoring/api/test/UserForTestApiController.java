@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 @Controller
@@ -44,12 +45,18 @@ public class UserForTestApiController implements UserForTestApi {
     private static final String USER_PREFIX = "test_";
     private static final String USER_DEFAULT_PASSWORD = "changeit";
 
+    private final AMASPSPGateway amGateway;
+
+    private final AMOpenBankingConfiguration amOpenBankingConfiguration;
+
+    private final AMAuthentication amAuthentication;
+
     @Autowired
-    private AMASPSPGateway amGateway;
-    @Autowired
-    private AMOpenBankingConfiguration amOpenBankingConfiguration;
-    @Autowired
-    private AMAuthentication amAuthentication;
+    public UserForTestApiController(AMASPSPGateway amGateway, AMOpenBankingConfiguration amOpenBankingConfiguration, AMAuthentication amAuthentication) {
+        this.amGateway = amGateway;
+        this.amOpenBankingConfiguration = amOpenBankingConfiguration;
+        this.amAuthentication = amAuthentication;
+    }
 
     @Override
     public ResponseEntity createUser() throws OBErrorResponseException {
@@ -60,6 +67,11 @@ public class UserForTestApiController implements UserForTestApi {
                         .user(UserRegistrationRequest.User.builder()
                                 .username(USER_PREFIX + UUID.randomUUID())
                                 .userPassword(USER_DEFAULT_PASSWORD)
+                                .sunIdentityMSISDNNumber(
+                                        Arrays.asList(
+                                                UserRegistrationRequest.AnalyticsAuthority.PUSH_KPI.getAuthority(),
+                                                UserRegistrationRequest.AnalyticsAuthority.READ_KPI.getAuthority())
+                                )
                                 .build())
                         .build())
                 .build();

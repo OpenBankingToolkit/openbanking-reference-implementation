@@ -30,11 +30,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
+@EnableMongoRepositories(basePackages = "com.forgerock.openbanking")
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableWebSecurity
-@EnableMongoRepositories
 @Import(MetricsApplicationSecurityConfiguration.class)
 public class ForgerockOpenbankingMetricsServicesApplication {
 
