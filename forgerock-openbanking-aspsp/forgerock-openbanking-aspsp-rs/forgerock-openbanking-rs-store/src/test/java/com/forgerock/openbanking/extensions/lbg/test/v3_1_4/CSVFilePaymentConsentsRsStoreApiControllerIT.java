@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.forgerock.openbanking.extensions.lbg.test.v3_1_3;
+package com.forgerock.openbanking.extensions.lbg.test.v3_1_4;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentFactory;
@@ -93,7 +93,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 @ContextConfiguration(classes = ForgerockOpenbankingRsStoreApplication.class)
 public class CSVFilePaymentConsentsRsStoreApiControllerIT {
 
-    private static final String _URL = "/open-banking/v3.1.3/pisp/file-payment-consents/";
+    private static final String _URL = "/open-banking/v3.1.4/pisp/file-payment-consents/";
     private CSVFilePayment file;
 
     @LocalServerPort
@@ -154,7 +154,7 @@ public class CSVFilePaymentConsentsRsStoreApiControllerIT {
         assertThat(consent.getId()).isEqualTo(consentResponse.getData().getConsentId());
         assertThat(consent.getInitiation()).isEqualTo(consentResponse.getData().getInitiation());
         assertThat(consent.getStatus().toOBExternalConsentStatus2Code()).isEqualTo(consentResponse.getData().getStatus());
-        assertThat(consent.getObVersion()).isEqualTo(OBVersion.v3_1_3);
+        assertThat(consent.getObVersion()).isEqualTo(OBVersion.v3_1_4);
     }
 
     /**
