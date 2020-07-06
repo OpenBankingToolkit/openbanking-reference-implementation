@@ -43,10 +43,6 @@
             <groupId>com.forgerock.openbanking.common</groupId>
             <artifactId>forgerock-openbanking-common</artifactId>
         </dependency>
-<!--        <dependency>
-            <groupId>com.forgerock.openbanking</groupId>
-            <artifactId>forgerock-openbanking-upgrade</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>com.forgerock.openbanking.analytics</groupId>
             <artifactId>forgerock-openbanking-analytics-core</artifactId>
