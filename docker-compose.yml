@@ -334,7 +334,7 @@ services:
       obref:
 
   auth-ui:
-    image: eu.gcr.io/openbanking-214714/obri/auth
+    image: eu.gcr.io/openbanking-214714/obri/auth-ui
     container_name: auth-ui
     ports:
       - "4203:443"
