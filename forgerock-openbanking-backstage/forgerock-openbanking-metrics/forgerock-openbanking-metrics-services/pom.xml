@@ -106,7 +106,7 @@
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <configuration>
                     <skipPush>false</skipPush>
-                    <repository>eu.gcr.io/openbanking-214714/obri/metrics</repository>
+                    <repository>eu.gcr.io/openbanking-214714/obri/metrics-service</repository>
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>

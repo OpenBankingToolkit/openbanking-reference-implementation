@@ -23,6 +23,8 @@ package com.forgerock.openbanking.monitoring.model.user;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class UserRegistrationRequest {
@@ -40,5 +42,34 @@ public class UserRegistrationRequest {
     public static class User {
         private String username;
         private String userPassword;
+        private List<String> sunIdentityMSISDNNumber;
+    }
+
+    /**
+     * Authorities to access analytics @see <a href="https://github.com/OpenBankingToolkit/openbanking-toolkit/wiki/analytics" />
+     */
+    public enum AnalyticsAuthority {
+        PUSH_KPI("PUSH_KPI"),
+
+        READ_KPI("READ_KPI");
+
+        private final String authority;
+
+        AnalyticsAuthority(String authority) {
+            this.authority = authority;
+        }
+
+        public String getAuthority() {
+            return authority;
+        }
+
+        public static AnalyticsAuthority fromAuthority(String authority) {
+            for(AnalyticsAuthority analyticsAuthority: AnalyticsAuthority.values()) {
+                if (analyticsAuthority.authority.equals(authority)) {
+                    return analyticsAuthority;
+                }
+            }
+            throw new UnsupportedOperationException("Unsupported analytics authority: '" + authority + "'");
+        }
     }
 }

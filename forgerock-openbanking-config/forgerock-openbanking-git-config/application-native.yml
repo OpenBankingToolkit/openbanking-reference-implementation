@@ -135,6 +135,12 @@ spring:
   data:
     mongodb:
       uri: mongodb://mongo:cj9ka0f6ie1mq1akqsb1iy10wp1yfz5b@mongo-mongodb/mongo
+  #Disable zipkin on local for native profile
+  zipkin:
+    enabled: false
+  sleuth:
+    opentracing:
+      enabled: false
 
 #Authentication
 jwt-auth:

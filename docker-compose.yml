@@ -7,10 +7,10 @@ services:
     container_name: mongo-mongodb
     image: mongo
     ports:
-    - "27017:27017"
+      - "27017:27017"
     volumes:
-    - ./mongo/:/docker-entrypoint-initdb.d/:ro
-    - $PWD/mongodata:/data/db  # Persist mongo data to $HOME/mongo
+      - ./mongo/:/docker-entrypoint-initdb.d/:ro
+      - $PWD/mongodata:/data/db  # Persist mongo data to $HOME/mongo
     hostname: mongo-mongodb
     networks:
       obref:
@@ -124,7 +124,8 @@ services:
       - ./forgerock-openbanking-gateway/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
       obref:
-        aliases: 
+        aliases:
+          - service.metrics.dev-ob.forgerock.financial
           - service.directory.dev-ob.forgerock.financial
           - am.dev-ob.forgerock.financial
           - as.aspsp.dev-ob.forgerock.financial
@@ -295,6 +296,31 @@ services:
       retries: 3
       start_period: 40s
 
+  metrics-service:
+    container_name: metrics-services
+    image: eu.gcr.io/openbanking-214714/obri/metrics-service
+    ports:
+      - "8098:8098"
+      - "9098:9098"
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
+      SPRING_PROFILES_ACTIVE: native,console-logging
+      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8098 -Dam.internal-port=8443
+      HOSTNAME: metrics-services
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9098,server=y,suspend=n
+    volumes:
+      - ./forgerock-openbanking-backstage/forgerock-openbanking-metrics/forgerock-openbanking-metrics-services/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
+      - ./forgerock-openbanking-backstage/forgerock-openbanking-metrics/forgerock-openbanking-metrics-services/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
+    networks:
+      obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8098/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   openam:
     build:
       context: .
@@ -308,7 +334,8 @@ services:
       obref:
 
   auth-ui:
-    image: openbankingtoolkit/openbanking-auth-ui
+    image: eu.gcr.io/openbanking-214714/obri/auth-ui
+    container_name: auth-ui
     ports:
       - "4203:443"
     environment:
@@ -321,7 +348,8 @@ services:
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
   directory-ui:
-    image: openbankingtoolkit/openbanking-directory-ui
+    image: eu.gcr.io/openbanking-214714/obri/directory-ui
+    container_name: directory-ui
     ports:
       - "4202:443"
     environment:
@@ -335,7 +363,8 @@ services:
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
   bank-ui:
-    image: openbankingtoolkit/openbanking-bank-ui
+    image: eu.gcr.io/openbanking-214714/obri/bank-ui
+    container_name: bank-ui
     ports:
       - "4201:443"
     environment:
