@@ -52,7 +52,7 @@
         <ob-auth.version>1.0.57</ob-auth.version>
         <ob-aspsp.version>1.0.89</ob-aspsp.version>
         <ob-clients.version>1.0.35</ob-clients.version>
-        <ob-extensions.version>1.0.10</ob-extensions.version>
+        <ob-extensions.version>1.0.11</ob-extensions.version>
     </properties>
 
     <modules>
