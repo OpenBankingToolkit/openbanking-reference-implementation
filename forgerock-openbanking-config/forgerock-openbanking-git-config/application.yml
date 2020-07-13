@@ -827,7 +827,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "info, health"
 
 jwkms:
   internal-port: 8443
