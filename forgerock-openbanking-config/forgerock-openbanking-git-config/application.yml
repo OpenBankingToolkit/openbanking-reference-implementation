@@ -82,7 +82,6 @@ rs-discovery:
   hostname: matls.rs.aspsp.${dns.hosts.root}
   base-url: https://${rs-discovery.hostname}
   apis:
-    version: ""
     payments:
       v_1_1:
         createSingleImmediatePayment: ${rs-discovery.base-url}/open-banking/v1.1/payments
