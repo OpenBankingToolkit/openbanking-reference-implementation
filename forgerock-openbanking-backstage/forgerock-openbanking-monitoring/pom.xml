@@ -137,7 +137,6 @@
         <dependency>
             <groupId>com.forgerock.openbanking</groupId>
             <artifactId>forgerock-openbanking-auth</artifactId>
-            <version>${ob-auth.version}</version>
         </dependency>
         <dependency>
             <groupId>com.forgerock.openbanking.clients</groupId>
