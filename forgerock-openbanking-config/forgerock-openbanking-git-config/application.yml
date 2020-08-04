@@ -314,6 +314,48 @@ rs-discovery:
         getFilePayment: ${rs-discovery.base-url}/open-banking/v3.1.4/pisp/file-payments/{FilePaymentId}
         getFilePaymentReport: ${rs-discovery.base-url}/open-banking/v3.1.4/pisp/file-payments/{ConsentId}/report-file
         getFilePaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.4/pisp/file-payments/{FilePaymentId}/payment-details
+      v_3_1_5:
+        createDomesticPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-payment-consents
+        getDomesticPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-payment-consents/{ConsentId}
+        getDomesticPaymentConsentsConsentIdFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-payment-consents/{ConsentId}/funds-confirmation
+        createDomesticPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-payments
+        getDomesticPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-payments/{DomesticPaymentId}
+        getDomesticPaymentsDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-payments/{DomesticPaymentId}/payment-details
+        createDomesticScheduledPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-scheduled-payment-consents
+        getDomesticScheduledPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-scheduled-payment-consents/{ConsentId}
+        createDomesticScheduledPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-scheduled-payments
+        getDomesticScheduledPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-scheduled-payments/{DomesticScheduledPaymentId}
+        getDomesticScheduledPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-scheduled-payments/{DomesticScheduledPaymentId}/payment-details
+        createDomesticStandingOrderConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-standing-order-consents
+        getDomesticStandingOrderConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-standing-order-consents/{ConsentId}
+        createDomesticStandingOrder: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-standing-orders
+        getDomesticStandingOrder: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-standing-orders/{DomesticStandingOrderId}
+        getDomesticStandingOrderPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/domestic-standing-orders/{DomesticStandingOrderId}/payment-details
+        createInternationalPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-payment-consents
+        getInternationalPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-payment-consents/{ConsentId}
+        getInternationalPaymentConsentsConsentIdFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-payment-consents/{ConsentId}/funds-confirmation
+        createInternationalPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-payments
+        getInternationalPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-payments/{InternationalPaymentId}
+        getInternationalPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-payments/{InternationalPaymentId}/payment-details
+        createInternationalScheduledPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-scheduled-payment-consents
+        getInternationalScheduledPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-scheduled-payment-consents/{ConsentId}
+        getInternationalScheduledPaymentConsentsConsentIdFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-scheduled-payment-consents/{ConsentId}/funds-confirmation
+        createInternationalScheduledPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-scheduled-payments
+        getInternationalScheduledPayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-scheduled-payments/{InternationalScheduledPaymentId}
+        getInternationalScheduledPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-scheduled-payments/{InternationalScheduledPaymentId}/payment-details
+        createInternationalStandingOrderConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-standing-order-consents
+        getInternationalStandingOrderConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-standing-order-consents/{ConsentId}
+        createInternationalStandingOrder: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-standing-orders
+        getInternationalStandingOrder: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-standing-orders/{InternationalStandingOrderId}
+        getInternationalStandingOrderPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/international-standing-orders/{InternationalStandingOrderPaymentId}/payment-details
+        createFilePaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payment-consents
+        getFilePaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payment-consents/{ConsentId}
+        createFilePaymentFile: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payment-consents/{ConsentId}/file
+        getFilePaymentFile: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payment-consents/{ConsentId}/file
+        createFilePayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payments
+        getFilePayment: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payments/{FilePaymentId}
+        getFilePaymentReport: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payments/{ConsentId}/report-file
+        getFilePaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.5/pisp/file-payments/{FilePaymentId}/payment-details
     accounts:
       v_1_1:
         createAccountRequest: ${rs-discovery.base-url}/open-banking/v1.1/account-requests
