@@ -30,10 +30,10 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVVa
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFilePayment;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.parser.CSVParser;
 import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
-import com.forgerock.openbanking.aspsp.rs.store.repository.v3_1.payments.FileConsent2Repository;
+import com.forgerock.openbanking.aspsp.rs.store.repository.v3_1_5.payments.FileConsent5Repository;
 import com.forgerock.openbanking.common.conf.discovery.ResourceLinkService;
 import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatusCode;
-import com.forgerock.openbanking.common.model.openbanking.v3_1.payment.FRFileConsent2;
+import com.forgerock.openbanking.common.model.openbanking.v3_1_5.payment.FRFileConsent5;
 import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.exceptions.OBErrorResponseException;
 import com.forgerock.openbanking.model.error.OBRIErrorResponseCategory;
@@ -72,16 +72,21 @@ import static com.forgerock.openbanking.constants.OpenBankingConstants.HTTP_DATE
 
 @Api(value = "csv-file-payment-consents", description = "the CSV file-payment-consents API")
 @Controller("CSVFilePaymentConsentsApiV3.1.3")
-@RequestMapping({"/open-banking/v3.1.3/pisp","/open-banking/v3.1.4/pisp"})
+@RequestMapping({"/open-banking/v3.1.3/pisp","/open-banking/v3.1.4/pisp","/open-banking/v3.1.5/pisp"})
 @Slf4j
 public class CSVFilePaymentConsentsRsStoreApiController {
 
     private final TppRepository tppRepository;
-    private final FileConsent2Repository fileConsentRepository;
+    private final FileConsent5Repository fileConsentRepository;
     private final ResourceLinkService resourceLinkService;
     private ConsentMetricService consentMetricService;
 
-    public CSVFilePaymentConsentsRsStoreApiController(@Qualifier("webClientConsentMetricService") ConsentMetricService consentMetricService, TppRepository tppRepository, FileConsent2Repository fileConsentRepository, ResourceLinkService resourceLinkService) {
+    public CSVFilePaymentConsentsRsStoreApiController(
+            @Qualifier("webClientConsentMetricService") ConsentMetricService consentMetricService,
+            TppRepository tppRepository,
+            FileConsent5Repository fileConsentRepository,
+            ResourceLinkService resourceLinkService
+    ) {
         this.tppRepository = tppRepository;
         this.fileConsentRepository = fileConsentRepository;
         this.resourceLinkService = resourceLinkService;
@@ -149,7 +154,7 @@ public class CSVFilePaymentConsentsRsStoreApiController {
         log.trace("CVS store controller.");
         log.trace("Received '{}'.", fileParam);
 
-        final FRFileConsent2 fileConsent = fileConsentRepository.findById(consentId)
+        final FRFileConsent5 fileConsent = fileConsentRepository.findById(consentId)
                 .orElseThrow(() -> new OBErrorResponseException(
                         HttpStatus.BAD_REQUEST,
                         OBRIErrorResponseCategory.REQUEST_INVALID,
