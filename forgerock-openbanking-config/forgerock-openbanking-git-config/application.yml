@@ -611,6 +611,40 @@ rs-discovery:
         getScheduledPayments: ${rs-discovery.base-url}/open-banking/v3.1.4/aisp/scheduled-payments
         getStatements: ${rs-discovery.base-url}/open-banking/v3.1.4/aisp/statements
 
+      v_3_1_5:
+        createAccountAccessConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/account-access-consents
+        getAccountAccessConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/account-access-consents/{ConsentId}
+        deleteAccountAccessConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/account-access-consents/{ConsentId}
+        getAccount: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}
+        getAccountTransactions: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/transactions
+        getAccountBeneficiaries: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/beneficiaries
+        getAccountBalances: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/balances
+        getAccountDirectDebits: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/direct-debits
+        getAccountStandingOrders: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/standing-orders
+        getAccountProduct: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/product
+
+        getAccounts: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts
+        getStandingOrders: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/standing-orders
+        getDirectDebits: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/direct-debits
+        getBeneficiaries: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/beneficiaries
+        getTransactions: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/transactions
+        getBalances: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/balances
+        getProducts: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/products
+
+        getAccountOffers: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/offers
+        getAccountParty: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/party
+        getAccountParties: ${rs-discovery.base-url}/open-banking/v3.1.5/accounts/{AccountId}/parties
+        getAccountScheduledPayments: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/scheduled-payments
+        getAccountStatements: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/statements
+        getAccountStatement: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/statements/{StatementId}
+        getAccountStatementFile: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/statements/{StatementId}/file
+        getAccountStatementTransactions: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/accounts/{AccountId}/statements/{StatementId}/transactions
+
+        getOffers: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/offers
+        getParty: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/party
+        getScheduledPayments: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/scheduled-payments
+        getStatements: ${rs-discovery.base-url}/open-banking/v3.1.5/aisp/statements
+
     fundsConfirmations:
       v_3_0:
         createFundsConfirmationConsent: ${rs-discovery.base-url}/open-banking/v3.0/cbpii/funds-confirmation-consents
