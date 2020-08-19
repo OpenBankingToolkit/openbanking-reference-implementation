@@ -676,6 +676,11 @@ rs-discovery:
         getFundsConfirmationConsent: ${rs-discovery.base-url}/open-banking/v3.1.4/cbpii/funds-confirmation-consents/{ConsentId}
         createFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.4/cbpii/funds-confirmations
         deleteFundsConfirmationConsent: ${rs-discovery.base-url}/open-banking/v3.1.4/cbpii/funds-confirmations-consent
+      v_3_1_5:
+        createFundsConfirmationConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/cbpii/funds-confirmation-consents
+        getFundsConfirmationConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/cbpii/funds-confirmation-consents/{ConsentId}
+        createFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.5/cbpii/funds-confirmations
+        deleteFundsConfirmationConsent: ${rs-discovery.base-url}/open-banking/v3.1.5/cbpii/funds-confirmations-consent
 
     eventNotifications:
       v_3_0:
@@ -720,6 +725,15 @@ rs-discovery:
         getEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.4/event-subscriptions
         amendEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.4/event-subscriptions/{EventSubscriptionId}
         deleteEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.4/event-subscriptions/{EventSubscriptionId}
+      v_3_1_5:
+        createCallbackUrl: ${rs-discovery.base-url}/open-banking/v3.1.5/callback-urls
+        getCallbackUrls: ${rs-discovery.base-url}/open-banking/v3.1.5/callback-urls
+        amendCallbackUrl: ${rs-discovery.base-url}/open-banking/v3.1.5/callback-urls/{CallbackUrlId}
+        deleteCallbackUrl: ${rs-discovery.base-url}/open-banking/v3.1.5/callback-urls/{CallbackUrlId}
+        createEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.5/event-subscriptions
+        getEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.5/event-subscriptions
+        amendEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.5/event-subscriptions/{EventSubscriptionId}
+        deleteEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.5/event-subscriptions/{EventSubscriptionId}
 
 #The directory discovery endpoints
 directory:
