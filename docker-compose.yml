@@ -325,11 +325,19 @@ services:
     build:
       context: .
       dockerfile: forgerock-am/Dockerfile
+      args:
+        # @see README file to get the binaries
+        AM_WAR_NAME: "OpenAM-6.5.1.war"
+        AM_PATCH_ZIP: "openbanking-1-2-tpatch.zip"
+        AMSTER_ZIP: "Amster-6.5.1.zip"
     image: openam:local
     container_name: openam
     ports:
       - "80:8080"
       - "443:8443"
+      - "5005:5005" # debug port, @see https://github.com/ForgeCloud/ob-deploy/wiki/Debugging-Open-Banking-AM#debug-configuration-for-intellij
+    environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
     networks:
       obref:
 

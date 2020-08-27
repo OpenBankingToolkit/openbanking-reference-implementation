@@ -1,10 +1,15 @@
 FROM tomcat:9-jdk11-openjdk AS extract-container
 
-ENV AM_WAR_NAME "am.war"
+ARG AM_WAR_NAME
+ARG AM_PATCH_ZIP
+ARG AMSTER_ZIP
 
-ADD forgerock-am/_binaries/amster.zip /
+# ENV AM_WAR_NAME "OpenAM-6.5.1.war"
+# ENV AM_PATCH "openbanking-1-1-tpatch.zip"
+
+ADD forgerock-am/_binaries/${AMSTER_ZIP} /
 ADD forgerock-am/_binaries/${AM_WAR_NAME} /am.war
-ADD forgerock-am/_binaries/openbanking-1-1-tpatch.zip /
+ADD forgerock-am/_binaries/${AM_PATCH_ZIP} /
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y unzip && \
@@ -15,9 +20,9 @@ RUN apt-get update && \
     echo "VERSION FOUND: $(grep 'com.iplanet.am.buildVersion=' /var/tmp/openam/WEB-INF/classes/serverdefaults.properties)" && \
     exit 10; \
     fi && \
-    unzip /openbanking-1-1-tpatch.zip -d /var/tmp/openam && \
+    unzip /${AM_PATCH_ZIP} -d /var/tmp/openam && \
     mkdir -p /var/tmp/amster && \
-    unzip -q /amster.zip -d /var/tmp/amster
+    unzip -q /${AMSTER_ZIP} -d /var/tmp/amster
 
 FROM tomcat:9-jdk11-openjdk
 
@@ -26,6 +31,7 @@ ENV AMSTER_KEY_PATH "/var/run/secrets/amster"
 ENV FORGEROCK_HOME /home/forgerock
 ENV OPENAM_HOME /home/forgerock/openam
 ENV OB_DOMAIN dev-ob.forgerock.financial
+#ENV JAVA_OPTS "-Xdebug –Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 ENV CATALINA_OPTS "-server -Xms2048m -Xmx2048m \
   -Dcom.sun.identity.util.debug.provider=com.sun.identity.shared.debug.impl.StdOutDebugProvider \
   -Dcom.sun.identity.shared.debug.file.format=\"%PREFIX% %MSG%\\n%STACKTRACE%\""
