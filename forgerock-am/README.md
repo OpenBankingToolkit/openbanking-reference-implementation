@@ -8,6 +8,9 @@ To build the Open Banking AM docker image on local will be necessary download th
 gsutil rsync gs://ob-forgerock-binaries/openam-local-binaries forgerock-am/_binaries
 ```
 
+## Current Customer Patch
+- openbanking-1-2-tpatch.zip
+
 ## Docker compose
 Edit `docker-compose.yml` if necessary to change the arguments:
 - **AM_WAR_NAME**: "*OpenAM-X.X.X.war*"
