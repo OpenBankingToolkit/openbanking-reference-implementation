@@ -51,6 +51,11 @@
             <groupId>com.forgerock.openbanking.clients</groupId>
             <artifactId>forgerock-openbanking-analytics-webclient</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.mongobee</groupId>
+            <artifactId>mongobee</artifactId>
+        </dependency>
         <dependency>
             <groupId>dev.openbanking4.spring.security</groupId>
             <artifactId>spring-security-multi-auth-starter</artifactId>
@@ -84,6 +89,7 @@
             <groupId>com.forgerock.openbanking</groupId>
             <artifactId>forgerock-openbanking-uk-extensions</artifactId>
         </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>com.forgerock.openbanking.aspsp</groupId>
