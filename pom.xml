@@ -34,7 +34,7 @@
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-starter-parent</artifactId>
-        <version>1.0.78</version>
+        <version>1.0.79</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -49,7 +49,7 @@
         <ob-jwkms.version>1.1.71</ob-jwkms.version>
         <ob-auth.version>1.0.59</ob-auth.version>
         <ob-directory.version>1.4.74</ob-directory.version>
-        <ob-aspsp.version>1.0.97</ob-aspsp.version>
+        <ob-aspsp.version>1.0.98</ob-aspsp.version>
         <ob-clients.version>1.0.36</ob-clients.version>
         <ob-extensions.version>1.0.12</ob-extensions.version>
     </properties>
