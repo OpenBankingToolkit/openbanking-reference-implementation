@@ -478,13 +478,31 @@ we will get an access token with the right privileges. You will get the followin
 }
 ----
 
-Only the access token interest us here. it's important that this access token doesn't have the user consent in it. You can see access token as keys.
+Only the access token interests us here. it's important that this access token doesn't have the user consent in it. You can see access token as keys.
 This key gives you the right to create a payment initiation, but it doesn't give you the right of making the final payment.
 For that, we would need another access token, with more privileges, and in particular, that contains the consent approval of the user.
 
+==== Detached JSON Web Signature (JWS)
+Having got an access token via the client credential flow, it is then possible to submit a payment request. Before moving onto that, it's important to be aware that since version 3.0 of the
+Payment Initiation APIs, the UK's Open Banking Implementation Entity mandates that all inbound payment requests and their responses are digitally signed using a detached JSON Web Signature (JWS),
+which must be provided in the `x-jws-signature` header. This is described in more detail here: https://openbankinguk.github.io/read-write-api-site3/v3.1.6/profiles/read-write-data-api-profile.html#message-signing-2[message signing]
+
+Due to a lack of third party library support for the exclusion ("detachment") of the b64 payload in the JWS, this functionality was suspended until June 16th 2020 by Open Banking https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1112670669/W007[Waiver 007].
+However, version 3.1.4 of the Open Banking specification mandates that the b64 claim is not used in the JWS header. Instead, the absence of this header means the default value is true, meaning
+that from v3.1.4 onwards, the `x-jws-signature` will always have the b64 encoded payload included in the signature.
+
+Fortunately, it is not necessary to have a detailed knowledge of JWS tokens, or to create one yourself before sending a payment request. A "Pre-request Script" within the Postman collection retrieves
+the required JWS from the JWKMS before the payment request is sent. However, it is important to be aware that a JWS is required, otherwise unexpected errors may occur.
+
+NOTE: It is necessary to provide the RS with a JWK that may be used to sign responses with.
+
+If necessary, the `x-jws-signature` header is configurable and can be enabled/disabled via a
+https://github.com/OpenBankingToolkit/openbanking-reference-implementation/blob/06b9afcd669af83f75f6ede7be6a95d474e6c498/forgerock-openbanking-config/forgerock-openbanking-git-config/application.yml#L68[spring config setting].
+Currently this defaults to true.
+
 ==== Create a payment request
 
-Once you got an access token via the client credential flow, you can submit a payment request. In the body of the request, you will specify the payment information:
+Using the access token obtained above, you can now submit a payment request. In the body of the request, you will specify the payment information:
 
 [source,json]
 ----
