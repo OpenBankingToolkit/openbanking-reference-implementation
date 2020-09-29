@@ -30,10 +30,10 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVVa
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFilePayment;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.parser.CSVParser;
 import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
-import com.forgerock.openbanking.aspsp.rs.store.repository.v3_1_5.payments.FileConsent5Repository;
+import com.forgerock.openbanking.aspsp.rs.store.repository.payments.FileConsentRepository;
 import com.forgerock.openbanking.common.conf.discovery.ResourceLinkService;
-import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatusCode;
-import com.forgerock.openbanking.common.model.openbanking.v3_1_5.payment.FRFileConsent5;
+import com.forgerock.openbanking.common.model.openbanking.persistence.payment.ConsentStatusCode;
+import com.forgerock.openbanking.common.model.openbanking.persistence.payment.FRFileConsent;
 import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.exceptions.OBErrorResponseException;
 import com.forgerock.openbanking.model.error.OBRIErrorResponseCategory;
@@ -77,14 +77,14 @@ import static com.forgerock.openbanking.constants.OpenBankingConstants.HTTP_DATE
 public class CSVFilePaymentConsentsRsStoreApiController {
 
     private final TppRepository tppRepository;
-    private final FileConsent5Repository fileConsentRepository;
+    private final FileConsentRepository fileConsentRepository;
     private final ResourceLinkService resourceLinkService;
     private ConsentMetricService consentMetricService;
 
     public CSVFilePaymentConsentsRsStoreApiController(
             @Qualifier("webClientConsentMetricService") ConsentMetricService consentMetricService,
             TppRepository tppRepository,
-            FileConsent5Repository fileConsentRepository,
+            FileConsentRepository fileConsentRepository,
             ResourceLinkService resourceLinkService
     ) {
         this.tppRepository = tppRepository;
@@ -154,7 +154,7 @@ public class CSVFilePaymentConsentsRsStoreApiController {
         log.trace("CVS store controller.");
         log.trace("Received '{}'.", fileParam);
 
-        final FRFileConsent5 fileConsent = fileConsentRepository.findById(consentId)
+        final FRFileConsent fileConsent = fileConsentRepository.findById(consentId)
                 .orElseThrow(() -> new OBErrorResponseException(
                         HttpStatus.BAD_REQUEST,
                         OBRIErrorResponseCategory.REQUEST_INVALID,

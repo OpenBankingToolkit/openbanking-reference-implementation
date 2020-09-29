@@ -29,7 +29,7 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFile
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.parser.CSVParser;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidationService;
 import com.forgerock.openbanking.aspsp.rs.wrappper.RSEndpointWrapperService;
-import com.forgerock.openbanking.common.model.openbanking.v3_1_5.payment.FRFileConsent5;
+import com.forgerock.openbanking.common.model.openbanking.persistence.payment.FRFileConsent;
 import com.forgerock.openbanking.common.services.store.RsStoreGateway;
 import com.forgerock.openbanking.common.services.store.payment.FilePaymentService;
 import com.forgerock.openbanking.exceptions.OBErrorException;
@@ -63,7 +63,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Collections;
 
-import static com.forgerock.openbanking.common.services.openbanking.converter.payment.FRFileConsentConverter.toFRFileConsent2;
 import static com.forgerock.openbanking.constants.OpenBankingConstants.HTTP_DATE_FORMAT;
 
 @Api(value = "csv-file-payment-consents", description = "the CSV file-payment-consents API")
@@ -143,12 +142,12 @@ public class CSVFilePaymentConsentsApiController {
     ) throws OBErrorResponseException {
         log.trace("CVS controller.");
         log.trace("Received '{}'.", fileParam);
-        FRFileConsent5 consent = filePaymentService.getPayment(consentId);
+        FRFileConsent consent = filePaymentService.getPayment(consentId);
         try {
             CSVParser parser = CSVParserFactory.parse(CSVFilePaymentType.fromStringType(consent.getFileType().getFileType()), fileParam);
             CSVFilePayment filePayment = parser.parse().getCsvFilePayment();
-            CSVValidationService.Consent.numTransactions(toFRFileConsent2(consent), filePayment);
-            CSVValidationService.Consent.controlSum(toFRFileConsent2(consent), filePayment);
+            CSVValidationService.Consent.numTransactions(consent, filePayment);
+            CSVValidationService.Consent.controlSum(consent, filePayment);
         } catch (OBErrorException | CSVErrorException e) {
             if (e instanceof CSVErrorException) {
                 throw new OBErrorResponseException(((CSVErrorException) e).getCsvErrorType().getHttpStatus(), OBRIErrorResponseCategory.REQUEST_INVALID, "csv error", ((CSVErrorException) e).getOBError());
