@@ -164,7 +164,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
                 MockMvcRequestBuilders
                         .post("https://rs-api:" + port + _url, fileConsentId)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType("text/csv")
+                        .contentType("text/plain")
                         .header(OBHeaders.AUTHORIZATION, "Bearer " + jws)
                         .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                         .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
@@ -202,7 +202,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
                 MockMvcRequestBuilders
                         .post("https://rs-api:" + port + _url, fileConsentId)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType("text/csv")
+                        .contentType("text/plain")
                         .header(OBHeaders.AUTHORIZATION, "Bearer " + jws)
                         .header(OBHeaders.X_IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                         .header(OBHeaders.X_JWS_SIGNATURE, UUID.randomUUID().toString())
