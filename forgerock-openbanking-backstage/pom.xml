@@ -28,13 +28,13 @@
     <name>ForgeRock OpenBanking Reference Implementation - Backstage</name>
     <groupId>com.forgerock.openbanking.backstage</groupId>
     <artifactId>forgerock-openbanking-backstage</artifactId>
-    <version>3.1.6-rem-rc1</version>
+    <version>3.1.6-rem-rc2</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-        <version>3.1.6-rem-rc1</version>
+        <version>3.1.6-rem-rc2</version>
     </parent>
 
     <modules>
