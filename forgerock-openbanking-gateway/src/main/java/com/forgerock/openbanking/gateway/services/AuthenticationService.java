@@ -24,11 +24,17 @@ import com.forgerock.openbanking.gateway.model.ApplicationIdentity;
 import com.forgerock.openbanking.gateway.model.Tpp;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.util.JSONObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -84,7 +90,7 @@ public class AuthenticationService {
         ParameterizedTypeReference<ApplicationIdentity> ptr = new ParameterizedTypeReference<ApplicationIdentity>() {
         };
         //TODO read the endpoint from the configuration
-        HttpEntity<String> request = new HttpEntity<>(jwk.toJSONObject().toJSONString(), headers);
+        HttpEntity<String> request = new HttpEntity<>(JSONObjectUtils.toJSONString(jwk.toJSONObject()), headers);
 
         ResponseEntity<ApplicationIdentity> entity = restTemplate.exchange(authenticateEndpoint,
                 HttpMethod.POST, request, ptr);
