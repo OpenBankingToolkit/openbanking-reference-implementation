@@ -30,6 +30,7 @@ import com.github.mongobee.Mongobee;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -66,6 +67,7 @@ public class ForgerockOpenbankingRsStoreApplication{
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "rs", name = "mongo-migration.enabled", havingValue = "true")
     public Mongobee mongobee(@Value("${spring.data.mongodb.uri}") String mongoDbUrl, MongoTemplate mongoTemplate){
         Mongobee mongobee = new Mongobee(mongoDbUrl);
         mongobee.setChangeLogsScanPackage("com.forgerock.openbanking.aspsp.rs.store.repository");
