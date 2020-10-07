@@ -66,6 +66,10 @@ rcs:
 rs:
   detached-signature:
     enable: true
+  # Switch for migrating the FR document classes within MongoDB
+  # See https://github.com/OpenBankingToolkit/openbanking-reference-implementation/issues/279
+  mongo-migration:
+    enabled: false
   tan: openbanking.org.uk
   issuerid: forgerock-rcs
   financial_id: 0015800001041REAAY
