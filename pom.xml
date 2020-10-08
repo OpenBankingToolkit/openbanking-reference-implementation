@@ -28,7 +28,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>3.1.6-rem-rc2</version>
+    <version>3.1.6-smiths-rc1</version>
     <packaging>pom</packaging>
 
     <parent>
