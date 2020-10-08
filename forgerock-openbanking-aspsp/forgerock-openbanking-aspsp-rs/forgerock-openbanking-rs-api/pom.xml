@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.aspsp.rs</groupId>
         <artifactId>forgerock-openbanking-aspsp-rs</artifactId>
-        <version>3.1.6-rem-rc2</version>
+        <version>3.1.6-smiths-rc1</version>
     </parent>
 
     <dependencies>
