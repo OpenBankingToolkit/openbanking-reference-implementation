@@ -47,11 +47,12 @@
     <properties>
         <ob-analytics.version>1.1.54</ob-analytics.version>
         <ob-jwkms.version>1.1.75</ob-jwkms.version>
-        <ob-auth.version>1.0.63</ob-auth.version>
-        <ob-directory.version>1.4.76</ob-directory.version>
-        <ob-aspsp.version>1.0.106</ob-aspsp.version>
-        <ob-clients.version>1.0.41</ob-clients.version>
+        <ob-auth.version>1.0.64</ob-auth.version>
+        <ob-directory.version>1.4.77-SNAPSHOT</ob-directory.version>
+        <ob-aspsp.version>1.0.107-SNAPSHOT</ob-aspsp.version>
+        <ob-clients.version>1.0.44</ob-clients.version>
         <ob-extensions.version>1.0.19</ob-extensions.version>
+        <ob-commons.version>1.0.86</ob-commons.version>
     </properties>
 
     <modules>
@@ -67,6 +68,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.forgerock.openbanking</groupId>
+                <artifactId>forgerock-openbanking-model</artifactId>
+                <version>${ob-commons.version}</version>
+            </dependency>
 
             <!-- OpenBanking -->
             <dependency>
