@@ -51,8 +51,8 @@
         <ob-directory.version>1.4.77-SNAPSHOT</ob-directory.version>
         <ob-aspsp.version>1.0.107-SNAPSHOT</ob-aspsp.version>
         <ob-clients.version>1.0.44</ob-clients.version>
-        <ob-extensions.version>1.0.19</ob-extensions.version>
-        <ob-commons.version>1.0.86</ob-commons.version>
+        <ob-extensions.version>1.0.20-SNAPSHOT</ob-extensions.version>
+        <ob-commons.version>1.0.87-SNAPSHOT</ob-commons.version>
     </properties>
 
     <modules>
