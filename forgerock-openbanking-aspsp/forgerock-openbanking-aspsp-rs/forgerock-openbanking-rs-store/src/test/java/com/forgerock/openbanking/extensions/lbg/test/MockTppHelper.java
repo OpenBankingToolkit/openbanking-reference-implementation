@@ -20,7 +20,7 @@
  */
 package com.forgerock.openbanking.extensions.lbg.test;
 
-import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
+import com.forgerock.openbanking.repositories.TppRepository;
 import com.forgerock.openbanking.model.Tpp;
 
 import static org.mockito.ArgumentMatchers.eq;

@@ -21,7 +21,7 @@
 package com.forgerock.openbanking.aspsp.rs.store;
 
 import com.forgerock.openbanking.aspsp.rs.store.repository.ManualRegistrationApplicationRepository;
-import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
+import com.forgerock.openbanking.repositories.TppRepository;
 import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
 import com.forgerock.openbanking.common.EnableSslClient;
 import com.forgerock.openbanking.common.model.onboarding.ManualRegistrationApplication;
@@ -42,7 +42,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 
 @SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
-@EnableMongoRepositories
+@EnableMongoRepositories(basePackages = "com.forgerock.openbanking")
 @EnableMongoAuditing
 @EnableDiscoveryClient
 @EnableSslClient

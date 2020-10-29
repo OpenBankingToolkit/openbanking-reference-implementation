@@ -29,7 +29,7 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFile
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVHeaderIndicatorSection;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidation;
 import com.forgerock.openbanking.aspsp.rs.store.ForgerockOpenbankingRsStoreApplication;
-import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
+import com.forgerock.openbanking.repositories.TppRepository;
 import com.forgerock.openbanking.aspsp.rs.store.repository.v3_1_5.payments.FileConsent5Repository;
 import com.forgerock.openbanking.common.conf.RSConfiguration;
 import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatusCode;
