@@ -29,7 +29,6 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVPa
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVValidationFactory;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFilePayment;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.parser.CSVParser;
-import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
 import com.forgerock.openbanking.aspsp.rs.store.repository.payments.FileConsentRepository;
 import com.forgerock.openbanking.common.conf.discovery.ResourceLinkService;
 import com.forgerock.openbanking.common.model.openbanking.persistence.payment.ConsentStatusCode;
@@ -38,6 +37,7 @@ import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.exceptions.OBErrorResponseException;
 import com.forgerock.openbanking.model.error.OBRIErrorResponseCategory;
 import com.forgerock.openbanking.model.error.OBRIErrorType;
+import com.forgerock.openbanking.repositories.TppRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

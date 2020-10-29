@@ -29,7 +29,6 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFile
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVHeaderIndicatorSection;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidation;
 import com.forgerock.openbanking.aspsp.rs.store.ForgerockOpenbankingRsStoreApplication;
-import com.forgerock.openbanking.aspsp.rs.store.repository.TppRepository;
 import com.forgerock.openbanking.aspsp.rs.store.repository.payments.FileConsentRepository;
 import com.forgerock.openbanking.common.conf.RSConfiguration;
 import com.forgerock.openbanking.common.model.openbanking.persistence.payment.ConsentStatusCode;
@@ -39,6 +38,7 @@ import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.extensions.lbg.test.MockTppHelper;
 import com.forgerock.openbanking.integration.test.support.SpringSecForTest;
 import com.forgerock.openbanking.model.OBRIRole;
+import com.forgerock.openbanking.repositories.TppRepository;
 import com.github.jsonzou.jmockdata.JMockData;
 import kong.unirest.HttpResponse;
 import kong.unirest.JacksonObjectMapper;
