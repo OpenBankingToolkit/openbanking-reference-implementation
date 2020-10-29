@@ -45,14 +45,14 @@
     <url>http://www.forgerock.com</url>
 
     <properties>
-        <ob-analytics.version>1.1.54</ob-analytics.version>
-        <ob-jwkms.version>1.1.75</ob-jwkms.version>
-        <ob-auth.version>1.0.64</ob-auth.version>
-        <ob-directory.version>1.4.77-SNAPSHOT</ob-directory.version>
-        <ob-aspsp.version>1.0.107-SNAPSHOT</ob-aspsp.version>
+        <ob-analytics.version>1.1.55</ob-analytics.version>
+        <ob-jwkms.version>1.1.76</ob-jwkms.version>
+        <ob-auth.version>1.0.65</ob-auth.version>
+        <ob-directory.version>1.4.77</ob-directory.version>
+        <ob-aspsp.version>1.0.107</ob-aspsp.version>
         <ob-clients.version>1.0.44</ob-clients.version>
-        <ob-extensions.version>1.0.20-SNAPSHOT</ob-extensions.version>
-        <ob-commons.version>1.0.87-SNAPSHOT</ob-commons.version>
+        <ob-extensions.version>1.0.20</ob-extensions.version>
+        <ob-commons.version>1.0.86</ob-commons.version>
     </properties>
 
     <modules>
