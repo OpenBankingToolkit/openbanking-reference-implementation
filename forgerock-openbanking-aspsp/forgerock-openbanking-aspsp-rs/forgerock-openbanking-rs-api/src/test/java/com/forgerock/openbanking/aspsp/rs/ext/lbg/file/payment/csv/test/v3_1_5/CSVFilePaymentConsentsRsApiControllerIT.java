@@ -30,8 +30,8 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFile
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVHeaderIndicatorSection;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidation;
 import com.forgerock.openbanking.common.conf.RSConfiguration;
-import com.forgerock.openbanking.common.model.openbanking.forgerock.ConsentStatusCode;
-import com.forgerock.openbanking.common.model.openbanking.v3_1_5.payment.FRFileConsent5;
+import com.forgerock.openbanking.common.model.openbanking.persistence.payment.ConsentStatusCode;
+import com.forgerock.openbanking.common.model.openbanking.persistence.payment.FRFileConsent;
 import com.forgerock.openbanking.common.services.store.RsStoreGateway;
 import com.forgerock.openbanking.common.services.store.payment.FilePaymentService;
 import com.forgerock.openbanking.constants.OIDCConstants;
@@ -82,6 +82,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static com.forgerock.openbanking.common.services.openbanking.converter.payment.FRWriteFileConsentConverter.toFRWriteFileConsent;
 import static com.forgerock.openbanking.integration.test.support.JWT.jws;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -154,7 +155,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
 
         OBWriteFileConsent3 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getFileType());
 
-        FRFileConsent5 existingConsent = mockFileConsent(fileConsentId,file.toString(), consentRequest);
+        FRFileConsent existingConsent = mockFileConsent(fileConsentId,file.toString(), consentRequest);
 
         given(rsStoreGateway.toRsStore(any(), any(), any(), any(), any())).willReturn(ResponseEntity.status(HttpStatus.CREATED).body(existingConsent));
         given(filePaymentService.getPayment(fileConsentId)).willReturn(existingConsent);
@@ -192,7 +193,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
 
         OBWriteFileConsent3 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType());
 
-        FRFileConsent5 existingConsent = mockFileConsent(fileConsentId,file.toString(), consentRequest);
+        FRFileConsent existingConsent = mockFileConsent(fileConsentId,file.toString(), consentRequest);
 
         given(rsStoreGateway.toRsStore(any(), any(), any(), any(), any())).willReturn(ResponseEntity.status(HttpStatus.CREATED).body(existingConsent));
         given(filePaymentService.getPayment(fileConsentId)).willReturn(existingConsent);
@@ -239,14 +240,14 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
      * @param consentRequest
      * @return
      */
-    private static final FRFileConsent5 mockFileConsent(String fileConsentId, String csvFileContent, OBWriteFileConsent3 consentRequest){
-        FRFileConsent5 frFileConsent5 = JMockData.mock(FRFileConsent5.class);
-        frFileConsent5.setStatus(ConsentStatusCode.AWAITINGAUTHORISATION);
-        frFileConsent5.setId(fileConsentId);
-        frFileConsent5.setFileContent(csvFileContent);
-        frFileConsent5.setPayments(Collections.emptyList());
-        frFileConsent5.setWriteFileConsent(consentRequest);
-        return frFileConsent5;
+    private static final FRFileConsent mockFileConsent(String fileConsentId, String csvFileContent, OBWriteFileConsent3 consentRequest){
+        FRFileConsent frFileConsent = JMockData.mock(FRFileConsent.class);
+        frFileConsent.setStatus(ConsentStatusCode.AWAITINGAUTHORISATION);
+        frFileConsent.setId(fileConsentId);
+        frFileConsent.setFileContent(csvFileContent);
+        frFileConsent.setPayments(Collections.emptyList());
+        frFileConsent.setWriteFileConsent(toFRWriteFileConsent(consentRequest));
+        return frFileConsent;
     }
 
     /**
