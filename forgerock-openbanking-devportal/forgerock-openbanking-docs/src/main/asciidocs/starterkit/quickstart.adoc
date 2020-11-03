@@ -91,63 +91,95 @@ Refer to <<#_aspsp_discovery,ASPSP discovery>> for more information.
 
 === Onboarding
 
-For all of the examples in this section the Postman functions live in `Onboarding your TPP` directory.
+For all of the examples in this section the Postman functions live in `Dynamic Registration` -> `Onboarding your TPP` directory.
 
 Refer to <<#_on_boarding_with_an_aspsp,On-boarding with an ASPSP>> for more information.
 
 ==== Check Mutual Authentication Set Up
-. Select `test mtls before on-boarding`
+. Select `Dynamic Registration` -> `Onboarding your TPP` -> `test mtls before on-boarding`
 . Click `Send` and expect a similar response
 
 [source,json]
 ----
 {
-    "issuerId": "5b97d919b093467d45a69e59",
+    "issuerId": "5fa14c3a0626b40014b77b62",
     "authorities": [
-        {
-            "authority": "UNREGISTERED_TPP"
-        }
+        "PSD2_PSP_AI",
+        "PSD2_PSP_IC",
+        "PSD2_PSP_PI",
+        "ROLE_EIDAS",
+        "ROLE_FORGEROCK_EXTERNAL_APP",
+        "ROLE_TPP",
+        "UNREGISTERED_TPP"
     ]
 }
 ----
 
 ==== Get Current Software Statement
-. Select `Current software statement`
+. Select `Dynamic Registration` -> `Onboarding your TPP` -> `Current software statement`
 . Click `Send` and expect a similar response
 
 [source,json]
 ----
 {
-    "id": "5b97d919b093467d45a69e59",
+    "id": "5fa14c3a0626b40014b77b62",
     "name": "Postman",
+    "description": "app description",
     "mode": "TEST",
     "roles": [
+        "CBPII",
         "AISP",
         "PISP",
-        "CBPII",
         "DATA"
     ],
     "status": "ACTIVE",
     "redirectUris": [
         "https://www.google.com"
     ],
-    "applicationId": "5b97d919b093467d09ce7e34"
+    "applicationId": "5fa14c3a0e02d30017b54804",
+    "software_id": "5fa14c3a0626b40014b77b62",
+    "org_id": "5fa1244bfe096000142f9248"
 }
 ----
 
 ==== Generating an SSA
-. Select `Generate SSA`
+. Select `Dynamic Registration` -> `Onboarding your TPP` -> `Generate SSA`
 . Click `Send` and expect JWT token in the response
+[source,shell]
+----
+eyJraWQiOiIyMTA5ODRjOTEwZTg1ZjljMDRkNjZjZDdiNGNkMDAxOThjMWZhZjJhIiwiYWxnIjoiUFMyNTYifQ.eyJvcmdfandrc19lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2.......MdSnV9VtWAFm1Sxfzw8pgy4lytpYzRMVUpeRTz2ysV6TBYsONKNSUTZ3-81EWr5B....
+----
 
 ==== Generating a Registration JWT
-. Select `Generate registration JWT`
+. Select `Dynamic Registration` -> `Onboarding your TPP` -> `Generate registration JWT`
 . Click `Send` and expect JWT token in the response
+[source, shell]
+----
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QeyJraWQiOiIzMmQyNDA0ZW ......
+----
 
 ==== Registering the TPP
-. Select `Dynamic Registration`
+. Select `Dynamic Registration` -> `Onboarding your TPP` -> `Dynamic Registration`
 . Click `Send` and expect a similar response.
 
-NOTE: There is an expiry time on the JWT so if you don't make request soon enough you may get an expired response.
+NOTE: There is an expiry time on the JWT so if you don't make request soon enough you may get an expired response. It means that you need start again from <<#_generating_an_ssa, Generating an SSA>>
+[source,json]
+----
+{
+    "Code": "OBRI.TPP.Registration",
+    "Id": "e9864e077f304685",
+    "Message": "An error happened when using the TPP registration endpoint",
+    "Errors": [
+        {
+            "ErrorCode": "OBRI.Registration.Request.Invalid",
+            "Message": "The registration request JWT is invalid. Reason 'JWT expired'",
+            "Url": "https://docs.{{obriDomain}}.forgerock.financial:443/errors#OBRI.Registration.Request.Invalid"
+        }
+    ]
+}
+----
+
+If the JWT haven't expire expect a response similar to below:
 
 [source,json]
 ----
@@ -155,67 +187,69 @@ NOTE: There is an expiry time on the JWT so if you don't make request soon enoug
     "scopes": [
         "openid",
         "payments",
-        "accounts",
-        "fundsconfirmations"
+        "fundsconfirmations",
+        "accounts"
     ],
-    "scope": "openid payments accounts fundsconfirmations",
+    "scope": "openid payments fundsconfirmations accounts",
+    "client_id": "3b05a12b-b1b8-4449-ba5c-2d29683e1b84",
     "redirect_uris": [
         "https://www.google.com"
     ],
     "response_types": [
         "code id_token"
     ],
+    "grant_types": [
+        "authorization_code",
+        "refresh_token",
+        "client_credentials"
+    ],
     "application_type": "web",
     "client_name": "Postman",
-    "jwks_uri": "https://service.directory.{{obriDomain}}/api/software-statement/5b97d919b093467d45a69e59/application/jwk_uri",
+    "jwks_uri": "https://service.directory.{{obriDomain}}.forgerock.financial:443/api/software-statement/5fa14c3a0626b40014b77b62/application/jwk_uri",
     "subject_type": "public",
-    "id_token_signed_response_alg": "RS256",
-    "id_token_encrypted_response_alg": "RSA1_5",
-    "id_token_encrypted_response_enc": "A128CBC_HS256",
+    "id_token_signed_response_alg": "PS256",
+    "id_token_encrypted_response_alg": "RSA-OAEP-256",
+    "id_token_encrypted_response_enc": "A128CBC-HS256",
     "userinfo_signed_response_alg": "",
     "userinfo_encrypted_response_alg": "",
-    "request_object_signing_alg": "RS256",
+    "userinfo_encrypted_response_enc": "",
+    "request_object_signing_alg": "PS256",
     "request_object_encryption_alg": "RSA-OAEP-256",
     "request_object_encryption_enc": "A128CBC-HS256",
     "token_endpoint_auth_method": "private_key_jwt",
-    "token_endpoint_auth_signing_alg": "RS256",
+    "token_endpoint_auth_signing_alg": "PS256",
     "default_max_age": "1",
-    "software_statement": "…",
-    "client_id": "cfc758aa-166e-42c9-a1a6-f41dc4dca491",
-    "client_secret": "6936f827-3c8a-46ee-a357-e8b61acd43ed",
-    "registration_access_token": "…",
-    "registration_client_uri": "https://as.aspsp.{{obriDomain}}/oauth2/register?client_id=cfc758aa-166e-42c9-a1a6-f41dc4dca491",
-    "client_secret_expires_at": "0"
+    "software_statement": "eyJraWQiOiIyMTA5O.....39ZEHzBg",
+    "registration_access_token": "eyJ0eXAiO....78No-i0HgjNehwmiebUqhOg",
+    "registration_client_uri": "https://as.aspsp.{{obriDomain}}.forgerock.financial/oauth2/register?client_id=3b05a12b-b1b8-4449-ba5c-2d29683e1b84"
 }
 ----
 
 ==== Check TPP Is Registered
-. Select `test mtls before on-boarding`
+. Select `Dynamic Registration` -> `Onboarding your TPP` -> `test mtls before on-boarding`
 . Click `Send` and expect a similar response
 
 [source,json]
 ----
 {
-    "issuerId": "cfc758aa-166e-42c9-a1a6-f41dc4dca491",
+    "issuerId": "3b05a12b-b1b8-4449-ba5c-2d29683e1b84",
     "authorities": [
-        {
-            "authority": "ROLE_AISP"
-        },
-        {
-            "authority": "ROLE_PISP"
-        },
-        {
-            "authority": "ROLE_DATA"
-        },
-        {
-            "authority": "ROLE_CBPII"
-        }
+        "PSD2_PSP_AI",
+        "PSD2_PSP_IC",
+        "PSD2_PSP_PI",
+        "ROLE_AISP",
+        "ROLE_CBPII",
+        "ROLE_DATA",
+        "ROLE_EIDAS",
+        "ROLE_FORGEROCK_EXTERNAL_APP",
+        "ROLE_PISP",
+        "ROLE_TPP"
     ]
 }
 ----
 
 === Accounts
-For all of the examples in this section the Postman functions live in `Accounts flow` directory.
+For all of the examples in this section the Postman functions live in `Accounts flow` folder.
 
 In this section you will:
 
@@ -226,26 +260,28 @@ In this section you will:
 Refer to <<#_accessing_psu_accounts,Accessing PSU accounts>> for more information.
 
 ==== Generate Client Credential JWT As TPP
-. Select `Generate client assertion JWT`
+. Select `Accounts flow` -> `Access preparation` -> `Generate client assertion JWT`
 . Click `Send` and expect JWT token in the response
-
+[source,shell]
+----
+eyJraWQiOiIzMmQyNDA0ZWE3MGI2ZWI1MTQyOGMzMWY3MmUyNDAzZmYwYTViZGQ4IiwiYWxnIjoiUFMyNTYifQ.eyJzdWIiOi....
+----
 ==== Generate Access Token As TPP
-. Select `Client credential`
+. Select `Accounts flow` -> `Access preparation` -> `Client credential`
 . Click `Send` and expect a similar response
-
 [source,json]
 ----
 {
-    "access_token": "…",
+    "access_token":"eyJ0eXAiOiJKV1QiLC........J6aXAiOiJOT05FIiwia2lk",
     "scope": "openid payments accounts",
-    "id_token": "…",
+    "id_token": "eyJ0eXAiOiJKV1........QiLCJ6aXAiOiJOT05FIiwia2lk",
     "token_type": "Bearer",
     "expires_in": 86399
 }
 ----
 
 ==== Request Account Data As TPP
-. Select `create account request`
+. Select `Accounts flow` -> `Access preparation` -> `create account request`
 . Click `Send` and expect a similar response
 
 [source,json]
@@ -278,14 +314,17 @@ Refer to <<#_accessing_psu_accounts,Accessing PSU accounts>> for more informatio
 ----
 
 ==== Sign Payload For Accepting Account Data Request As TPP
-. Select `Generate request parameter`
+. Select `Accounts flow` -> `Auth & Consent` -> `Generate request parameter`
 . Click `Send` and expect JWT token in the response
-
+[source,shell]
+----
+eyJraWQiOiIzMmQyNDA0ZWE3MGI2ZWI1MTQyOGMzMWY3MmUyNDAzZmYwYTViZGQ4IiwiYWxnIjoiUFMyNTYifQ.eyJpc3MiO.......
+----
 ==== Authorise TPP to Accept Account Data Request As User
 For this section we can only partially use Postman
 
-. Select `Hybrid flow`
-. Select `Code` under `Save`
+. Select `Accounts flow` -> `Auth & Consent` -> `Hybrid flow`
+. Select `Code` in postman under `Save`
 . Select cURL from the dropdown
 . Copy the URL
 . Put the URL into the browser
@@ -296,7 +335,7 @@ For this section we can only partially use Postman
 . Copy the `code` variable from the URL fragment which looks like `9b667799-c0dd-4823-b351-7431cd2f9c3d` and save this somewhere for later use. This code is called an *authorisation code*
 
 ==== Get Access Token as TPP
-. Select `Exchange Code`
+. Select `Accounts flow` -> `Token exchange` -> `Exchange Code`
 . Go to the `Body` tab
 . Override the `code` form value with your authorisation code you copied in the previous step.
 . Click send and expect a similar response
@@ -315,7 +354,7 @@ For this section we can only partially use Postman
 ----
 
 ==== Get Account Data as TPP
-. Select `Account API V3.0` -> `Get accounts`
+. Select `Accounts flow` -> `Data access` -> `Account API V3.0` -> `Get accounts`
 . Click `Send` and expect a similar response
 
 [source,json]
@@ -477,3 +516,79 @@ For this section we can only partially use Postman
     }
 }
 ----
+
+=== Event Notification
+
+For all of the examples in this section the Postman functions live in `Event Notifications` directory.
+
+In this section you will:
+
+. Register a callback URL with an ASPSP to receive event notifications.
+. Optionally read, update or delete a registered callback URL.
+
+==== Generate Client Credentials JWT As TPP
+. Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Generate client credential JWT`
+. Click `Send` and expect JWT token in the response
+[source,shell]
+----
+eyJraWQiOiI4NzkwMWRjNTI4......
+----
+==== Generate Access Token As TPP
+. Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Client credential`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAi.......LS0LoLA",
+    "expires_in": 86399,
+    "id_token": "eyJraWQi........oxesuhp-b7J0w",
+    "token_type": "Bearer",
+    "scope": "openid payments accounts"
+}
+----
+==== Create a Callback URL
+. Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Create Callback URL`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Data": {
+        "CallbackUrlId": "b44c37fb-da8f-4716-bdcf-7fd3894f6a71",
+        "Url": "https://tpp-core.{{obriDomain}}.forgerock.financial/open-banking/v3.0/event-notifications",
+        "Version": "3.0"
+    }
+}
+----
+==== Get Callback URL
+. Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Get Callback URLs - should be one`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Data": {
+        "CallbackUrl": [
+            {
+                "CallbackUrlId": "b44c37fb-da8f-4716-bdcf-7fd3894f6a71",
+                "Url": "https://tpp-core.{{obriDomain}}.forgerock.financial/open-banking/v3.0/event-notifications",
+                "Version": "3.0"
+            }
+        ]
+    }
+}
+----
+==== Update Callback URL
+. Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Amend Callback URL`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Data": {
+        "CallbackUrlId": "b44c37fb-da8f-4716-bdcf-7fd3894f6a71",
+        "Url": "http://test-tpp-updated/open-banking/v3.0/event-notifications-amended",
+        "Version": "3.0"
+    }
+}
+----
+==== Update Callback URL
+. Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Delete Callback URL`
+. Click `Send` and expect http code `204` and no content in the response
