@@ -1,4 +1,5 @@
 :toc: left
+:toc-title: Documentation Index
 :stylesheet: forgerock-obri.css
 
 = ForgeRock Open Banking Reference Implementation documentations

@@ -1,3 +1,4 @@
+
 == Quickstart
 This quickstart guide aims to get you exploring OBRI quickly.
 
@@ -517,23 +518,28 @@ For this section we can only partially use Postman
 }
 ----
 
-=== Event Notification
+=== Event Notification API
 
-For all of the examples in this section the Postman functions live in `Event Notifications` directory.
+For all examples in this section the Postman functions live in `Event Notifications` directory.
 
+'''
+
+==== Callback URL
+
+For all examples in this section the Postman functions live in `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` directory.
 In this section you will:
 
 . Register a callback URL with an ASPSP to receive event notifications.
 . Optionally read, update or delete a registered callback URL.
 
-==== Generate Client Credentials JWT As TPP
+===== Generate Client Credentials JWT As TPP
 . Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Generate client credential JWT`
 . Click `Send` and expect JWT token in the response
 [source,shell]
 ----
 eyJraWQiOiI4NzkwMWRjNTI4......
 ----
-==== Generate Access Token As TPP
+===== Generate Access Token As TPP
 . Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Client credential`
 . Click `Send` and expect a similar response
 [source,json]
@@ -546,7 +552,7 @@ eyJraWQiOiI4NzkwMWRjNTI4......
     "scope": "openid payments accounts"
 }
 ----
-==== Create a Callback URL
+===== Create a Callback URL
 . Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Create Callback URL`
 . Click `Send` and expect a similar response
 [source,json]
@@ -559,7 +565,7 @@ eyJraWQiOiI4NzkwMWRjNTI4......
     }
 }
 ----
-==== Get Callback URL
+===== Get Callback URL
 . Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Get Callback URLs - should be one`
 . Click `Send` and expect a similar response
 [source,json]
@@ -576,7 +582,7 @@ eyJraWQiOiI4NzkwMWRjNTI4......
     }
 }
 ----
-==== Update Callback URL
+===== Update Callback URL
 . Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Amend Callback URL`
 . Click `Send` and expect a similar response
 [source,json]
@@ -589,6 +595,353 @@ eyJraWQiOiI4NzkwMWRjNTI4......
     }
 }
 ----
-==== Update Callback URL
+===== Delete Callback URL
 . Select `Event Notifications` -> `Callback URL - v3.0 to v3.1.6` -> `v3.0` -> `Delete Callback URL`
 . Click `Send` and expect http code `204` and no content in the response
+
+'''
+
+==== Aggregated Polling
+- A TPP calls an ASPSP to poll for events.
+- The ASPSP responds with an array of awaiting events encoded as signed event notifications.
+
+For all examples in this section the Postman functions live in `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` directory.
+In this section you will:
+
+- Poll event notifications by a TPP.
+- Acknowledge Only: Only acknowledge receipt.
+- Poll and Acknowledge: Acknowledge successfully processed event notifications and requesting more.
+
+'''
+===== Poll Only
+'''
+====== Generate Client Credentials JWT As TPP
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll Only` -> `Generate client credential JWT`
+. Click `Send` and expect JWT token in the response
+[source,shell]
+----
+eyJraWQiOiI4NzkwMWRjNTI4......
+----
+====== Generate Access Token As TPP
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll Only` -> `Client credential`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAi.......LS0LoLA",
+    "expires_in": 86399,
+    "id_token": "eyJraWQi........oxesuhp-b7J0w",
+    "token_type": "Bearer",
+    "scope": "openid payments accounts"
+}
+----
+====== Poll Event (Empty response)
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll Only` -> `Poll Events v3.1.2 - empty`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "sets": {}
+}
+----
+====== Import an event using the FR internal API
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll Only` -> `Import [1] event v3.1.2 (Data api)`
+. Click `Send` and expect a similar response
+[source,json]
+----
+[
+    {
+        "id": "5fa2a5f2acc902001429b5eb",
+        "jti": "847a8562-ae90-4a6e-bb95-35adceb10e3f",
+        "signedJwt": "eyJraWQi.....7j6OQ",
+        "tppId": "3b05a12b-b1b8-4449-ba5c-2d29683e1b84",
+        "created": "2020-11-04T13:00:34.060Z",
+        "updated": "2020-11-04T13:00:34.060Z",
+        "new": false
+    }
+]
+----
+====== Poll Events - One Event
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll Only` -> `Poll Events v3.1.6 - One event`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "moreAvailable": false,
+    "sets": {
+        "847a8562-ae90-4a6e-bb95-35adceb10e3f": "eyJraWQ.....R7j6OQ"
+    }
+}
+----
+====== Remove Event created using FR internal data API
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll Only` -> `Remove events by tppId (Data api)`
+. Click `Send` and expect http code **204** and no content in the response
+
+'''
+===== Acknowledge Only
+'''
+====== Generate Client Credentials JWT As TPP
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Generate client credential JWT`
+. Click `Send` and expect JWT token in the response
+[source,shell]
+----
+eyJraWQiOiI4NzkwMWRjNTI4......
+----
+====== Generate Access Token As TPP
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Client credential`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAi.......LS0LoLA",
+    "expires_in": 86399,
+    "id_token": "eyJraWQi........oxesuhp-b7J0w",
+    "token_type": "Bearer",
+    "scope": "openid payments accounts"
+}
+----
+====== Poll Event (Empty response)
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Poll Events v3.1.2 - empty`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "sets": {}
+}
+----
+====== Import an event using the FR internal API
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Import [1] event v3.1.2 (Data api)`
+. Click `Send` and expect a similar response
+[source,json]
+----
+[
+    {
+        "id": "5fa2a5f2acc902001429b5eb",
+        "jti": "847a8562-ae90-4a6e-bb95-35adceb10e3f",
+        "signedJwt": "eyJraWQi.....7j6OQ",
+        "tppId": "3b05a12b-b1b8-4449-ba5c-2d29683e1b84",
+        "created": "2020-11-04T13:00:34.060Z",
+        "updated": "2020-11-04T13:00:34.060Z",
+        "new": false
+    }
+]
+----
+====== Poll Events v3.1.6 - One event
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Poll Events v3.1.6 - One event`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "moreAvailable": false,
+    "sets": {
+        "847a8562-ae90-4a6e-bb95-35adceb10e3f": "eyJraWQ.....R7j6OQ"
+    }
+}
+----
+====== Acknowledge Only Events
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Acknowledge Only Events v3.1.6 - empty`
+. Clieck `Send` and expect a similar response
+[source,json]
+----
+{
+    "sets": {}
+}
+----
+====== Remove Event created using FR internal data API
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Acknowledge Only` -> `Remove events by tppId (Data api)`
+. Click `Send` and expect http code **204** and no content in the response
+
+'''
+===== Poll and Acknowledge
+'''
+====== Generate Client Credentials JWT As TPP
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Generate client credential JWT`
+. Click `Send` and expect JWT token in the response
+[source,shell]
+----
+eyJraWQiOiI4NzkwMWRjNTI4......
+----
+====== Generate Access Token As TPP
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Client credential`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAi.......LS0LoLA",
+    "expires_in": 86399,
+    "id_token": "eyJraWQi........oxesuhp-b7J0w",
+    "token_type": "Bearer",
+    "scope": "openid payments accounts"
+}
+----
+====== Poll Event (Empty response)
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Poll Events v3.1.2 - empty`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "sets": {}
+}
+----
+====== Import two events using the FR internal API
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Import [2] event v3.1.2 (Data api)`
+. Click `Send` and expect a similar response
+[source,json]
+----
+[
+    {
+        "id": "5fa2b6d8acc902001429b5ed",
+        "jti": "6ee27018-ac7e-4d0d-8ee6-bc22af8ae477",
+        "signedJwt": "eyJraWQ....QESERA",
+        "tppId": "3b05a12b-b1b8-4449-ba5c-2d29683e1b84",
+        "created": "2020-11-04T14:12:40.589Z",
+        "updated": "2020-11-04T14:12:40.589Z",
+        "new": false
+    },
+    {
+        "id": "5fa2b6d8acc902001429b5ee",
+        "jti": "864b2eb6-5c32-43be-a0d4-c36cdea350f4",
+        "signedJwt": "eyJraWQiOi....1wbwQ",
+        "tppId": "3b05a12b-b1b8-4449-ba5c-2d29683e1b84",
+        "created": "2020-11-04T14:12:40.650Z",
+        "updated": "2020-11-04T14:12:40.650Z",
+        "new": false
+    }
+]
+----
+====== Poll Events v3.1.6 - Two events
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Poll Events v3.1.6 - Two event`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "moreAvailable": false,
+    "sets": {
+        "864b2eb6-5c32-43be-a0d4-c36cdea350f4": "eyJraWQ....RX1wbwQ",
+        "6ee27018-ac7e-4d0d-8ee6-bc22af8ae477": "eyJraWQ....QESERA"
+    }
+}
+----
+====== Poll and Acknowledge
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Acknowledge Only Events v3.1.6 - empty`
+. Clieck `Send` and expect a similar response
+[source,json]
+----
+{
+    "moreAvailable": false,
+    "sets": {
+        "6ee27018-ac7e-4d0d-8ee6-bc22af8ae477": "eyJraWQ....QESERA"
+    }
+}
+----
+====== Remove Event created using FR internal data API
+. Select `Event Notifications` -> `Aggregated Polling - v3.1.2 to v3.1.6` -> `Poll and Acknowledge` -> `Remove events by tppId (Data api)`
+. Click `Send` and expect http code **204** and no content in the response
+
+'''
+==== Event Notification Subscription
+For all examples in this section the Postman functions live in `Event Notifications` → `Event Notification Subscription - v3.1.2 to v3.1.6` directory.
+In this section you will:
+
+- Create an event subscription resource.
+- Access an event subscription resource.
+- Update an event subscription resource.
+- Delete an event subscription resource.
+
+'''
+===== Generate Client Credentials JWT As TPP
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Generate client credential JWT`
+. Click `Send` and expect JWT token in the response
+[source,shell]
+----
+eyJraWQiOiI4NzkwMWRjNTI4......
+----
+===== Generate Access Token As TPP
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Client credential`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "access_token": "eyJ0eXAi.......LS0LoLA",
+    "expires_in": 86399,
+    "id_token": "eyJraWQi........oxesuhp-b7J0w",
+    "token_type": "Bearer",
+    "scope": "openid payments accounts"
+}
+----
+===== Create an Event subscription
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Create event subscription v3.1.2`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Data": {
+        "EventSubscriptionId": "5336cc75-4bfb-4ff1-927d-6c60e8e93630",
+        "CallbackUrl": "https://tpp.com/open-banking/v3.1.2/event-notifications",
+        "Version": "3.1.2"
+    },
+    "Links": {
+        "Self": "https://matls.rs.aspsp.smiths-rc2.forgerock.financial/open-banking/v3.1.2/callback-urls"
+    },
+    "Meta": {}
+}
+----
+===== Create an Event subscription - conflict test
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Create event subscription v3.1.3 - Conflict 409`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Code": "OBRI.Request.Invalid",
+    "Id": "b4dae9a137850849",
+    "Message": "An error happened when parsing the request arguments",
+    "Errors": [
+        {
+            "ErrorCode": "OBRI.EventSubscription.Exists",
+            "Message": "An event subscription already exists for this TPP. Please use PUT and DELETE methods to amend or remove.",
+            "Url": "https://docs.smiths-rc2.forgerock.financial:443/errors#OBRI.EventSubscription.Exists"
+        }
+    ]
+}
+----
+===== Get event subscription
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Get event subscription 3.1.2 via api v3.1.4`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Data": {
+        "EventSubscription": [
+            {
+                "EventSubscriptionId": "5336cc75-4bfb-4ff1-927d-6c60e8e93630",
+                "CallbackUrl": "https://tpp.com/open-banking/v3.1.2/event-notifications",
+                "Version": "3.1.2"
+            }
+        ]
+    },
+    "Links": {
+        "Self": "https://matls.rs.aspsp.smiths-rc2.forgerock.financial/open-banking/v3.1.4/callback-urls"
+    },
+    "Meta": {}
+}
+----
+===== Update event subscription
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Update event subscription 3.1.2 to 3.1.3 via api v3.1.5`
+. Click `Send` and expect a similar response
+[source,json]
+----
+{
+    "Data": {
+        "EventSubscriptionId": "5336cc75-4bfb-4ff1-927d-6c60e8e93630",
+        "CallbackUrl": "https://tpp.com/open-banking/v3.1.3/event-notifications",
+        "Version": "3.1.3"
+    },
+    "Links": {
+        "Self": "https://matls.rs.aspsp.smiths-rc2.forgerock.financial/open-banking/v3.1.5/callback-urls"
+    },
+    "Meta": {}
+}
+----
+===== Delete event subscription
+. Select `Event Notifications` -> `Event Notification Subscription - v3.1.2 to v3.1.6` -> `Delete event subscription v3.1.6`
+. Click `Send` and expect http code **204** and no content response
