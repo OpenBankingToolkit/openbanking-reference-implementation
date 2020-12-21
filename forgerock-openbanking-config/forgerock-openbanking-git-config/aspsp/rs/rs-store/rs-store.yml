@@ -12,6 +12,19 @@ server:
 
 rs:
   data.internal_ids.show: true
+  # Refer to https://github.com/OpenBankingToolkit/openbanking-reference-implementation/issues/344
+  data.internal_ids.direct_debit.show: false
+  data.internal_ids.offer.show: false
+  data.internal_ids.product.show: false
+  data.internal_ids.statement.show: false
+  data.internal_ids.domestic.transaction.show: false
+  data.internal_ids.international.transaction.show: false
+  data.internal_ids.domestic.beneficiary.show: false
+  data.internal_ids.international.beneficiary.show: false
+  data.internal_ids.domestic.scheduled_payment.show: false
+  data.internal_ids.international.scheduled_payment.show: false
+  data.internal_ids.domestic.standing_order.show: false
+  data.internal_ids.international.standing_order.show: false
   page:
     default:
       transaction:
