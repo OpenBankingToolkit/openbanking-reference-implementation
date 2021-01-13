@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>3.1.6-smiths-rc2</version>
+        <version>2.9.9-SNAPSHOT</version>
     </parent>
 
     <dependencies>
