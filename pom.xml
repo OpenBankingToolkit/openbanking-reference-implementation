@@ -21,21 +21,20 @@
     under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>2.9.9-SNAPSHOT</version>
+    <version>2.9.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-starter-parent</artifactId>
         <version>1.0.86</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <organization>
@@ -49,9 +48,9 @@
         <ob-jwkms.version>1.1.76</ob-jwkms.version>
         <ob-auth.version>1.0.65</ob-auth.version>
         <ob-directory.version>1.4.77</ob-directory.version>
-        <ob-aspsp.version>1.0.112</ob-aspsp.version>
+        <ob-aspsp.version>1.0.113</ob-aspsp.version>
         <ob-clients.version>1.0.44</ob-clients.version>
-        <ob-extensions.version>1.0.21</ob-extensions.version>
+        <ob-extensions.version>1.0.24</ob-extensions.version>
         <ob-commons.version>1.0.86</ob-commons.version>
     </properties>
 
