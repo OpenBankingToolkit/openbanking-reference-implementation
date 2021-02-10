@@ -28,3 +28,4 @@ requirements.lock
 .project
 .settings/
 mongodata/
+/release.properties

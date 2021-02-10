@@ -170,8 +170,8 @@
     </dependencyManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</connection>
-        <developerConnection>scm:git:https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git
+        <connection>scm:git:git@github.com:OpenBankingToolkit/openbanking-reference-implementation.git</connection>
+        <developerConnection>scm:git:git@github.com:OpenBankingToolkit/openbanking-reference-implementation.git
         </developerConnection>
         <url>https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</url>
         <tag>HEAD</tag>
