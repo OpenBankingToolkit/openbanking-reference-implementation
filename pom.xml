@@ -51,7 +51,7 @@
         <ob-aspsp.version>1.0.113</ob-aspsp.version>
         <ob-clients.version>1.0.44</ob-clients.version>
         <ob-extensions.version>1.0.24</ob-extensions.version>
-        <ob-commons.version>1.0.86</ob-commons.version>
+        <ob-commons.version>1.0.87</ob-commons.version>
     </properties>
 
     <modules>
