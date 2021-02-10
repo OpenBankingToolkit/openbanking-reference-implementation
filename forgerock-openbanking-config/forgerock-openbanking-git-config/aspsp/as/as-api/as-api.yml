@@ -24,6 +24,15 @@ dynamic-registration:
 user-info.enable: true
 introspection.enable: true
 grant-types.supported: "refresh_token,client_credentials,authorization_code"
+#ASPSP - OIDC response types supported to FAPI complaint
+# AM plugins provider configuration for response types (and combinations)
+#  - code|org.forgerock.oauth2.core.AuthorizationCodeResponseTypeHandler
+#  - id_token|org.forgerock.openidconnect.IdTokenResponseTypeHandler
+#  - device_code|org.forgerock.oauth2.core.TokenResponseTypeHandler
+#  - token|org.forgerock.oauth2.core.TokenResponseTypeHandler
+#  - none|org.forgerock.oauth2.core.NoneResponseTypeHandler
+response-types.supported: "code,code id_token,id_token"
+
 request-uri-parameter.supported: true
 
 request_object_encryption_alg_values.enabled: true
