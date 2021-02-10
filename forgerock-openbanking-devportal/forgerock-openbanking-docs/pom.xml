@@ -34,7 +34,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.devportal</groupId>
         <artifactId>forgerock-openbanking-devportal</artifactId>
-        <version>2.9.11</version>
+        <version>2.9.11-SNAPSHOT</version>
     </parent>
 
     <properties>
