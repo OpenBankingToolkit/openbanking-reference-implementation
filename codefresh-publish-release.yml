@@ -491,14 +491,14 @@ steps:
   create-release-published-json:
     image: codefreshio/git-image:latest
     stage: "trigger-deploy"
-    title: "Update release.json"
+    title: "Create releases-published.json"
     description: "Update release.json file"
     working_directory: ${{clone-ob-deploy}}
     fail_fast: false
     commands:
       - apt update && apt install jq
-      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}-${CF_SHORT_REVISION}'" else . end ]' client_releases/master-dev/releases.json > client_releases/master-dev/releases-published.json
-      # - mv client_releases/master-dev/releases.json.tmp client_releases/master-dev/releases.json
+      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}-${CF_SHORT_REVISION}'" else . end ]' client_releases/master-dev/releases.json > client_releases/master-dev/releases-published.json.tmp
+      - mv client_releases/master-dev/releases-published.json.tmp client_releases/master-dev/releases-published.json
       - git config --global user.email "codefresh@codefresh.io"
       - git config --global user.name "Codefresh"
       - git add client_releases/master-dev/releases-published.json
@@ -513,11 +513,4 @@ steps:
       - OWNER=forgecloud
       - REPO=ob-deploy
       - ENFORCE_ADMINS=true
-
-  trigger-ob-deploy-master:
-    title: "Trigger deploy pipeline"
-    stage: "trigger-deploy"
-    image: codefresh/cli
-    commands:
-      - codefresh run ForgeCloud/ob-deploy/ob-deploy-master-dev --branch ${{CF_BRANCH}} --detach -t "default"
 
