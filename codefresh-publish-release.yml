@@ -488,20 +488,20 @@ steps:
       - REPO=ob-deploy
       - ENFORCE_ADMINS=false
 
-  create-release-published-json:
+  update-release-published-json:
     image: codefreshio/git-image:latest
     stage: "trigger-deploy"
-    title: "Create releases-published.json"
-    description: "Create release-published.json file"
+    title: "Update releases-published.json"
+    description: "Update release-published.json file"
     working_directory: ${{clone-ob-deploy}}
     fail_fast: false
     commands:
       - apt update && apt install jq
-      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}-${CF_SHORT_REVISION}'" else . end ]' client_releases/master-dev/releases.json > client_releases/master-dev/releases-published.json.tmp
-      - mv client_releases/master-dev/releases-published.json.tmp client_releases/master-dev/releases-published.json
+      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}-${CF_SHORT_REVISION}'" else . end ]' releases-published.json > releases-published.json.tmp
+      - mv releases-published.json.tmp releases-published.json
       - git config --global user.email "codefresh@codefresh.io"
       - git config --global user.name "Codefresh"
-      - git add client_releases/master-dev/releases-published.json
+      - git add releases-published.json
       - git commit --allow-empty -m "Bumping master-dev to deploy spring apps with version ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}"
       - git push https://${{GITHUB_USERNAME}}:${{GITHUB_ACCESS_TOKEN}}@github.com/ForgeCloud/ob-deploy.git "master"
   enable-include-administrator:
