@@ -1,0 +1,516 @@
+version: "1.0"
+
+stages:
+  - prepare
+  - build
+  - unit-test
+  - docker-build
+  - integration-test
+  - docker-push
+  - trigger-deploy
+
+indicators:
+  - environment: &global_env
+      - FR_PRIVATE_REPO_USER=${{FR_PRIVATE_REPO_USER}}
+      - FR_PRIVATE_REPO_PASSWORD=${{FR_PRIVATE_REPO_PASSWORD}}
+      - GITHUB_GPG_KEY_ID=${{GITHUB_GPG_KEY_ID}}
+      - GITHUB_GPG_KEY=${{GITHUB_GPG_KEY}}
+      - GITHUB_ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}
+
+steps:
+  main_clone:
+    type: git-clone
+    title: Git Clone openbanking-reference-implementation
+    repo: OpenBankingToolkit/openbanking-reference-implementation
+    revision: '${{CF_REVISION}}'
+    stage: prepare
+    git: github-bot
+  #  Prepare stage
+  set-global-variables:
+    image: eu.gcr.io/openbanking-214714/ob-release:latest
+    stage: "prepare"
+    title: "Set up global variables"
+    environment: *global_env
+    commands:
+      - cf_export PROJECT_VERSION=$(mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | tr '[:upper:]' '[:lower:]')
+      - cf_export REGISTRY_CONTEXT=eu.gcr.io/openbanking-214714
+  check-copyright:
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
+    stage: "prepare"
+    title: "Verify copyrights"
+    working-directory: ${{main_clone}}
+    environment: *global_env
+    commands:
+      - mvn license:check
+  # Build stage
+  build-stage:
+    stage: "build"
+    steps:
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
+    title: "Compile, build and install artifact"
+    working-directory: ${{main_clone}}
+    environment: *global_env
+    commands:
+      - mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -Ddockerfile.skip -DdockerCompose.skip -DskipTests -DskipITs clean install -T 8
+
+  test-stage:
+    stage: "unit-test"
+    steps:
+    # Unit-test stage
+    image: ${{REGISTRY_CONTEXT}}/ob-release:latest
+    title: "Run unit tests"
+    working-directory: ${{main_clone}}
+    environment: *global_env
+    commands:
+      - mvn -Dmaven.repo.local=/codefresh/volume/${{CF_BRANCH_TAG_NORMALIZED}}/.m2/repository -DdockerCompose.skip -Ddockerfile.skip -DskipITs verify
+
+  # Docker-build stage
+  docker-build-1:
+    type: parallel
+    stage: "docker-build"
+    steps:
+      build-config-docker-image:
+        type: build
+        title: "Build config service docker image"
+        image_name: obri/config
+        working-directory: ${{main_clone}}/forgerock-openbanking-config
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-docs-docker-image:
+        type: build
+        title: "Build docs service docker image"
+        image_name: obri/docs
+        working-directory: ${{main_clone}}/forgerock-openbanking-devportal/forgerock-openbanking-docs
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-register-docker-image:
+        type: build
+        title: "Build register service docker image"
+        image_name: obri/register
+        working-directory: ${{main_clone}}/forgerock-openbanking-devportal/forgerock-openbanking-register
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-directory-docker-image:
+        type: build
+        title: "Build directory service docker image"
+        image_name: obri/directory-services
+        working-directory: ${{main_clone}}/forgerock-openbanking-directory-services
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-jwkms-image:
+        type: build
+        title: "Build jwkms service docker image"
+        image_name: obri/jwkms
+        working-directory: ${{main_clone}}/forgerock-openbanking-jwkms
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-as-api-docker-image:
+        type: build
+        title: "Build as-api service docker image"
+        image_name: obri/as-api
+        working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-as/forgerock-openbanking-as-api
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-rs-api-docker-image:
+        type: build
+        title: "Build rs-api service docker image"
+        image_name: obri/rs-api
+        working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-rs-rcs-docker-image:
+        type: build
+        title: "Build rs-rcs service docker image"
+        image_name: obri/rs-rcs
+        working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-rcs
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-rs-simulator-docker-image:
+        type: build
+        title: "Build rs-simulator service docker image"
+        image_name: obri/rs-simulator
+        working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-simulator
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+  docker-build-2:
+    type: parallel
+    stage: "docker-build"
+    steps:
+      build-rs-store-docker-image:
+        type: build
+        title: "Build rs-store service docker image"
+        image_name: obri/rs-store
+        working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-rs-ui-docker-image:
+        type: build
+        title: "Build rs-ui service docker image"
+        image_name: obri/rs-ui
+        working-directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-ui
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-admin-docker-image:
+        type: build
+        title: "Build admin service docker image"
+        image_name: obri/admin
+        working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-admin
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-metrics-service-docker-image:
+        type: build
+        title: "Build metrics service docker image"
+        image_name: obri/metrics-service
+        working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-metrics/forgerock-openbanking-metrics-services
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-monitoring-service-docker-image:
+        type: build
+        title: "Build monitoring service docker image"
+        image_name: obri/monitoring
+        working-directory: ${{main_clone}}/forgerock-openbanking-backstage/forgerock-openbanking-monitoring
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+      build-scgw-docker-image:
+        type: build
+        title: "Build scgw service docker image"
+        image_name: obri/scgw
+        working-directory: ${{main_clone}}/forgerock-openbanking-gateway
+        build_arguments:
+          - JAR_FILE=target/forgerock-openbanking-*.jar
+          - VERSION_FILE=target/VERSION
+          - SERVICE_FILE=target/SERVICE
+        tag: ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        disable_push: true
+
+  integration-test-scgw:
+    type: composition
+    stage: "integration-test"
+    title: "SCGW integration tests"
+    description: "Start docker services via docker-compose and run scgw integration tests"
+    composition: docker-compose.yml
+    composition_variables:
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
+    working_directory: ${{main_clone}}/forgerock-openbanking-gateway
+    composition_candidates:
+      scgw-tests:
+        volumes:
+          - ${{CF_VOLUME}}:/codefresh/volume
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
+        environment: *global_env
+        command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-gateway/pom.xml
+        # Simulate DNS routing multiple hostnames
+        networks:
+          default:
+            aliases:
+              - jwkms
+              - rs-api
+              - as-api
+              - jwkms.dev-ob.forgerock.financial
+              - rs.aspsp.dev-ob.forgerock.financial
+              - matls.as.aspsp.dev-ob.forgerock.financial
+              - as.aspsp.dev-ob.forgerock.financial
+  integration-test-rs-api:
+    type: composition
+    stage: "integration-test"
+    title: "RS-API integration tests"
+    description: "Start docker services via docker-compose and run rs-api integration tests"
+    composition: docker-compose.yml
+    composition_variables:
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
+    working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api
+    composition_candidates:
+      scgw-tests:
+        volumes:
+          - ${{CF_VOLUME}}:/codefresh/volume
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
+        environment: *global_env
+        command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-api/pom.xml
+        # Simulate DNS routing multiple hostnames
+        networks:
+          default:
+            aliases:
+              - jwkms
+              - rs-api
+              - as-api
+              - rs-store
+              - jwkms.dev-ob.forgerock.financial
+              - rs.aspsp.dev-ob.forgerock.financial
+              - matls.as.aspsp.dev-ob.forgerock.financial
+              - as.aspsp.dev-ob.forgerock.financial
+  integration-test-rs-store:
+    type: composition
+    stage: "integration-test"
+    title: "RS-STORE integration tests"
+    description: "Start docker services via docker-compose and run rs-store integration tests"
+    composition: docker-compose.yml
+    composition_variables:
+      - TAG=:${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}} # deprecated
+      - CONFIG_IMAGE=${{build-config-docker-image}}
+    working_directory: ${{main_clone}}/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store
+    composition_candidates:
+      scgw-tests:
+        volumes:
+          - ${{CF_VOLUME}}:/codefresh/volume
+        image: ${{REGISTRY_CONTEXT}}/ob-release:latest
+        environment: *global_env
+        command: /codefresh/volume/openbanking-reference-implementation/ci/run-it.sh ${{CF_BRANCH_TAG_NORMALIZED}} /codefresh/volume/openbanking-reference-implementation/forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/pom.xml
+        # Simulate DNS routing multiple hostnames
+        networks:
+          default:
+            aliases:
+              - jwkms
+              - rs-api
+              - as-api
+              - rs-store
+              - jwkms.dev-ob.forgerock.financial
+              - rs.aspsp.dev-ob.forgerock.financial
+              - matls.as.aspsp.dev-ob.forgerock.financial
+              - as.aspsp.dev-ob.forgerock.financial
+  upload-code-coverage:
+    image: rkostrzewski/codecov
+    stage: "integration-test"
+    title: "Upload code coverage"
+    working_directory: ${{main_clone}}
+    environment:
+      - CODECOV_TOKEN=${{CODECOV_TOKEN}}
+    commands:
+      - curl -s https://codecov.io/bash > .codecov
+      - chmod +x .codecov
+      - ./.codecov -p /codefresh/volume/openbanking-reference-implementation
+
+  # Docker-push stage
+  docker-push-latest:
+    type: parallel
+    stage: "docker-push"
+    steps:
+      push-config-docker-image-latest:
+        type: push
+        title: "Push config service docker image to registry"
+        candidate: ${{build-config-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-docs-docker-image-latest:
+        type: push
+        title: "Push docs service docker image to registry"
+        candidate: ${{build-docs-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-register-docker-image-latest:
+        type: push
+        title: "Push register service docker image to registry"
+        candidate: ${{build-register-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-directory-docker-image-latest:
+        type: push
+        title: "Push directory service docker image to registry"
+        candidate: ${{build-directory-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-jwkms-image-latest:
+        type: push
+        title: "Push jwkms service docker image to registry"
+        candidate: ${{build-jwkms-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-as-api-docker-image-latest:
+        type: push
+        title: "Push as-api service docker image to registry"
+        candidate: ${{build-as-api-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-rs-api-docker-image-latest:
+        type: push
+        title: "Push rs-api service docker image to registry"
+        candidate: ${{build-rs-api-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-rs-rcs-docker-image-latest:
+        type: push
+        title: "Push rs-rcs service docker image to registry"
+        candidate: ${{build-rs-rcs-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-rs-simulator-docker-image-latest:
+        type: push
+        title: "Push rs-simulator service docker image to registry"
+        candidate: ${{build-rs-simulator-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-rs-store-docker-image-latest:
+        type: push
+        title: "Push rs-store service docker image to registry"
+        candidate: ${{build-rs-store-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-rs-ui-docker-image-latest:
+        type: push
+        title: "Push rs-ui service docker image to registry"
+        candidate: ${{build-rs-ui-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-admin-docker-image-latest:
+        type: push
+        title: "Push admin service docker image to registry"
+        candidate: ${{build-admin-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-metrics-service-docker-image-latest:
+        type: push
+        title: "Push metrics service docker image to registry"
+        candidate: ${{build-metrics-service-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-monitoring-service-docker-image-latest:
+        type: push
+        title: "Push monitoring service docker image to registry"
+        candidate: ${{build-monitoring-service-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+      push-scgw-docker-image-latest:
+        type: push
+        title: "Push SCGW service docker image to registry"
+        candidate: ${{build-scgw-docker-image}}
+        tags:
+          - latest
+          - ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}
+        registry: gcr
+
+  clean-before-clone:
+    image: codefreshio/git-image:latest
+    stage: "trigger-deploy"
+    title: "Clean before clone"
+    description: "Need to clean the ob-deploy"
+    commands:
+      - rm -fr "/codefresh/volume/ob-deploy/.git/rebase-apply"
+
+  clone-ob-deploy:
+    type: git-clone
+    stage: "trigger-deploy"
+    title: "Clone ob-deploy repo"
+    git: github-bot
+    repo: forgeCloud/ob-deploy
+
+  disable-include-administrator:
+    title: "disable include administrators"
+    stage: "trigger-deploy"
+    image: benjjefferies/branch-protection-bot
+    environment:
+      - ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}
+      - OWNER=forgecloud
+      - REPO=ob-deploy
+      - ENFORCE_ADMINS=false
+
+  create-release-published-json:
+    image: codefreshio/git-image:latest
+    stage: "trigger-deploy"
+    title: "Create releases-published.json"
+    description: "Update release.json file"
+    working_directory: ${{clone-ob-deploy}}
+    fail_fast: false
+    commands:
+      - apt update && apt install jq
+      - jq -M  '[ .[] | if (.helmReference  | contains("obri-helm-charts/spring-application")) then .version |= "'${PROJECT_VERSION}-${CF_SHORT_REVISION}'" else . end ]' client_releases/master-dev/releases.json > client_releases/master-dev/releases-published.json.tmp
+      - mv client_releases/master-dev/releases-published.json.tmp client_releases/master-dev/releases-published.json
+      - git config --global user.email "codefresh@codefresh.io"
+      - git config --global user.name "Codefresh"
+      - git add client_releases/master-dev/releases-published.json
+      - git commit --allow-empty -m "Bumping master-dev to deploy spring apps with version ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}"
+      - git push https://${{GITHUB_USERNAME}}:${{GITHUB_ACCESS_TOKEN}}@github.com/ForgeCloud/ob-deploy.git "master"
+  enable-include-administrator:
+    title: "enable include administrators"
+    stage: "trigger-deploy"
+    image: benjjefferies/branch-protection-bot
+    environment:
+      - ACCESS_TOKEN=${{GITHUB_ACCESS_TOKEN}}
+      - OWNER=forgecloud
+      - REPO=ob-deploy
+      - ENFORCE_ADMINS=true
+
