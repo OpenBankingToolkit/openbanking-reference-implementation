@@ -492,7 +492,7 @@ steps:
     image: codefreshio/git-image:latest
     stage: "trigger-deploy"
     title: "Create releases-published.json"
-    description: "Update release.json file"
+    description: "Create release-published.json file"
     working_directory: ${{clone-ob-deploy}}
     fail_fast: false
     commands:
