@@ -502,7 +502,7 @@ steps:
       - git config --global user.email "codefresh@codefresh.io"
       - git config --global user.name "Codefresh"
       - git add releases-published.json
-      - git commit --allow-empty -m "Bumping master-dev to deploy spring apps with version ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}"
+      - git commit --allow-empty -m "Update versions in release-published.json to deploy spring apps with version ${{PROJECT_VERSION}}-${{CF_SHORT_REVISION}}"
       - git push https://${{GITHUB_USERNAME}}:${{GITHUB_ACCESS_TOKEN}}@github.com/ForgeCloud/ob-deploy.git "master"
   enable-include-administrator:
     title: "enable include administrators"
