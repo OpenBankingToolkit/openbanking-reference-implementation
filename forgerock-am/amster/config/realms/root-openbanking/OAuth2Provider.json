@@ -27,7 +27,7 @@
     },
     "advancedOAuth2Config" : {
       "customLoginUrlTemplate" : "https://bank.&{ob.domain}:4201/login?goto=${goto}<#if acrValues??>&acr_values=${acrValues}</#if><#if realm??>&realm=${realm}</#if><#if module??>&module=${module}</#if><#if service??>&service=${service}</#if><#if locale??>&locale=${locale}</#if><#if request??>&request=${request}</#if>",
-      "supportedScopes" : [ "openid", "payments", "fundsconfirmations", "accounts" ],
+      "supportedScopes" : [ "openid", "payments", "fundsconfirmations", "accounts", "eventpolling" ],
       "codeVerifierEnforced" : "false",
       "tokenSigningAlgorithm" : "ES256",
       "authenticationAttributes" : [ "uid", "amadmin" ],
