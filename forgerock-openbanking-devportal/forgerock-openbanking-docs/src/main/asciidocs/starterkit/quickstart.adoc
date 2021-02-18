@@ -187,6 +187,7 @@ If the JWT haven't expire expect a response similar to below:
 {
     "scopes": [
         "openid",
+        "eventpolling",
         "payments",
         "fundsconfirmations",
         "accounts"
