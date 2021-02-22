@@ -30,7 +30,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>4.1.1</version>
+        <version>4.1.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
