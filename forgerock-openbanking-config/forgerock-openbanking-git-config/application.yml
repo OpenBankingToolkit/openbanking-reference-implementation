@@ -4,7 +4,7 @@ dns:
 
 #Server config
 server:
-  max-http-header-size: 10000000 # Required for the large signed JWT headers
+  max-http-header-size: 10000000 # The max request header size, Required for the large signed JWT headers
   ssl:
     ciphers: TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
     enabled-protocols: TLSv1.2
@@ -1026,6 +1026,9 @@ spring:
     config:
       allowOverride: true
       override-none: true
+    gateway:
+      httpclient:
+        max-header-size: 10000000 # The max response header size, Required for the large signed JWT headers
   jackson:
     default-property-inclusion: NON_NULL
   sleuth:
