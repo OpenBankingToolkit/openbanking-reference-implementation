@@ -27,7 +27,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
