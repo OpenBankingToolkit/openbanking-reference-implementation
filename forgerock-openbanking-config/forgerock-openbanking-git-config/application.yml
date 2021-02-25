@@ -85,6 +85,8 @@ rs-simulator:
 rs-discovery:
   hostname: matls.rs.aspsp.${dns.hosts.root}
   base-url: https://${rs-discovery.hostname}
+  read-write-api:
+    version: 3.1.6
   apis:
     payments:
       v_1_1:

@@ -40,6 +40,8 @@ rs:
 
 rs-discovery:
   base-url: https://${rs-discovery.hostname}:8074
+  read-write-api:
+    version: 3.1.6
 
 shop:
   port: ${scgw.port}
