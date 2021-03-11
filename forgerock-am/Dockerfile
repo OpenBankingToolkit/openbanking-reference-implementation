@@ -88,8 +88,11 @@ RUN chmod 0600 ${AMSTER_KEY_PATH}/id_rsa && \
 ADD forgerock-am/amster/ /opt/amster/
 ADD forgerock-am/am/*.sh $FORGEROCK_HOME/
 
-RUN echo "127.0.0.1  openam" >> /etc/hosts && \
-    /usr/local/tomcat/bin/catalina.sh start && \
+# Issue: Docker BuildKit file Read Only error
+# Docker mount the volume read-only and to avoid the read-only error
+# We comment the below line and It have been added extra-host on docker-compose to do the same
+# RUN echo "127.0.0.1  openam" >> /etc/hosts && \
+RUN /usr/local/tomcat/bin/catalina.sh start && \
     tail -f /usr/local/tomcat/logs/catalina.out | while read LOGLINE; do \
         echo "${LOGLINE}"; \
         [[ "${LOGLINE}" == *"Server startup in"* ]] && pkill -P $$ tail; \

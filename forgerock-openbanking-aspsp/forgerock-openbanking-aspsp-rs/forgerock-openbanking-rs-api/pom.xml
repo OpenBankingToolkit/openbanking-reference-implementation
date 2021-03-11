@@ -35,6 +35,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.forgerock.openbanking</groupId>
+            <artifactId>forgerock-openbanking-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.forgerock.openbanking.common</groupId>
             <artifactId>forgerock-openbanking-common</artifactId>
         </dependency>
