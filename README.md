@@ -120,10 +120,16 @@ To make these keys available to the jwkms you will need to;
 1. Download the Amster 6.5.1 zip file from backstage
     https://backstage.forgerock.com/downloads/browse/am/archive/productId:amster/minorVersion:6.5/version:6.5.1/releaseType:full
 1. Copy the amster zip file to `forgerock-am/_binaries` and rename the file to `amster.zip`, so that the path is `forgerock-am/_binaries/amster.zip`.
-#### Docker compose
+#### Run with Docker compose
+```shell
+docker-compose up
+```
+#### Run with Docker compose profiles
 **Compose Profiles**
 > We use the directive profiles to select the enabled services to run.[Compose profiles documentation](https://docs.docker.com/compose/profiles/)
 
+> Specific compose (`docker-compose-profiles.yml`) file to use the profiles.
+> 
 **Requirements to use compose profiles**
 - Compose version >= 1.28
 - MacOs users: upgrade docker desktop to 3.2.1 or later or used `brew` to install/upgrade it.
@@ -142,15 +148,15 @@ To make these keys available to the jwkms you will need to;
 - Current Profiles:
   - _**all**_: Runs `all` profile platform services
     ```shell
-    docker-compose --profile all up
+    docker-compose -f docker-compose-profile.yml --profile all up
     ```
   - _**metrics**_: Runs `mandatory` platform services and `metrics` profile services
     ```shell
-    docker-compose --profile metrics up
+    docker-compose -f docker-compose-profile.yml --profile metrics up
     ```
   - _**analytics**_: Runs `mandatory` platform services and `analytics` profile services
     ```shell
-    docker-compose --profile analytics up
+    docker-compose -f docker-compose-profile.yml --profile analytics up
     ```
 
 
