@@ -10,6 +10,9 @@ server:
     key-store-password: changeit
     key-alias: "${server.ssl.client-certs-key-alias}"
 
+# force upgrade
+upgrade:
+  force: true
 #Authentication
 jwt-auth:
   expected-audience-id: "metrics"

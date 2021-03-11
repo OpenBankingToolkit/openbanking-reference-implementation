@@ -2,6 +2,7 @@
 
 | |Current Status|
 |---|---|
+|Release|[![GitHub release (latest by date)](https://img.shields.io/github/v/release/OpenBankingToolkit/openbanking-reference-implementation.svg)](https://img.shields.io/github/v/release/OpenBankingToolkit/openbanking-reference-implementation)
 |License|![license](https://img.shields.io/github/license/ACRA/acra.svg)|
 
 **_This repository is part of the Open Banking Tool kit. If you just landed to that repository looking for our tool kit,_
@@ -119,7 +120,45 @@ To make these keys available to the jwkms you will need to;
 1. Download the Amster 6.5.1 zip file from backstage
     https://backstage.forgerock.com/downloads/browse/am/archive/productId:amster/minorVersion:6.5/version:6.5.1/releaseType:full
 1. Copy the amster zip file to `forgerock-am/_binaries` and rename the file to `amster.zip`, so that the path is `forgerock-am/_binaries/amster.zip`.
-1. Run `docker-compose up -d` and wait for services to start
+#### Run with Docker compose
+```shell
+docker-compose up
+```
+#### Run with Docker compose profiles
+**Compose Profiles**
+> We use the directive profiles to select the enabled services to run.[Compose profiles documentation](https://docs.docker.com/compose/profiles/)
+
+> Specific compose (`docker-compose-profiles.yml`) file to use the profiles.
+> 
+**Requirements to use compose profiles**
+- Compose version >= 1.28
+- MacOs users: upgrade docker desktop to 3.2.1 or later or used `brew` to install/upgrade it.
+- Linux users [Install docs](https://docs.docker.com/compose/install/):
+  - Alternatives
+  ```shell
+    pip install docker-compose
+  ```
+  ```shell 
+    curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" > ./docker-compose
+    sudo mv ./docker-compose /usr/bin/docker-compose
+    sudo chmod +x /usr/bin/docker-compose
+  ```
+**Run docker compose profiles**
+- These services without profile will be run always, we treated them like as `mandatory services`
+- Current Profiles:
+  - _**all**_: Runs `all` profile platform services
+    ```shell
+    docker-compose -f docker-compose-profile.yml --profile all up
+    ```
+  - _**metrics**_: Runs `mandatory` platform services and `metrics` profile services
+    ```shell
+    docker-compose -f docker-compose-profile.yml --profile metrics up
+    ```
+  - _**analytics**_: Runs `mandatory` platform services and `analytics` profile services
+    ```shell
+    docker-compose -f docker-compose-profile.yml --profile analytics up
+    ```
+
 
 ### Kubernetes
 - Start Docker & Kubernetes

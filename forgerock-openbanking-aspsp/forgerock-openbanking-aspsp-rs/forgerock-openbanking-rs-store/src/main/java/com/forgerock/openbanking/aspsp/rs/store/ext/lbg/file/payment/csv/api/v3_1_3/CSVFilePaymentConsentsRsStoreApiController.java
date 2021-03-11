@@ -20,8 +20,8 @@
  */
 package com.forgerock.openbanking.aspsp.rs.store.ext.lbg.file.payment.csv.api.v3_1_3;
 
-import com.forgerock.openbanking.analytics.model.openbanking.OBReference;
-import com.forgerock.openbanking.analytics.model.openbanking.OpenBankingAPI;
+import com.forgerock.openbanking.api.annotations.OBReference;
+import com.forgerock.openbanking.api.annotations.OpenBankingAPI;
 import com.forgerock.openbanking.analytics.services.ConsentMetricService;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.exception.CSVErrorException;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentType;
