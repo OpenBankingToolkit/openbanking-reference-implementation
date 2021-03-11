@@ -148,15 +148,15 @@ docker-compose up
 - Current Profiles:
   - _**all**_: Runs `all` profile platform services
     ```shell
-    docker-compose -f docker-compose-profile.yml --profile all up
+    docker-compose -f docker-compose-profiles.yml --profile all up
     ```
   - _**metrics**_: Runs `mandatory` platform services and `metrics` profile services
     ```shell
-    docker-compose -f docker-compose-profile.yml --profile metrics up
+    docker-compose -f docker-compose-profiles.yml --profile metrics up
     ```
   - _**analytics**_: Runs `mandatory` platform services and `analytics` profile services
     ```shell
-    docker-compose -f docker-compose-profile.yml --profile analytics up
+    docker-compose -f docker-compose-profiles.yml --profile analytics up
     ```
 
 
