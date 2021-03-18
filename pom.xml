@@ -27,7 +27,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>4.1.6-SNAPSHOT</version>
+    <version>4.1.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -48,7 +48,7 @@
         <ob-jwkms.version>1.1.78</ob-jwkms.version>
         <ob-auth.version>1.0.67</ob-auth.version>
         <ob-directory.version>1.4.80</ob-directory.version>
-        <ob-aspsp.version>1.2.1</ob-aspsp.version>
+        <ob-aspsp.version>1.2.2</ob-aspsp.version>
         <ob-clients.version>1.1.0</ob-clients.version>
         <ob-extensions.version>1.2.1</ob-extensions.version>
         <ob-commons.version>1.1.0</ob-commons.version>
