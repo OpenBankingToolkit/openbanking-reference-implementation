@@ -66,6 +66,13 @@ rcs:
 rs:
   detached-signature:
     enable: true
+  ## Set the limits for the number of accounts and sub documents (e.g. beneficiaries etc) that
+  ## may be ingested via the /user/data API.
+  data:
+    upload:
+      limit:
+        accounts: 600
+        documents: 6000
   # Switch for migrating the FR document classes within MongoDB
   # See https://github.com/OpenBankingToolkit/openbanking-reference-implementation/issues/279
   mongo-migration:
