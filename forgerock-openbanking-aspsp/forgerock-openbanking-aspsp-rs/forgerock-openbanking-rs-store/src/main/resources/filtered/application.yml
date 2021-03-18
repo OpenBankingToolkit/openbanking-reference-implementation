@@ -1,6 +1,0 @@
-rs:
-  data:
-    upload:
-      limit:
-        accounts: 100
-        documents: 1000
