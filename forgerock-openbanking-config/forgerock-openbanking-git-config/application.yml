@@ -74,6 +74,13 @@ rs:
   issuerid: forgerock-rcs
   financial_id: 0015800001041REAAY
   jwks_uri: https://matls.rs.aspsp.${dns.hosts.root}:${rcs.port}/api/jwk/jwk_uri
+  ## Set the limits for the number of accounts and sub documents (e.g. beneficiaries etc) that
+  ## may be ingested via the /user/data API.
+  data:
+    upload:
+      limit:
+        accounts: 600
+        documents: 6000
 
 rs-simulator:
   port: 443

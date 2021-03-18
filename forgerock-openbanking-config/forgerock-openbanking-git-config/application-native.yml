@@ -37,6 +37,13 @@ am:
 rs:
   detached-signature:
     enable: true
+  ## Set the limits for the number of accounts and sub documents (e.g. beneficiaries etc) that
+  ## may be ingested via the /user/data API.
+  data:
+    upload:
+      limit:
+        accounts: 600
+        documents: 6000
 
 rs-discovery:
   base-url: https://${rs-discovery.hostname}:8074
