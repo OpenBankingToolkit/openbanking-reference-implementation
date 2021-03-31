@@ -379,7 +379,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>4.0</version>
                 <configuration>
                     <header>file://${maven.multiModuleProjectDirectory}/legal/LICENSE.txt</header>
                     <includes>
