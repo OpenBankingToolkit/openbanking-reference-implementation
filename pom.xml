@@ -47,7 +47,7 @@
         <ob-analytics.version>1.2.1</ob-analytics.version>
         <ob-jwkms.version>1.1.79</ob-jwkms.version>
         <ob-auth.version>1.0.68</ob-auth.version>
-        <ob-directory.version>1.4.81</ob-directory.version>
+        <ob-directory.version>1.4.82</ob-directory.version>
         <ob-aspsp.version>1.2.3</ob-aspsp.version>
         <ob-clients.version>1.1.1</ob-clients.version>
         <ob-extensions.version>1.2.2</ob-extensions.version>
