@@ -921,6 +921,15 @@ ob:
 gateway:
   client-jwk-header: X-Client-Jwk
 
+# issue: https://github.com/OpenBankingToolkit/openbanking-toolkit/issues/28
+# configuration to fetch resources from gcp buckets
+# See aspsp/rs-store/StatementPDFService and GCPBucketStorageAccessor
+gcp-storage:
+  project-id: openbanking-214714
+  statements:
+    bucket-name: ob-sandbox-storage
+    resource: statements/default/fr-statement.pdf
+
 #RS store discovery endpoints
 rs-store:
   internal-port: 8443

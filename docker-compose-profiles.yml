@@ -247,7 +247,9 @@ services:
       HOSTNAME: rs-store
       CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9086,server=y,suspend=n
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/ob/config/gcp-credentials.json
     volumes:
+      - ${GCP_CREDENTIALS}:/opt/ob/config/gcp-credentials.json:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
