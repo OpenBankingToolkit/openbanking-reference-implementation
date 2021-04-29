@@ -1,0 +1,94 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.forgerock.openbanking.directory:forgerock-openbanking-directory-server
+    versions:
+    - 1.4.80
+    - 1.4.82
+  - dependency-name: com.forgerock.openbanking:forgerock-openbanking-starter-parent
+    versions:
+    - 1.1.87
+    - 1.1.88
+    - 1.1.89
+  - dependency-name: com.forgerock.openbanking.jwkms:forgerock-openbanking-jwkms-server
+    versions:
+    - 1.1.78
+    - 1.1.80
+  - dependency-name: com.forgerock.openbanking:forgerock-openbanking-auth
+    versions:
+    - 1.0.67
+    - 1.0.69
+  - dependency-name: com.forgerock.openbanking:forgerock-openbanking-model
+    versions:
+    - 1.0.87
+    - 1.0.89
+    - 1.1.0
+    - 1.1.2
+  - dependency-name: com.forgerock.openbanking:forgerock-openbanking-annotations
+    versions:
+    - 1.1.2
+  - dependency-name: com.forgerock.openbanking.clients:forgerock-openbanking-analytics-webclient
+    versions:
+    - 1.1.0
+    - 1.1.2
+  - dependency-name: com.forgerock.openbanking.analytics:forgerock-openbanking-analytics-client
+    versions:
+    - 1.1.0
+    - 1.1.2
+  - dependency-name: com.forgerock.openbanking.clients:forgerock-openbanking-jwkms-client
+    versions:
+    - 1.1.0
+    - 1.1.2
+  - dependency-name: com.forgerock.openbanking.analytics:forgerock-openbanking-analytics-core
+    versions:
+    - 1.2.2
+  - dependency-name: com.mycila:license-maven-plugin
+    versions:
+    - "4.0"
+  - dependency-name: com.forgerock.openbanking.aspsp:integration-test-support
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-rs-rcs-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-rs-mock-store-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-rs-mock-portal-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-rs-mock-payment-simulator-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-rs-gateway-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-as-manual-onboarding-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-as-gateway-server
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: com.forgerock.openbanking.aspsp:forgerock-openbanking-uk-aspsp-common
+    versions:
+    - 1.0.116
+    - 1.2.1
+  - dependency-name: org.jacoco:jacoco-maven-plugin
+    versions:
+    - 0.8.6
+  - dependency-name: org.asciidoctor:asciidoctor-maven-plugin
+    versions:
+    - 2.1.0
