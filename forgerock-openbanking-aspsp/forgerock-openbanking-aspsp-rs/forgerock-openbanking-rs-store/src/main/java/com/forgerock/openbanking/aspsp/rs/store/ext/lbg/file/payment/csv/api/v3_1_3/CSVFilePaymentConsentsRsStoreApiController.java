@@ -185,10 +185,9 @@ public class CSVFilePaymentConsentsRsStoreApiController {
             CSVFilePayment paymentFile = parser.parse().getCsvFilePayment();
             CSVValidationFactory.getValidationServiceInstance(paymentFile).validate();
 
-            //PaymentFile paymentFile = PaymentFileFactory.createPaymentFile(fileConsent.getFileType(), fileParam);
             log.info("Successfully parsed file of type: '{}' for consent: '{}'", fileConsent.getFileType(), fileConsent.getId());
 
-            fileConsent.setPayments(Collections.EMPTY_LIST);
+            fileConsent.setPayments(paymentFile.toFRFilePaymentList());
             fileConsent.setFileContent(fileParam);
             fileConsent.setUpdated(new Date());
             fileConsent.setStatus(ConsentStatusCode.AWAITINGAUTHORISATION);

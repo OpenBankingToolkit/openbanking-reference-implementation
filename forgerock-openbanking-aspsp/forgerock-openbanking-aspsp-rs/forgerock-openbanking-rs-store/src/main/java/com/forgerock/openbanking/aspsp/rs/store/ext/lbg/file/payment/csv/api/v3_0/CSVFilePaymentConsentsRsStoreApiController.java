@@ -20,9 +20,9 @@
  */
 package com.forgerock.openbanking.aspsp.rs.store.ext.lbg.file.payment.csv.api.v3_0;
 
+import com.forgerock.openbanking.analytics.services.ConsentMetricService;
 import com.forgerock.openbanking.api.annotations.OBReference;
 import com.forgerock.openbanking.api.annotations.OpenBankingAPI;
-import com.forgerock.openbanking.analytics.services.ConsentMetricService;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.exception.CSVErrorException;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVFilePaymentType;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.factory.CSVParserFactory;
@@ -38,13 +38,7 @@ import com.forgerock.openbanking.exceptions.OBErrorResponseException;
 import com.forgerock.openbanking.model.error.OBRIErrorResponseCategory;
 import com.forgerock.openbanking.model.error.OBRIErrorType;
 import com.forgerock.openbanking.repositories.TppRepository;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,17 +48,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import uk.org.openbanking.datamodel.error.OBErrorResponse1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Date;
 
 import static com.forgerock.openbanking.common.services.openbanking.IdempotencyService.validateIdempotencyRequest;
@@ -185,13 +174,12 @@ public class CSVFilePaymentConsentsRsStoreApiController {
         // We parse the file and check metadata against the parsed file
         try {
             CSVParser parser = CSVParserFactory.parse(CSVFilePaymentType.fromStringType(fileConsent.getFileType().getFileType()), fileParam);
-            CSVFilePayment paymentFile = parser.parse().getCsvFilePayment();
-            CSVValidationFactory.getValidationServiceInstance(paymentFile).validate();
+            CSVFilePayment csvPaymentFile = parser.parse().getCsvFilePayment();
+            CSVValidationFactory.getValidationServiceInstance(csvPaymentFile).validate();
 
-            //PaymentFile paymentFile = PaymentFileFactory.createPaymentFile(fileConsent.getFileType(), fileParam);
             log.info("Successfully parsed file of type: '{}' for consent: '{}'", fileConsent.getFileType(), fileConsent.getId());
 
-            fileConsent.setPayments(Collections.EMPTY_LIST);
+            fileConsent.setPayments(csvPaymentFile.toFRFilePaymentList());
             fileConsent.setFileContent(fileParam);
             fileConsent.setUpdated(new Date());
             fileConsent.setStatus(ConsentStatusCode.AWAITINGAUTHORISATION);
