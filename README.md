@@ -120,7 +120,11 @@ To make these keys available to the jwkms you will need to;
 1. Download the Amster 6.5.1 zip file from backstage
     https://backstage.forgerock.com/downloads/browse/am/archive/productId:amster/minorVersion:6.5/version:6.5.1/releaseType:full
 1. Copy the amster zip file to `forgerock-am/_binaries` and rename the file to `amster.zip`, so that the path is `forgerock-am/_binaries/amster.zip`.
-#### GCP credentials
+#### GCP credentials (only FR team members)
+>The credentials are only accessible for forgerock team members, simulated default value for GCP credentials are set for customers.
+> The test Get account statement file will return 404 - not found when simulated default value is used.
+
+In the `docker-compose file` the service rs-store currently use a volume to access the GCP credentials set in the environment.
 Setting the GCP credentials in local to use it in docker-compose `rs-store` service.
 1. Copy the secret file `ob-gcr.json` from `ob-ci-secrets` repository to your path.
 2. Create the env variable `GCP_CREDENTIALS` in your local system pointed to `ob-gcr.json`.
