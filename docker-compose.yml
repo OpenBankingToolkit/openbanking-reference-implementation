@@ -236,7 +236,7 @@ services:
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9086,server=y,suspend=n
       GOOGLE_APPLICATION_CREDENTIALS: /opt/ob/config/gcp-credentials.json
     volumes:
-      - ${GCP_CREDENTIALS}:/opt/ob/config/gcp-credentials.json:ro
+      - ${GCP_CREDENTIALS:-./gcp-credentials.json}:/opt/ob/config/gcp-credentials.json:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
       - ./forgerock-openbanking-aspsp/forgerock-openbanking-aspsp-rs/forgerock-openbanking-rs-store/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
     networks:
