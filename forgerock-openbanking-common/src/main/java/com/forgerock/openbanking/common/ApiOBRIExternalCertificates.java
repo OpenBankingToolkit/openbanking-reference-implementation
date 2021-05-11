@@ -25,7 +25,7 @@ import com.forgerock.cert.psd2.RolesOfPsp;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.model.Tpp;
-import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
+import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -89,9 +89,21 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
     }
 
     @Override
-    public String getUserName(X509Certificate[] certificatesChain) {
+    /**
+     * Obtains the username from the certificate if that certificate is valid.
+     * The OpenBanking APIs may be accessed using the following types of certificates;
+     * - An OBWac certificate. This is effectively a test eIDAS cert issued and signed by Open Banking
+     * - A ForgeRock Directory issued certificate. Issued by the ForgeRock Directory and signed by the
+     *   obri-external-ca certificate.
+     * - A valid eIDAS PSD2 certificate signed by a trusted CA found in a regularly updated system truststore.
+     */
+    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
+
+        // TODO: Real eidas certs can be signed by any trusted party - this check means failure to get username from
+        //  real eIDAS certificates
         // additional check of obCA[0] compared to the common OBRIExternalCertificate class
         if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {
+            log.warn("ApiOBRIExternalCertificates:getUserName(): Certificate is untrusted - returning null");
             return null;
         }
 

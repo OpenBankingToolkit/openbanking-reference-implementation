@@ -23,9 +23,9 @@ package com.forgerock.openbanking.common;
 import com.forgerock.cert.Psd2CertInfo;
 import com.forgerock.cert.psd2.RolesOfPsp;
 import com.forgerock.openbanking.model.OBRIRole;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.X509Collector;
-import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
+import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import com.forgerock.spring.security.multiauth.configurers.collectors.X509Collector;
+import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -41,7 +41,8 @@ import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIs
  * A common utility for internal OBRI certificates.
  */
 @AllArgsConstructor
-public class OBRIInternalCertificates implements PSD2Collector.AuthoritiesCollector, X509Collector.UsernameCollector {
+public class OBRIInternalCertificates implements PSD2Collector.Psd2AuthoritiesCollector,
+        PSD2Collector.Psd2UsernameCollector {
 
     private final X509Certificate caCertificate;
 
@@ -60,7 +61,7 @@ public class OBRIInternalCertificates implements PSD2Collector.AuthoritiesCollec
     }
 
     @Override
-    public String getUserName(X509Certificate[] certificatesChain) {
+    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
         if (!isCertificateIssuedByCA(caCertificate, certificatesChain)) {
             return null;
         }
