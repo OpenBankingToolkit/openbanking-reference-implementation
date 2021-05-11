@@ -23,7 +23,7 @@ package com.forgerock.openbanking.common;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWT;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
+import com.forgerock.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
 import lombok.Builder;
 import org.springframework.security.authentication.BadCredentialsException;
 

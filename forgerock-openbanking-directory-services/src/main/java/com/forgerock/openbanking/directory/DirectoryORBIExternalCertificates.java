@@ -28,7 +28,7 @@ import com.forgerock.openbanking.model.ApplicationIdentity;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
-import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
+import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -79,7 +79,7 @@ public class DirectoryORBIExternalCertificates extends OBRIExternalCertificates 
     }
 
     @Override
-    public String getUserName(X509Certificate[] certificatesChain) {
+    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
         if (!isCertificateIssuedByCA(caCertificate, certificatesChain)) {
             return null;
         }

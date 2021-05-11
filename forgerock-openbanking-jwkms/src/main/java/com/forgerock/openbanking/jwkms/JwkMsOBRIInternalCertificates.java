@@ -25,7 +25,7 @@ import com.forgerock.cert.psd2.RolesOfPsp;
 import com.forgerock.openbanking.common.OBRIInternalCertificates;
 import com.forgerock.openbanking.jwkms.service.application.ApplicationService;
 import com.forgerock.openbanking.model.OBRIRole;
-import dev.openbanking4.spring.security.multiauth.model.granttypes.PSD2GrantType;
+import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -68,7 +68,7 @@ class JwkMsOBRIInternalCertificates extends OBRIInternalCertificates {
     }
 
     @Override
-    public String getUserName(X509Certificate[] certificatesChain) {
+    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
         if (!isCertificateIssuedByCA(caCertificate, certificatesChain)) {
             return null;
         }

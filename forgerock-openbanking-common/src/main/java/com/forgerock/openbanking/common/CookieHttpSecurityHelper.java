@@ -21,10 +21,10 @@
 package com.forgerock.openbanking.common;
 
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
-import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
-import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import com.forgerock.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
+import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import com.forgerock.spring.security.multiauth.configurers.collectors.StaticUserCollector;
+import com.forgerock.spring.security.multiauth.model.CertificateHeaderFormat;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 import java.util.Collections;
@@ -85,14 +85,14 @@ public class CookieHttpSecurityHelper {
                 .collector(PSD2Collector.psd2Builder()
                         .collectFromHeader(CertificateHeaderFormat.JWK)
                         .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                        .usernameCollector(obriInternalCertificates)
-                        .authoritiesCollector(obriInternalCertificates)
+                        .psd2UsernameCollector(obriInternalCertificates)
+                        .psd2AuthoritiesCollector(obriInternalCertificates)
                         .build())
                 .collector(PSD2Collector.psd2Builder()
                         .collectFromHeader(CertificateHeaderFormat.JWK)
                         .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                        .usernameCollector(obriExternalCertificates)
-                        .authoritiesCollector(obriExternalCertificates)
+                        .psd2UsernameCollector(obriExternalCertificates)
+                        .psd2AuthoritiesCollector(obriExternalCertificates)
                         .build())
                 .collector(StaticUserCollector.builder()
                         .grantedAuthorities(Collections.emptySet())

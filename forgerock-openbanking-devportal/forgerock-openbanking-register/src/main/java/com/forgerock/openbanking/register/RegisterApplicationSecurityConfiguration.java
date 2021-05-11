@@ -30,11 +30,11 @@ import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
 import com.google.common.collect.Sets;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWT;
-import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomJwtCookieCollector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.StaticUserCollector;
-import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import com.forgerock.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
+import com.forgerock.spring.security.multiauth.configurers.collectors.CustomJwtCookieCollector;
+import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import com.forgerock.spring.security.multiauth.configurers.collectors.StaticUserCollector;
+import com.forgerock.spring.security.multiauth.model.CertificateHeaderFormat;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,14 +99,14 @@ class RegisterApplicationSecurityConfiguration {
                             .collector(PSD2Collector.psd2Builder()
                                     .collectFromHeader(CertificateHeaderFormat.JWK)
                                     .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                                    .usernameCollector(obriInternalCertificates)
-                                    .authoritiesCollector(obriInternalCertificates)
+                                    .psd2UsernameCollector(obriInternalCertificates)
+                                    .psd2AuthoritiesCollector(obriInternalCertificates)
                                     .build())
                             .collector(PSD2Collector.psd2Builder()
                                     .collectFromHeader(CertificateHeaderFormat.JWK)
                                     .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                                    .usernameCollector(obriExternalCertificates)
-                                    .authoritiesCollector(obriExternalCertificates)
+                                    .psd2UsernameCollector(obriExternalCertificates)
+                                    .psd2AuthoritiesCollector(obriExternalCertificates)
                                     .build())
                             .collector(DecryptingJwtCookieCollector.jwtBuilder()
                                     .cryptoApiClient(cryptoApiClient)

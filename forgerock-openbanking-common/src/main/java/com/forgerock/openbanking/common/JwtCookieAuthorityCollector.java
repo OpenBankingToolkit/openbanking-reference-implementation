@@ -23,7 +23,7 @@ package com.forgerock.openbanking.common;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.google.common.collect.Sets;
 import com.nimbusds.jwt.JWT;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
+import com.forgerock.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

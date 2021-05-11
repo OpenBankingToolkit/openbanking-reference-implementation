@@ -20,9 +20,9 @@
  */
 package com.forgerock.openbanking.common;
 
-import dev.openbanking4.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
-import dev.openbanking4.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import dev.openbanking4.spring.security.multiauth.model.CertificateHeaderFormat;
+import com.forgerock.spring.security.multiauth.configurers.MultiAuthenticationCollectorConfigurer;
+import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import com.forgerock.spring.security.multiauth.model.CertificateHeaderFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -62,8 +62,8 @@ public class AuthWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .collector(PSD2Collector.psd2Builder()
                                 .collectFromHeader(CertificateHeaderFormat.JWK)
                                 .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
-                                .usernameCollector(obriInternalCertificates)
-                                .authoritiesCollector(obriInternalCertificates)
+                                .psd2UsernameCollector(obriInternalCertificates)
+                                .psd2AuthoritiesCollector(obriInternalCertificates)
                                 .build())
                 );
     }
