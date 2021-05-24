@@ -93,7 +93,7 @@ rs-discovery:
   hostname: matls.rs.aspsp.${dns.hosts.root}
   base-url: https://${rs-discovery.hostname}
   read-write-api:
-    version: 3.1.7
+    version: 3.1.7 #TODO - 36 finish VRPs and then set this to 3.1.8 (and add the 3.1.8 endpoints below)
   apis:
     payments:
       v_1_1:
