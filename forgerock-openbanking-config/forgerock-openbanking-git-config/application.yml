@@ -1080,7 +1080,7 @@ am:
       oidc-client: ${am.internal.root}/json/realms/root/realms/openbanking/realm-config/agents/OAuth2Client
       authentication: ${am.internal.root}/json/authenticate
     credential:
-      amadmin: sy95jyiquqvjbbquq845gncysh13eax6 # TODO this is a default that shouldn't need to be here. All apps need it but may not use it.#obri
+      amadmin: password # TODO this is a default that shouldn't need to be here. All apps need it but may not use it
 obri:
   token:
     sso: sso_token
