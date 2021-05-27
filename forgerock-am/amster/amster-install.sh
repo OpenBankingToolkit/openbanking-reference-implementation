@@ -8,7 +8,7 @@ export SERVER_URL=${OPENAM_INSTANCE:-http://openam:8080}
 export URI=${SERVER_URI:-/}
 export INSTANCE="${SERVER_URL}${URI}"
 export CHECK_AM_ALREADY_CONFIGURED="${CHECK_AM_ALREADY_CONFIGURED-"false"}"
-
+echo "127.0.0.1  openam" >> /etc/hosts && \
 ALIVE="${INSTANCE}/isAlive.jsp"
 CONFIG_URL="${INSTANCE}/config/options.htm"
 
@@ -18,6 +18,8 @@ wait_for_openam()
     local response="000"
 
     while true; do
+        cat /etc/hosts
+        echo "Checking AM is alive at ${CONFIG_URL}"
         response=$(curl --write-out %{http_code} --silent --connect-timeout 30 --output /dev/null ${CONFIG_URL} )
 
         echo "Got Response code $response and CHECK_AM_ALREADY_CONFIGURED=${CHECK_AM_ALREADY_CONFIGURED}"
