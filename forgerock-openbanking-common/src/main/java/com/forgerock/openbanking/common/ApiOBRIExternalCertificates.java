@@ -99,12 +99,12 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
      */
     public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
 
-        // TODO: Real eidas certs can be signed by any trusted party - this check means failure to get username from
-        //  real eIDAS certificates
-        // additional check of obCA[0] compared to the common OBRIExternalCertificate class
-        if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {
-            log.warn("ApiOBRIExternalCertificates:getUserName(): Certificate is untrusted - returning null");
-            return null;
+        // additional check of obCA[0] compared to the common OBRIExternalCertificate class.
+        if(!psd2CertInfo.isPsd2Cert()) {
+            if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {
+                log.warn("ApiOBRIExternalCertificates:getUserName(): Certificate is untrusted - returning null");
+                return null;
+            }
         }
 
         String cn = getCn(certificatesChain[0]);
