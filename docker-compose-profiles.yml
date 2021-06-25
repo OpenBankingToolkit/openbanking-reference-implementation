@@ -44,7 +44,7 @@ services:
   admin:
     container_name: admin
     image: eu.gcr.io/openbanking-214714/obri/admin
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8082:8082"
     environment:
@@ -92,7 +92,7 @@ services:
   directory-services:
     container_name: directory-services
     image: eu.gcr.io/openbanking-214714/obri/directory-services
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8076:8076"
       - "9076:9076"
@@ -158,7 +158,7 @@ services:
   as-api:
     container_name: as-api
     image: eu.gcr.io/openbanking-214714/obri/as-api
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8066:8066"
       - "9066:9066"
@@ -184,7 +184,7 @@ services:
   rs-api:
     container_name: rs-api
     image: eu.gcr.io/openbanking-214714/obri/rs-api
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8094:8094"
       - "9094:9094"
@@ -210,7 +210,7 @@ services:
   rs-rcs:
     container_name: rs-rcs
     image: eu.gcr.io/openbanking-214714/obri/rs-rcs
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8084:8084"
       - "9084:9084"
@@ -236,7 +236,7 @@ services:
   rs-store:
     container_name: rs-store
     image: eu.gcr.io/openbanking-214714/obri/rs-store
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8086:8086"
       - "9086:9086"
@@ -264,7 +264,7 @@ services:
   rs-ui:
     container_name: rs-ui
     image: eu.gcr.io/openbanking-214714/obri/rs-ui
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8092:8092"
       - "9092:9092"
@@ -290,7 +290,7 @@ services:
   monitoring:
     container_name: monitoring
     image: eu.gcr.io/openbanking-214714/obri/monitoring
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "8073:8073"
       - "9073:9073"
@@ -316,7 +316,7 @@ services:
   metrics-service:
     container_name: metrics-services
     image: eu.gcr.io/openbanking-214714/obri/metrics-service
-    profiles: ["all", "metrics", "analytics"]
+    profiles: ["all","all-no-bank-ui", "metrics", "analytics"]
     ports:
       - "8098:8098"
       - "9098:9098"
@@ -365,7 +365,7 @@ services:
   auth-ui:
     image: eu.gcr.io/openbanking-214714/obri/auth-ui
     container_name: auth-ui
-    profiles: ["all", "metrics", "analytics"]
+    profiles: ["all","all-no-bank-ui", "metrics", "analytics"]
     ports:
       - "4203:443"
     environment:
@@ -380,7 +380,7 @@ services:
   directory-ui:
     image: eu.gcr.io/openbanking-214714/obri/directory-ui
     container_name: directory-ui
-    profiles: ["all"]
+    profiles: ["all","all-no-bank-ui"]
     ports:
       - "4202:443"
     environment:
@@ -412,7 +412,7 @@ services:
   analytics-ui:
     image: eu.gcr.io/openbanking-214714/obri/analytics-ui:latest
     container_name: analytics-ui
-    profiles: ["all", "analytics"]
+    profiles: ["all","all-no-bank-ui", "analytics"]
     ports:
       - "4206:443"
     environment:
@@ -429,7 +429,7 @@ services:
   analytics-node:
     image: eu.gcr.io/openbanking-214714/obri/analytics-node:latest
     container_name: analytics-node
-    profiles: [ "all", "analytics" ]
+    profiles: [ "all","all-no-bank-ui", "analytics" ]
     ports:
       - "5000:8443"
     environment:
