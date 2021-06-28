@@ -217,14 +217,6 @@
             <id>jcenter</id>
             <url>https://jcenter.bintray.com/</url>
         </repository>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-openbanking-toolkit-OpenBankingToolKit</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/openbanking-toolkit/OpenBankingToolKit</url>
-        </repository>
     </repositories>
 
     <build>
