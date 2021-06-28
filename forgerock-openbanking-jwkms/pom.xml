@@ -30,7 +30,7 @@
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-        <version>4.2.3</version>
+        <version>4.2.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>

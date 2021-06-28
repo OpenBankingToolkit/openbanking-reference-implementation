@@ -27,13 +27,13 @@
     <name>ForgeRock OpenBanking Dev Portal</name>
     <groupId>com.forgerock.openbanking.devportal</groupId>
     <artifactId>forgerock-openbanking-devportal</artifactId>
-    <version>4.2.3</version>
+    <version>4.2.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking</groupId>
         <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-        <version>4.2.3</version>
+        <version>4.2.4-SNAPSHOT</version>
     </parent>
 
     <modules>
