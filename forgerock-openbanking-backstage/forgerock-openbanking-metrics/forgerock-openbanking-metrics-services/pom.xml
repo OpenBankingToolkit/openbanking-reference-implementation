@@ -34,7 +34,7 @@
     <parent>
         <groupId>com.forgerock.openbanking.metrics</groupId>
         <artifactId>forgerock-openbanking-metrics</artifactId>
-        <version>4.2.3-SNAPSHOT</version>
+        <version>4.2.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>
