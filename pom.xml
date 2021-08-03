@@ -44,7 +44,7 @@
     <url>http://www.forgerock.com</url>
 
     <properties>
-        <ob-commons.version>1.2.1</ob-commons.version>
+        <ob-commons.version>1.2.2</ob-commons.version>
         <ob-clients.version>1.2.1</ob-clients.version>
         <ob-jwkms.version>1.2.1</ob-jwkms.version>
         <ob-auth.version>1.1.1</ob-auth.version>
