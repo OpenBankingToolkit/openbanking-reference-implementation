@@ -1,7 +1,6 @@
 FROM tomcat:9-jdk11-openjdk AS extract-container
 
 ARG AM_WAR_NAME
-# ARG AM_PATCH_ZIP
 ARG AMSTER_ZIP
 
 # ENV AM_WAR_NAME "OpenAM-6.5.1.war" see docker-compose files to check the war name
