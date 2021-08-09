@@ -346,8 +346,7 @@ services:
       dockerfile: forgerock-am/Dockerfile
       args:
         # @see README file to get the binaries
-        AM_WAR_NAME: "OpenAM-6.5.1.war"
-        AM_PATCH_ZIP: "openbanking-1-2-tpatch.zip"
+        AM_WAR_NAME: "OpenAM-6.5.1-eb5282f9bc.war"
         AMSTER_ZIP: "Amster-6.5.1.zip"
     image: openam:local
     container_name: openam

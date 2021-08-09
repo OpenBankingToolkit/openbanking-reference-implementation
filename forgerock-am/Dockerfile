@@ -1,15 +1,13 @@
 FROM tomcat:9-jdk11-openjdk AS extract-container
 
 ARG AM_WAR_NAME
-ARG AM_PATCH_ZIP
+# ARG AM_PATCH_ZIP
 ARG AMSTER_ZIP
 
-# ENV AM_WAR_NAME "OpenAM-6.5.1.war"
-# ENV AM_PATCH "openbanking-1-1-tpatch.zip"
+# ENV AM_WAR_NAME "OpenAM-6.5.1.war" see docker-compose files to check the war name
 
 ADD forgerock-am/_binaries/${AMSTER_ZIP} /
 ADD forgerock-am/_binaries/${AM_WAR_NAME} /am.war
-ADD forgerock-am/_binaries/${AM_PATCH_ZIP} /
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y unzip && \
@@ -20,7 +18,7 @@ RUN apt-get update && \
     echo "VERSION FOUND: $(grep 'com.iplanet.am.buildVersion=' /var/tmp/openam/WEB-INF/classes/serverdefaults.properties)" && \
     exit 10; \
     fi && \
-    unzip /${AM_PATCH_ZIP} -d /var/tmp/openam && \
+    mkdir -p /var/tmp/openam && \
     mkdir -p /var/tmp/amster && \
     unzip -q /${AMSTER_ZIP} -d /var/tmp/amster
 
