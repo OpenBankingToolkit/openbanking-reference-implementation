@@ -113,13 +113,10 @@ To make these keys available to the jwkms you will need to;
 ## How to run the development environment
 
 ### Docker
-1. If you have not already, register on https://backstage.forgerock.com/
-1. Download AM 6.5.1 war file from backstage. This *must* be version 6.5.1.0, both the evaluation and full editions will work.
-    https://backstage.forgerock.com/downloads/browse/am/archive/productId:am/minorVersion:6.5/version:6.5.1/releaseType:full
-1. Copy the war file to `forgerock-am/_binaries` and rename the file to `am.war`, so that the path is `forgerock-am/_binaries/am.war`.
-1. Download the Amster 6.5.1 zip file from backstage
-    https://backstage.forgerock.com/downloads/browse/am/archive/productId:amster/minorVersion:6.5/version:6.5.1/releaseType:full
-1. Copy the amster zip file to `forgerock-am/_binaries` and rename the file to `amster.zip`, so that the path is `forgerock-am/_binaries/amster.zip`.
+
+To set up your source file ready to build an AM Docker image you will need to follow the instructions found here;
+[forgerock-am readme](forgerock-am/README.md)
+
 #### GCP credentials (only FR team members)
 >The credentials are only accessible for forgerock team members, simulated default value for GCP credentials are set for customers.
 > The test Get account statement file will return 404 - not found when simulated default value is used.
