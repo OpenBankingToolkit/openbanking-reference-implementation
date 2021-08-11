@@ -27,13 +27,13 @@
     <name>ForgeRock OpenBanking Metrics</name>
     <groupId>com.forgerock.openbanking.metrics</groupId>
     <artifactId>forgerock-openbanking-metrics</artifactId>
-    <version>4.2.5</version>
+    <version>4.2.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>com.forgerock.openbanking.backstage</groupId>
         <artifactId>forgerock-openbanking-backstage</artifactId>
-        <version>4.2.5</version>
+        <version>4.2.6-SNAPSHOT</version>
     </parent>
 
     <modules>
