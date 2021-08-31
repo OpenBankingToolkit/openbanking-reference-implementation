@@ -51,11 +51,13 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
         PSD2Collector.Psd2UsernameCollector {
 
     private final X509Certificate caCertificate;
-    private final TppStoreService tppStoreService;
     private final X509Certificate[] obCA;
 
     @Override
-    public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
+    public Set<GrantedAuthority> getAuthorities(
+            X509Certificate[] certificatesChain, 
+            Psd2CertInfo psd2CertInfo, 
+            RolesOfPsp roles) {
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         if (roles != null) {
@@ -71,35 +73,19 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
             authorities.add(OBRIRole.ROLE_TPP);
         }
 
-        if (authorities.contains(OBRIRole.ROLE_TPP)) {
-            String cn = getCn(certificatesChain[0]);
-            Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
-            if (!optionalTpp.isPresent()) {
-                log.debug("TPP not found. This TPP {} is not on board yet", cn);
-                authorities.add(OBRIRole.UNREGISTERED_TPP);
-            } else {
-                List<GrantedAuthority> tppAuthorities = optionalTpp.get().getTypes().stream().map(OBRIRole::fromSoftwareStatementType).collect(Collectors.toList());
-                authorities.addAll(tppAuthorities);
-            }
-        }
         return authorities;
     }
 
     @Override
     public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
-        if (!isCertificateIssuedByCA(caCertificate, certificatesChain)) {
+        if (!psd2CertInfo.isPsd2Cert()) {
             return null;
         }
-
-        String cn = getCn(certificatesChain[0]);
-
-        Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
-        if (!optionalTpp.isPresent()) {
-            log.debug("TPP not found. This TPP {} is not on board yet", cn);
-            return cn;
-        } else {
-            return optionalTpp.get().getClientId();
-        }
+        return psd2CertInfo.getOrganizationId()
+            .orElseGet(() -> {
+                log.info("getUserName() PSD2 cert presented with no authorisation number");
+                return null;
+            });
     }
 
 
