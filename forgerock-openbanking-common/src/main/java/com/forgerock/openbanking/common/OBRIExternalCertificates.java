@@ -20,27 +20,23 @@
  */
 package com.forgerock.openbanking.common;
 
-import com.forgerock.cert.Psd2CertInfo;
-import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
-import com.forgerock.openbanking.model.OBRIRole;
-import com.forgerock.openbanking.model.Tpp;
-import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import com.forgerock.spring.security.multiauth.configurers.collectors.X509Collector;
-import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
+import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.forgerock.openbanking.common.CertificateHelper.getCn;
-import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
+import com.forgerock.cert.Psd2CertInfo;
+import com.forgerock.cert.psd2.RolesOfPsp;
+import com.forgerock.openbanking.model.OBRIRole;
+import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A common utility for external OBRI certificates.
@@ -54,10 +50,7 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
     private final X509Certificate[] obCA;
 
     @Override
-    public Set<GrantedAuthority> getAuthorities(
-            X509Certificate[] certificatesChain, 
-            Psd2CertInfo psd2CertInfo, 
-            RolesOfPsp roles) {
+    public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         if (roles != null) {
@@ -79,6 +72,7 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
     @Override
     public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
         if (!psd2CertInfo.isPsd2Cert()) {
+            log.info("getUserName() the presented cert is not a PSD2 certificate.");
             return null;
         }
         return psd2CertInfo.getOrganizationId()
