@@ -139,6 +139,8 @@ services:
           - scgw.dev-ob.forgerock.financial
           - rcs.aspsp.dev-ob.forgerock.financial
           - admin.dev-ob.forgerock.financial
+          - service.register.dev-ob.forgerock.financial
+          - register.dev-ob.forgerock.financial
     healthcheck:
       test: ["CMD", "curl", "-f", "-k", "https://localhost:8074/actuator/health"]
       interval: 1m30s
@@ -372,6 +374,49 @@ services:
       - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
       - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
+
+  register:
+    container_name: register
+    image: eu.gcr.io/openbanking-214714/obri/register
+    profiles: ["all","all-no-bank-ui"]
+    ports:
+      - "8100:8100"
+      - "9100:9100"
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config.dev-ob.forgerock.financial:8888
+      SPRING_PROFILES_ACTIVE: native,console-logging
+      java_opts: -Xmx256m -XX:+UseConcMarkSweepGC -Dserver.port=8100 -Dam.internal-port=8443 -Dam.port=8074
+      HOSTNAME: register
+      CONSOLE_LOG_PATTERN: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{traceId}]){green} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:9100,server=y,suspend=n
+    volumes:
+      - ./forgerock-openbanking-devportal/forgerock-openbanking-register/src/main/resources/unfiltered/keystore/keystore.jks:/opt/ob/config/keystore.jks:ro
+      - ./forgerock-openbanking-devportal/forgerock-openbanking-register/src/main/resources/unfiltered/keystore/truststore.jks:/etc/ssl/certs/java/cacerts
+    networks:
+      obref:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8066/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  manual-onboarding:
+    image: eu.gcr.io/openbanking-214714/obri/manual-onboarding
+    container_name: manual-onboarding
+    profiles: [ "all" ]
+    ports:
+      - "4204:443"
+    environment:
+      DOMAIN: .dev-ob.forgerock.financial
+      AUTHORIZATION_URL: https://as.aspsp.dev-ob.forgerock.financial:8074
+      AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
+      REGISTER_BACKEND_URL: https://service.register.dev-ob.forgerock.financial:8074
+    volumes:
+      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
+
 
   bank-ui:
     image: eu.gcr.io/openbanking-214714/obri/bank-ui
