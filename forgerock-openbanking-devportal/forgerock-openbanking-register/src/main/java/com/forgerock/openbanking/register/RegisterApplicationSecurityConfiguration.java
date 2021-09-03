@@ -23,7 +23,6 @@ package com.forgerock.openbanking.register;
 import com.forgerock.openbanking.common.CustomAuthProvider;
 import com.forgerock.openbanking.common.OBRIExternalCertificates;
 import com.forgerock.openbanking.common.OBRIInternalCertificates;
-import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.openbanking.ssl.services.keystore.KeyStoreService;
@@ -70,13 +69,11 @@ class RegisterApplicationSecurityConfiguration {
 
         private final CryptoApiClient cryptoApiClient;
         private final KeyStoreService keyStoreService;
-        private final TppStoreService tppStoreService;
 
         @Autowired
-        CookieWebSecurityConfigurerAdapter(CryptoApiClient cryptoApiClient, KeyStoreService keyStoreService, TppStoreService tppStoreService) {
+        CookieWebSecurityConfigurerAdapter(CryptoApiClient cryptoApiClient, KeyStoreService keyStoreService) {
             this.cryptoApiClient = cryptoApiClient;
             this.keyStoreService = keyStoreService;
-            this.tppStoreService = tppStoreService;
         }
 
         @Override
@@ -86,7 +83,7 @@ class RegisterApplicationSecurityConfiguration {
             X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
 
             OBRIInternalCertificates obriInternalCertificates = new OBRIInternalCertificates(internalCACertificate);
-            OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
+            OBRIExternalCertificates obriExternalCertificates = new OBRIExternalCertificates(externalCACertificate, obCA);
 
             http
                     .csrf().disable()

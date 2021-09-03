@@ -29,16 +29,20 @@ import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVDebi
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVFilePayment;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.model.CSVHeaderIndicatorSection;
 import com.forgerock.openbanking.aspsp.rs.ext.lbg.file.payment.csv.validation.CSVValidation;
+import com.forgerock.openbanking.aspsp.rs.wrappper.endpoints.FilePaymentsApiEndpointWrapper;
+import com.forgerock.openbanking.aspsp.rs.wrappper.endpoints.RSEndpointWrapper;
 import com.forgerock.openbanking.common.conf.RSConfiguration;
 import com.forgerock.openbanking.common.model.openbanking.persistence.payment.ConsentStatusCode;
 import com.forgerock.openbanking.common.model.openbanking.persistence.payment.FRFileConsent;
 import com.forgerock.openbanking.common.services.store.RsStoreGateway;
 import com.forgerock.openbanking.common.services.store.payment.FilePaymentService;
+import com.forgerock.openbanking.common.services.store.tpp.TppStoreServiceImpl;
 import com.forgerock.openbanking.constants.OIDCConstants;
 import com.forgerock.openbanking.exceptions.OBErrorException;
 import com.forgerock.openbanking.integration.test.support.SpringSecForTest;
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
 import com.forgerock.openbanking.model.OBRIRole;
+import com.forgerock.openbanking.model.Tpp;
 import com.github.jsonzou.jmockdata.JMockData;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
@@ -76,11 +80,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.forgerock.openbanking.common.services.openbanking.converter.payment.FRWriteFileConsentConverter.toFRWriteFileConsent;
 import static com.forgerock.openbanking.integration.test.support.JWT.jws;
@@ -88,6 +88,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -107,6 +108,13 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    // required to mock verifyMatlsFromAccessToken
+    @MockBean
+    private FilePaymentsApiEndpointWrapper filePaymentsApiEndpointWrapper;
+
+    @MockBean(name="tppStoreService") // required to avoid connection timeout rs-store when find client id
+    private TppStoreServiceImpl tppStoreService;
 
     @MockBean(name = "amResourceServerService") // Required to avoid Spring auto-wiring exception
     private AMResourceServerService amResourceServerService;
@@ -151,6 +159,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
         String jws = jws("payments", OIDCConstants.GrantType.CLIENT_CREDENTIAL);
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         given(amResourceServerService.verifyAccessToken("Bearer " + jws)).willReturn(SignedJWT.parse(jws));
+        doNothing().when(filePaymentsApiEndpointWrapper).verifyMatlsFromAccessToken();
         String fileConsentId = UUID.randomUUID().toString();
 
         OBWriteFileConsent3 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_BACS_BULK_V10.getFileType());
@@ -190,6 +199,7 @@ public class CSVFilePaymentConsentsRsApiControllerIT {
         String jws = jws("payments", OIDCConstants.GrantType.CLIENT_CREDENTIAL);
         springSecForTest.mockAuthCollector.mockAuthorities(OBRIRole.ROLE_PISP);
         given(amResourceServerService.verifyAccessToken("Bearer " + jws)).willReturn(SignedJWT.parse(jws));
+        doNothing().when(filePaymentsApiEndpointWrapper).verifyMatlsFromAccessToken();
         String fileConsentId = UUID.randomUUID().toString();
 
         OBWriteFileConsent3 consentRequest = mockConsent(file.toString(), CSVFilePaymentType.UK_LBG_FPS_BATCH_V10.getFileType());

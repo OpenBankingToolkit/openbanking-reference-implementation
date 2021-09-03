@@ -50,7 +50,7 @@ class JwkMsOBRIExternalCertificates extends OBRIExternalCertificates {
     private final ApplicationService applicationService;
 
     JwkMsOBRIExternalCertificates(X509Certificate caCertificate, ApplicationService applicationService) {
-        super(caCertificate, null, null);
+        super(caCertificate, null);
         this.caCertificate = caCertificate;
         this.applicationService = applicationService;
     }
