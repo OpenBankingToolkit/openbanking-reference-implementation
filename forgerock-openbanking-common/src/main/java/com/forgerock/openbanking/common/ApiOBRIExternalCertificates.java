@@ -50,7 +50,7 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
     private final X509Certificate[] obCA;
 
     public ApiOBRIExternalCertificates(X509Certificate caCertificate, TppStoreService tppStoreService, X509Certificate[] obCA) {
-        super(caCertificate, tppStoreService, obCA);
+        super(caCertificate, obCA);
         this.caCertificate = caCertificate;
         this.tppStoreService = tppStoreService;
         this.obCA = obCA;

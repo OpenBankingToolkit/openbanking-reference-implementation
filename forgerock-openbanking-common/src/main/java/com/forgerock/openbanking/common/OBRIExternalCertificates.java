@@ -20,27 +20,23 @@
  */
 package com.forgerock.openbanking.common;
 
-import com.forgerock.cert.Psd2CertInfo;
-import com.forgerock.cert.psd2.RolesOfPsp;
-import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
-import com.forgerock.openbanking.model.OBRIRole;
-import com.forgerock.openbanking.model.Tpp;
-import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
-import com.forgerock.spring.security.multiauth.configurers.collectors.X509Collector;
-import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
+import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.forgerock.openbanking.common.CertificateHelper.getCn;
-import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
+import com.forgerock.cert.Psd2CertInfo;
+import com.forgerock.cert.psd2.RolesOfPsp;
+import com.forgerock.openbanking.model.OBRIRole;
+import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
+import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A common utility for external OBRI certificates.
@@ -51,7 +47,6 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
         PSD2Collector.Psd2UsernameCollector {
 
     private final X509Certificate caCertificate;
-    private final TppStoreService tppStoreService;
     private final X509Certificate[] obCA;
 
     @Override
@@ -71,35 +66,20 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
             authorities.add(OBRIRole.ROLE_TPP);
         }
 
-        if (authorities.contains(OBRIRole.ROLE_TPP)) {
-            String cn = getCn(certificatesChain[0]);
-            Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
-            if (!optionalTpp.isPresent()) {
-                log.debug("TPP not found. This TPP {} is not on board yet", cn);
-                authorities.add(OBRIRole.UNREGISTERED_TPP);
-            } else {
-                List<GrantedAuthority> tppAuthorities = optionalTpp.get().getTypes().stream().map(OBRIRole::fromSoftwareStatementType).collect(Collectors.toList());
-                authorities.addAll(tppAuthorities);
-            }
-        }
         return authorities;
     }
 
     @Override
     public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
-        if (!isCertificateIssuedByCA(caCertificate, certificatesChain)) {
+        if (!psd2CertInfo.isPsd2Cert()) {
+            log.info("getUserName() the presented cert is not a PSD2 certificate.");
             return null;
         }
-
-        String cn = getCn(certificatesChain[0]);
-
-        Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
-        if (!optionalTpp.isPresent()) {
-            log.debug("TPP not found. This TPP {} is not on board yet", cn);
-            return cn;
-        } else {
-            return optionalTpp.get().getClientId();
-        }
+        return psd2CertInfo.getOrganizationId()
+            .orElseGet(() -> {
+                log.info("getUserName() PSD2 cert presented with no authorisation number");
+                return null;
+            });
     }
 
 

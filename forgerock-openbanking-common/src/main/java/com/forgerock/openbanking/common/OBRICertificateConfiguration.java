@@ -48,12 +48,10 @@ public class OBRICertificateConfiguration {
     private Resource obIssuingCertificatePem;
 
     private final KeyStoreService keyStoreService;
-    private final TppStoreService tppStoreService;
 
     @Autowired
-    OBRICertificateConfiguration(KeyStoreService keyStoreService, TppStoreService tppStoreService) {
+    OBRICertificateConfiguration(KeyStoreService keyStoreService) {
         this.keyStoreService = keyStoreService;
-        this.tppStoreService = tppStoreService;
     }
 
     @Bean
@@ -66,6 +64,6 @@ public class OBRICertificateConfiguration {
     public OBRIExternalCertificates obriExternalCertificates() throws Exception {
         X509Certificate externalCACertificate = (X509Certificate) keyStoreService.getKeyStore().getCertificate(externalCaAlias);
         X509Certificate[] obCA = loadOBCertificates(obRootCertificatePem, obIssuingCertificatePem);
-        return new OBRIExternalCertificates(externalCACertificate, tppStoreService, obCA);
+        return new OBRIExternalCertificates(externalCACertificate, obCA);
     }
 }
