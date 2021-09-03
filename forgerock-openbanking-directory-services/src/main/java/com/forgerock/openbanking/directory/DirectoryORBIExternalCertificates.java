@@ -53,7 +53,7 @@ public class DirectoryORBIExternalCertificates extends OBRIExternalCertificates 
     private final DirectoryUtilsService directoryUtilsService;
 
     public DirectoryORBIExternalCertificates(X509Certificate caCertificate, DirectoryUtilsService directoryUtilsService) {
-        super(caCertificate, null, null);
+        super(caCertificate, null);
         this.caCertificate = caCertificate;
         this.directoryUtilsService = directoryUtilsService;
     }
