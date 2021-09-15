@@ -60,12 +60,6 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
     public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
         Set<GrantedAuthority> authorities = new HashSet<>();
 
-        if (roles != null) {
-            authorities.addAll(roles.getRolesOfPsp().stream().map(r -> new PSD2GrantType(r)).collect(Collectors.toSet()));
-            authorities.add(OBRIRole.ROLE_TPP);
-            authorities.add(OBRIRole.ROLE_EIDAS);
-        }
-
         if (isCertificateIssuedByCA(caCertificate, certificatesChain)) {
             authorities.add(OBRIRole.ROLE_FORGEROCK_EXTERNAL_APP);
             authorities.add(OBRIRole.ROLE_TPP);
@@ -74,16 +68,14 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
             authorities.add(OBRIRole.ROLE_TPP);
         }
 
-        if (authorities.contains(OBRIRole.ROLE_TPP)) {
-            String cn = getCn(certificatesChain[0]);
-            Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
-            if (!optionalTpp.isPresent()) {
-                log.debug("TPP not found. This TPP {} is not on board yet", cn);
-                authorities.add(OBRIRole.UNREGISTERED_TPP);
-            } else {
-                List<GrantedAuthority> tppAuthorities = optionalTpp.get().getTypes().stream().map(OBRIRole::fromSoftwareStatementType).collect(Collectors.toList());
-                authorities.addAll(tppAuthorities);
+        if(psd2CertInfo != null && psd2CertInfo.isPsd2Cert()){
+            authorities.add(OBRIRole.ROLE_EIDAS);
+            authorities.add(OBRIRole.ROLE_TPP);
+            if (roles != null) {
+                authorities.addAll(roles.getRolesOfPsp().stream().map(r -> new PSD2GrantType(r)).collect(Collectors.toSet()));
             }
+        } else {
+            authorities.add(OBRIRole.UNKNOWN_CERTIFICATE);
         }
         return authorities;
     }
@@ -105,16 +97,11 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
                 log.warn("ApiOBRIExternalCertificates:getUserName(): Certificate is untrusted - returning null");
                 return null;
             }
+            log.warn("The presented certificate is not a PSD eIDAS certificate. Returning null username");
+            return null;
         }
-
-        String cn = getCn(certificatesChain[0]);
-
-        Optional<Tpp> optionalTpp = tppStoreService.findByCn(cn);
-        if (!optionalTpp.isPresent()) {
-            log.debug("TPP not found. This TPP {} is not on board yet", cn);
-            return getCn(certificatesChain[0]);
-        } else {
-            return optionalTpp.get().getClientId();
-        }
+        String organizationId = psd2CertInfo.getOrganizationId().orElse(null);
+        log.info("getUserName() returning AuthorizationNumber from certificate '{}'", organizationId);
+        return  organizationId;
     }
 }
