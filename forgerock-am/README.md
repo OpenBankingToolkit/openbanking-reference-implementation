@@ -11,7 +11,7 @@ cd openbanking-reference-implementation
 gsutil rsync gs://ob-forgerock-binaries/openam-local-binaries forgerock-am/_binaries
 ```
 ### Current AM war version files
-- OpenAM-6.5.1-eb5282f9bc.war
+- OpenAM-6.5.1-9f4e82458a.war
 - Amster-6.5.1.zip
 
 ## Current Customer Patch
