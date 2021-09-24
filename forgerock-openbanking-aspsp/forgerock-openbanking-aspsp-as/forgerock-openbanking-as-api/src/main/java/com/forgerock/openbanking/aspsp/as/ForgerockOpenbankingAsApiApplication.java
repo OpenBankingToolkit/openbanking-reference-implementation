@@ -21,16 +21,23 @@
 package com.forgerock.openbanking.aspsp.as;
 
 import com.forgerock.openbanking.common.EnableSslClient;
+import com.github.mongobee.Mongobee;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication(scanBasePackages = "com.forgerock.openbanking")
-@EnableMongoRepositories
+@EnableMongoRepositories(basePackages = "com.forgerock.openbanking")
+@EnableMongoAuditing
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableScheduling
@@ -40,6 +47,15 @@ public class ForgerockOpenbankingAsApiApplication {
 
     public static void main(String[] args) {
         new SpringApplication(ForgerockOpenbankingAsApiApplication.class).run(args);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "as", name = "mongo-migration.tpp-migration.enabled", havingValue = "true")
+    public Mongobee mongobee(@Value("${spring.data.mongodb.uri}") String mongoDbUrl, MongoTemplate mongoTemplate){
+        Mongobee mongobee = new Mongobee(mongoDbUrl);
+        mongobee.setChangeLogsScanPackage("com.forgerock.openbanking.aspsp.as.migration.tppschema");
+        mongobee.setMongoTemplate(mongoTemplate);
+        return mongobee;
     }
 
 }

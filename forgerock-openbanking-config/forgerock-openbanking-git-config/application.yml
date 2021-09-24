@@ -1032,6 +1032,11 @@ as:
     default-psu:
       username: test
       password: changeit
+  # Switch for migrating the TPP documents so a TPP can onboard multiple SSAs using an eIDAS type cert
+  # See https://github.com/ForgeCloud/ob-deploy/issues/775
+  mongo-migration:
+    tpp-migration:
+      enabled: false
 
 #AM config
 

@@ -14,6 +14,11 @@ as:
   headless:
     header-enable: true
     always-enable: false
+  # Switch for migrating the TPP documents so a TPP can onboard multiple SSAs using an eIDAS type cert
+  # See https://github.com/ForgeCloud/ob-deploy/issues/775
+  mongo-migration:
+    tpp-migration:
+      enabled: true
 
 am:
   internal-port: 30443

@@ -11,6 +11,7 @@ services:
     volumes:
       - ./mongo/:/docker-entrypoint-initdb.d/:ro
       - $PWD/mongodata:/data/db  # Persist mongo data to $HOME/mongo
+      - $PWD/mongobackups:/data/backups
     hostname: mongo-mongodb
     networks:
       obref:

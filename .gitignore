@@ -28,5 +28,6 @@ requirements.lock
 .project
 .settings/
 mongodata/
+mongobackups/
 /release.properties
 *.releaseBackup
