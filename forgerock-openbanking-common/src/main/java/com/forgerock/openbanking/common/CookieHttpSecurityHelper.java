@@ -83,18 +83,21 @@ public class CookieHttpSecurityHelper {
         MultiAuthenticationCollectorConfigurer<HttpSecurity> configurer = new MultiAuthenticationCollectorConfigurer<>();
         configurer
                 .collector(PSD2Collector.psd2Builder()
+                        .collectorName("obri-internal-PSD2-certificate collector")
                         .collectFromHeader(CertificateHeaderFormat.JWK)
                         .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
                         .psd2UsernameCollector(obriInternalCertificates)
                         .psd2AuthoritiesCollector(obriInternalCertificates)
                         .build())
                 .collector(PSD2Collector.psd2Builder()
+                        .collectorName("obri-external-PSD2-certificate collector")
                         .collectFromHeader(CertificateHeaderFormat.JWK)
                         .headerName(CLIENT_CERTIFICATE_HEADER_NAME)
                         .psd2UsernameCollector(obriExternalCertificates)
                         .psd2AuthoritiesCollector(obriExternalCertificates)
                         .build())
                 .collector(StaticUserCollector.builder()
+                        .collectorName("static-user-collector")
                         .grantedAuthorities(Collections.emptySet())
                         .usernameCollector(() -> "Anonymous")
                         .build());

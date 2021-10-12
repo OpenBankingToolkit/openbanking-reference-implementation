@@ -31,6 +31,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.SslInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
@@ -58,51 +59,63 @@ public class AddCertificateHeaderGatewayFilter implements GatewayFilter {
     private String clientJwkHeader;
     @Value("${monitoring.internal-port}")
     private String monitoringPort;
-    @Autowired
     private Tracer tracer;
-    @Autowired
     private WebClient webClient;
+
+    @Autowired
+    public AddCertificateHeaderGatewayFilter(Tracer tracer, WebClient webClient){
+        this.tracer = tracer;
+        this.webClient = webClient;
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        X509Certificate[] certs = request.getSslInfo().getPeerCertificates();
+        SslInfo sslInfo = request.getSslInfo();
+        if(sslInfo == null){
+            log.info("Request was not made using SSL. No certificate available");
+        }
+        X509Certificate[] certs = sslInfo.getPeerCertificates();
 
-        log.debug("Try to find the client certificate");
+        log.debug("AddCertificateHeaderGatewayFilter() Looking for client certificate");
         X509Certificate certificate = null;
 
         String monitoringID = request.getHeaders().getFirst(OB_MONITORING_HEADER_NAME);
         if (monitoringID != null) {
-            log.debug("Found the header '{}' equals to {}", OB_MONITORING_HEADER_NAME, monitoringID);
+            log.debug("AddCertificateHeaderGatewayFilter() Found the header '{}' equals to {}",
+                    OB_MONITORING_HEADER_NAME, monitoringID);
             return getMonitoringCertificate(monitoringID).flatMap(c -> {
                 try {
                     JWK jwk = JWK.parse(c);
-                    log.debug("Adding the client certificate JWK {} in the header of the request", jwk.toJSONString());
+                    log.debug("AddCertificateHeaderGatewayFilter() Adding the client certificate JWK {} in the header" +
+                            " of the request", jwk.toJSONString());
                     return chain.filter(exchange.mutate().request(
                             exchange.getRequest().mutate().header(clientJwkHeader, jwk.toJSONString()).build()
                     ).build());
                 }  catch (JOSEException e) {
-                    log.error("Can't parse x509 certificate", e);
+                    log.info("AddCertificateHeaderGatewayFilter() Can't parse x509 certificate", e);
                     return chain.filter( exchange);
                 }
             });
         }
 
         if (request.getHeaders().getFirst(CLIENT_CERTIFICATE_HEADER_NAME) != null) {
-            log.debug("Found a pem in the header '{}'", CLIENT_CERTIFICATE_HEADER_NAME);
+            log.debug("AddCertificateHeaderGatewayFilter() Found a pem in the header '{}'",
+                    CLIENT_CERTIFICATE_HEADER_NAME);
             certificate = parseCertificate(request);
         } else if (certs != null && certs.length > 0) {
-            log.debug("Extract the certificate from the request");
+            log.debug("AddCertificateHeaderGatewayFilter() Extract the certificate from the request");
             certificate =  certs[0];
         } else {
-            log.debug("No client certificate received.");
+            log.debug("AddCertificateHeaderGatewayFilter() No client certificate received.");
         }
 
         if (certificate != null) {
-            log.debug("Convert the certificate into a JWK");
+            log.debug("AddCertificateHeaderGatewayFilter() Convert the certificate into a JWK");
             try {
                 JWK jwk = JWK.parse(certificate);
-                log.debug("Adding the client certificate JWK {} in the header of the request", jwk.toJSONString());
+                log.debug("AddCertificateHeaderGatewayFilter() Adding the client certificate JWK {} in the header of " +
+                        "the request", jwk.toJSONString());
                 return chain.filter( exchange.mutate().request(
                         exchange.getRequest().mutate()
                                 .header(clientJwkHeader, jwk.toJSONString())
@@ -110,10 +123,10 @@ public class AddCertificateHeaderGatewayFilter implements GatewayFilter {
                                 .build()
                 ).build());
             } catch (JOSEException e) {
-                log.error("Can't parse x509 certificate", e);
+                log.info("AddCertificateHeaderGatewayFilter() Can't parse x509 certificate", e);
             }
         } else {
-            log.debug("Client certificate couldn't be exacted for a reason.");
+            log.debug("AddCertificateHeaderGatewayFilter() No client certificate found");
         }
         return chain.filter( exchange);
     }

@@ -47,7 +47,7 @@ public class JwtCookieAuthorityCollector implements CustomCookieCollector.Author
                 OBRIRole.ROLE_USER);
         List<String> amGroups = token.getJWTClaimsSet().getStringListClaim("group");
         if (amGroups != null && !amGroups.isEmpty()) {
-            log.trace("AM Authorities founds: {}", amGroups);
+            log.trace("AM Authorities found: {}", amGroups);
             for (String amGroup : amGroups) {
                 authorities.add(new SimpleGrantedAuthority(amGroup));
             }
