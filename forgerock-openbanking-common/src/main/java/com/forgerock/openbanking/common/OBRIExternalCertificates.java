@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.forgerock.cert.Psd2CertInfo;
+import com.forgerock.cert.exception.InvalidEidasCertType;
 import com.forgerock.cert.psd2.RolesOfPsp;
 import com.forgerock.openbanking.model.OBRIRole;
 import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
@@ -70,7 +71,7 @@ public class OBRIExternalCertificates implements PSD2Collector.Psd2AuthoritiesCo
     }
 
     @Override
-    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
+    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) throws InvalidEidasCertType {
         if (!psd2CertInfo.isPsd2Cert()) {
             log.info("getUserName() the presented cert is not a PSD2 certificate.");
             return null;

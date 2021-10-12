@@ -20,6 +20,7 @@
 
     <logger name="com.forgerock" level="DEBUG"/>
     <logger name="org.springframework" level="INFO"/>
+    <logger name="com.forgerock.spring.security" level="DEBUG"/>
     <logger name="org.forgerock.openbanking.commons.auth" level="TRACE"/>
 
 

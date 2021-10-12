@@ -21,22 +21,21 @@
 package com.forgerock.openbanking.common;
 
 import com.forgerock.cert.Psd2CertInfo;
+import com.forgerock.cert.exception.InvalidEidasCertType;
+import com.forgerock.cert.psd2.Psd2Role;
+import com.forgerock.cert.psd2.RoleOfPsp;
 import com.forgerock.cert.psd2.RolesOfPsp;
 import com.forgerock.openbanking.common.services.store.tpp.TppStoreService;
 import com.forgerock.openbanking.model.OBRIRole;
-import com.forgerock.openbanking.model.Tpp;
 import com.forgerock.spring.security.multiauth.model.granttypes.PSD2GrantType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.forgerock.openbanking.common.CertificateHelper.getCn;
 import static com.forgerock.openbanking.common.CertificateHelper.isCertificateIssuedByCA;
 
 /**
@@ -57,21 +56,28 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
     }
 
     @Override
-    public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo, RolesOfPsp roles) {
+    public Set<GrantedAuthority> getAuthorities(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo,
+                                                RolesOfPsp roles) {
         Set<GrantedAuthority> authorities = new HashSet<>();
-
-        if (isCertificateIssuedByCA(caCertificate, certificatesChain)) {
-            authorities.add(OBRIRole.ROLE_FORGEROCK_EXTERNAL_APP);
-            authorities.add(OBRIRole.ROLE_TPP);
-        }
-        if (isCertificateIssuedByCA(obCA[0], certificatesChain)) { // checks obCA[0] rather than caCertificate in the common OBRIExternalCertificate class
-            authorities.add(OBRIRole.ROLE_TPP);
-        }
 
         if(psd2CertInfo != null && psd2CertInfo.isPsd2Cert()){
             authorities.add(OBRIRole.ROLE_EIDAS);
+
+            if (isCertificateIssuedByCA(caCertificate, certificatesChain)) {
+                authorities.add(OBRIRole.ROLE_FORGEROCK_EXTERNAL_APP);
+                authorities.add(OBRIRole.ROLE_TPP);
+            }
+
+            if (isCertificateIssuedByCA(obCA[0], certificatesChain)) { // checks obCA[0] rather than caCertificate in the common OBRIExternalCertificate class
+                authorities.add(OBRIRole.ROLE_TPP);
+            }
+
             authorities.add(OBRIRole.ROLE_TPP);
             if (roles != null) {
+                for(RoleOfPsp role:  roles.getRolesOfPsp()){
+                    Psd2Role psd2Role = role.getRole();
+                    OBRIRole.getRoleFromPsd2Role(psd2Role).ifPresent(r->authorities.add(r));
+                }
                 authorities.addAll(roles.getRolesOfPsp().stream().map(r -> new PSD2GrantType(r)).collect(Collectors.toSet()));
             }
         } else {
@@ -89,8 +95,8 @@ public class ApiOBRIExternalCertificates extends OBRIExternalCertificates {
      *   obri-external-ca certificate.
      * - A valid eIDAS PSD2 certificate signed by a trusted CA found in a regularly updated system truststore.
      */
-    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) {
-
+    public String getUserName(X509Certificate[] certificatesChain, Psd2CertInfo psd2CertInfo) throws InvalidEidasCertType{
+        log.debug("getUserName() called on ApiOBRIExternalCertificates");
         // additional check of obCA[0] compared to the common OBRIExternalCertificate class.
         if(!psd2CertInfo.isPsd2Cert()) {
             if (!isCertificateIssuedByCA(caCertificate, certificatesChain) && !isCertificateIssuedByCA(obCA[0], certificatesChain)) {

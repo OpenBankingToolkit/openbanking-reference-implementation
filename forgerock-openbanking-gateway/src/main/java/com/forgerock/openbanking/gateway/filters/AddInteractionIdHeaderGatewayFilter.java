@@ -53,13 +53,15 @@ public class AddInteractionIdHeaderGatewayFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
         String xFapiInteractionId = request.getHeaders().getFirst(X_FAPI_INTERACTION_ID_HEADER_NAME);
         if (StringUtils.isEmpty(xFapiInteractionId)) {
-            log.debug("Interaction ID is missing, generate ID '{}'", xFapiInteractionId);
+            log.debug("AddInteractionIdHeaderGatewayFilter() Interaction ID is missing, generate ID '{}'",
+                    xFapiInteractionId);
             xFapiInteractionId = UUID.randomUUID().toString();
         }
         try{
             UUID.fromString(xFapiInteractionId);
         } catch (IllegalArgumentException exception){
-            log.warn("User submitted an invalid interaction id '{}: {}'", X_FAPI_INTERACTION_ID_HEADER_NAME, xFapiInteractionId);
+            log.info("AddInteractionIdHeaderGatewayFilter() User submitted an invalid interaction id '{}: {}'",
+                    X_FAPI_INTERACTION_ID_HEADER_NAME, xFapiInteractionId);
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid header: "+X_FAPI_INTERACTION_ID_HEADER_NAME+". This header must be a RFC4122 UID"));
         }
 
@@ -69,7 +71,7 @@ public class AddInteractionIdHeaderGatewayFilter implements GatewayFilter {
         addAnalyticsEnabledTag(request);
         addFapiInteractionTag(xFapiInteractionId);
 
-        log.debug("InteractionID:{}", xFapiInteractionId);
+        log.debug("AddInteractionIdHeaderGatewayFilter() returning InteractionID:{}", xFapiInteractionId);
         exchange.getResponse().getHeaders().add(X_FAPI_INTERACTION_ID_HEADER_NAME, xFapiInteractionId);
         return chain.filter(exchange);
     }

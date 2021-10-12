@@ -31,12 +31,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 import java.security.cert.X509Certificate;
 
 import static com.forgerock.openbanking.common.CertificateHelper.loadOBCertificates;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Import(CookieWebSecurityConfiguration.class)
 class AsApiSecurityConfiguration {
 
