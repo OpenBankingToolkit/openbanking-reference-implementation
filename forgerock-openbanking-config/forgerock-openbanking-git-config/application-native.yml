@@ -1,3 +1,8 @@
+platform:
+  aspsp-name: Forgerock Financial Sandbox
+  official-name: Forgerock Sandbox
+  short-name: Forgerock
+
 dns:
   hosts:
     root: dev-ob.forgerock.financial

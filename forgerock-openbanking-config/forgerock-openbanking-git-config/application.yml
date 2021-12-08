@@ -1,3 +1,8 @@
+platform:
+  aspsp-name: Forgerock Financial Sandbox
+  official-name: Forgerock Sandbox
+  short-name: Forgerock
+
 dns:
   hosts:
     prod: ob.forgerock.financial
@@ -927,7 +932,23 @@ rs-discovery:
         getEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.7/event-subscriptions
         amendEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.7/event-subscriptions/{EventSubscriptionId}
         deleteEventSubscription: ${rs-discovery.base-url}/open-banking/v3.1.7/event-subscriptions/{EventSubscriptionId}
-
+    vrpPayments:
+      v_3_1_8:
+        createDomesticVrpPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents
+        getDomesticVrpPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents/{ConsentId}
+        deleteDomesticVrpPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents/{ConsentId}
+        getDomesticVrpPaymentFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents/{ConsentId}/funds-confirmation
+        createDomesticVrpPayment: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps
+        getDomesticVrpPayment: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps/{DomesticVRPId}
+        getDomesticVrpPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps/{DomesticVRPId}/payment-details
+      v_3_1_9:
+        createDomesticVrpPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents
+        getDomesticVrpPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents/{ConsentId}
+        deleteDomesticVrpPaymentConsent: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents/{ConsentId}
+        getDomesticVrpPaymentFundsConfirmation: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrp-consents/{ConsentId}/funds-confirmation
+        createDomesticVrpPayment: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps
+        getDomesticVrpPayment: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps/{DomesticVRPId}
+        getDomesticVrpPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps/{DomesticVRPId}/payment-details
 #The directory discovery endpoints
 directory:
   port: 443
