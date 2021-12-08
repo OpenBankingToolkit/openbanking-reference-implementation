@@ -1,7 +1,7 @@
-platform:
-  aspsp-name: Forgerock Financial Sandbox
-  official-name: Forgerock Sandbox
-  short-name: Forgerock
+platform: # Data related with the platform like as the owned aspsp name
+  aspsp-name: Forgerock Financial Sandbox # The name presented in the Bank UI for VRP payments
+  official-name: Forgerock Sandbox # ASPSP Official Name to be used if necessary
+  short-name: Forgerock # ASPSP short name to be used if necessary
 
 dns:
   hosts:
