@@ -310,6 +310,17 @@ class GatewayRouteLocatorConfiguration {
                             return booleanSpec.uri("https://rs-api:" + rsApiPort);
                         }
                 ).route(r -> {
+                    BooleanSpec booleanSpec = r
+                            .host("matls.rs.aspsp." + dnsHostRoot + "**")
+                            .and()
+                            .path("/customer-info/**");
+                    booleanSpec.filters(f -> f
+                            .filter(addInteractionIdHeaderGatewayFilter, 0)
+                            .filter(addCertificateHeaderGatewayFilter)
+                            .preserveHostHeader()
+                    );
+                    return booleanSpec.uri("https://rs-api:" + rsApiPort);
+                }).route(r -> {
                             BooleanSpec booleanSpec = r
                                     .host("matls.rs.aspsp." + dnsHostRoot + "**")
                                     .and()
@@ -392,7 +403,6 @@ class GatewayRouteLocatorConfiguration {
                                 .path("/**")
                                 .filters(f -> f
                                         .filter(addInteractionIdHeaderGatewayFilter, 0)
-                                        .filter(addCertificateHeaderGatewayFilter)
                                 )
                                 .uri("https://rs-ui:" + rsUiPort)
                 ).route(r ->
