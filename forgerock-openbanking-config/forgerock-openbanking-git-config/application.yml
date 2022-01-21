@@ -71,6 +71,9 @@ rcs:
 rs:
   detached-signature:
     enable: true
+
+  customer-info:
+    enable: false
   ## Set the limits for the number of accounts and sub documents (e.g. beneficiaries etc) that
   ## may be ingested via the /user/data API.
   data:
@@ -949,6 +952,9 @@ rs-discovery:
         createDomesticVrpPayment: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps
         getDomesticVrpPayment: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps/{DomesticVRPId}
         getDomesticVrpPaymentDetails: ${rs-discovery.base-url}/open-banking/v3.1.8/pisp/domestic-vrps/{DomesticVRPId}/payment-details
+    customerInfo:
+      v_1_0:
+        getCustomerInfo: ${rs-discovery.base-url}/customer-info/v1.0/info
 #The directory discovery endpoints
 directory:
   port: 443
