@@ -61,6 +61,10 @@ rs-discovery:
   base-url: https://${rs-discovery.hostname}:8074
   read-write-api:
     version: 3.1.8
+  apis:
+    customerInfo:
+      v_1_0:
+        getCustomerInfo: ${rs-discovery.base-url}/customer-info/v1.0/info
 
 shop:
   port: ${scgw.port}
