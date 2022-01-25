@@ -48,8 +48,6 @@ rs:
   detached-signature:
     enable: true
 
-  customer-info:
-    enable: true
   ## Set the limits for the number of accounts and sub documents (e.g. beneficiaries etc) that
   ## may be ingested via the /user/data API.
   data:
