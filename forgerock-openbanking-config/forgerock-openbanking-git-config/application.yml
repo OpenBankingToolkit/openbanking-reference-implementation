@@ -1091,7 +1091,7 @@ am:
       userinfo: ${am.internal.root}/oauth2/realms/root/realms/openbanking/userinfo
       registration: ${am.internal.root}/oauth2/realms/root/realms/openbanking/register
     issuerid: ${am.root}/oauth2
-    audiences: https://${am.matls-hostname}/oauth2, ${am.root}/oauth2, https://${am.matls-hostname}/oauth2/access_token"
+    audiences: https://${am.matls-hostname}/oauth2, https://${am.hostname}/oauth2, https://${am.matls-hostname}/oauth2/access_token"
     jwksuri: ${am.internal.root}/oauth2/realms/root/realms/openbanking/connect/jwk_uri
   userprofile:
     id: id

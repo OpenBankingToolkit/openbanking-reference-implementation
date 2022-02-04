@@ -25,6 +25,7 @@ import com.forgerock.spring.security.multiauth.configurers.MultiAuthenticationCo
 import com.forgerock.spring.security.multiauth.configurers.collectors.PSD2Collector;
 import com.forgerock.spring.security.multiauth.configurers.collectors.StaticUserCollector;
 import com.forgerock.spring.security.multiauth.model.CertificateHeaderFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 import java.util.Collections;
@@ -34,6 +35,7 @@ import static com.forgerock.openbanking.common.CertificateHelper.CLIENT_CERTIFIC
 /**
  * A utility class providing helper methods related to certificates.
  */
+@Slf4j
 public class CookieHttpSecurityHelper {
 
     /**
@@ -63,6 +65,7 @@ public class CookieHttpSecurityHelper {
                                              OBRIInternalCertificates obriInternalCertificates,
                                              OBRIExternalCertificates obriExternalCertificates,
                                              CryptoApiClient cryptoApiClient) throws Exception {
+        log.debug("configureHttpSecurity() cryptoApiClient is '{}'", cryptoApiClient);
         httpSecurity(httpSecurity)
                 .apply(collectors(obriInternalCertificates, obriExternalCertificates, cryptoApiClient));
     }
@@ -80,6 +83,7 @@ public class CookieHttpSecurityHelper {
     private static MultiAuthenticationCollectorConfigurer<HttpSecurity> collectors(OBRIInternalCertificates obriInternalCertificates,
                                                                                    OBRIExternalCertificates obriExternalCertificates,
                                                                                    CryptoApiClient cryptoApiClient) {
+        log.debug("collectors() configuring and returning collectors. cryptoApiClient is '{}'", cryptoApiClient);
         MultiAuthenticationCollectorConfigurer<HttpSecurity> configurer = new MultiAuthenticationCollectorConfigurer<>();
         configurer
                 .collector(PSD2Collector.psd2Builder()
@@ -103,12 +107,17 @@ public class CookieHttpSecurityHelper {
                         .build());
 
         if (cryptoApiClient != null) {
+            log.debug("collectors - adding jwt cookie collector");
             JwtCookieAuthorityCollector jwtCookieAuthorityCollector = new JwtCookieAuthorityCollector();
             configurer.collector(DecryptingJwtCookieCollector.builder()
+                    .collectorName("jwt cookie collector")
                     .cryptoApiClient(cryptoApiClient)
+
                     .cookieName("obri-session")
                     .authoritiesCollector(jwtCookieAuthorityCollector)
                     .build());
+        } else {
+            log.debug("Not using Cookie Authenticator as cryptoApiClient not provided");
         }
         return configurer;
     }

@@ -30,8 +30,8 @@ am:
   internal:
     root: https://openam:${am.internal-port}
   port: 443
-  hostname: as.aspsp.${dns.hosts.root}:${am.port}
-  matls-hostname: matls.as.aspsp.${dns.hosts.root}:${am.port}
+  hostname: as.aspsp.${dns.hosts.root}:${scgw.port}
+  matls-hostname: matls.as.aspsp.${dns.hosts.root}:${scgw.port}
   realm:
     auth:
       oidc:
