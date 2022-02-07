@@ -21,7 +21,6 @@
 package com.forgerock.openbanking.gateway.filters;
 
 import brave.Tracer;
-import brave.propagation.TraceContext;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +81,7 @@ public class AddCertificateHeaderGatewayFilter implements GatewayFilter {
 
         String monitoringID = request.getHeaders().getFirst(OB_MONITORING_HEADER_NAME);
         if (monitoringID != null) {
-            log.debug("AddCertificateHeaderGatewayFilter() Found the header '{}' equals to {}",
+            log.debug("AddCertificateHeaderGatewayFilter() Header '{}' has the value {}",
                     OB_MONITORING_HEADER_NAME, monitoringID);
             return getMonitoringCertificate(monitoringID).flatMap(c -> {
                 try {

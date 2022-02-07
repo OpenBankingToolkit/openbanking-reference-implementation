@@ -21,18 +21,22 @@
 package com.forgerock.openbanking.common;
 
 import com.forgerock.openbanking.jwt.services.CryptoApiClient;
+import com.forgerock.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWT;
-import com.forgerock.spring.security.multiauth.configurers.collectors.CustomCookieCollector;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 
+@Slf4j
 public class DecryptingJwtCookieCollector extends CustomCookieCollector<JWT> {
 
     @Builder
-    public DecryptingJwtCookieCollector(CustomCookieCollector.AuthoritiesCollector<JWT> authoritiesCollector, String cookieName, CryptoApiClient cryptoApiClient) {
+    public DecryptingJwtCookieCollector(String collectorName,
+                                        CustomCookieCollector.AuthoritiesCollector<JWT> authoritiesCollector,
+                                        String cookieName, CryptoApiClient cryptoApiClient) {
         super(
-                "jwt-cookie",
+                collectorName,
                 tokenSerialised -> {
                     try {
                         return cryptoApiClient.decryptJwe(tokenSerialised);
@@ -40,7 +44,12 @@ public class DecryptingJwtCookieCollector extends CustomCookieCollector<JWT> {
                         throw new BadCredentialsException("Invalid cookie");
                     }
                 },
-                token -> token.getJWTClaimsSet().getSubject(),
+                token -> {
+                    String username = token.getJWTClaimsSet().getSubject();
+                    if(username.isBlank()) username = "Anonymous";
+                    log.info("getUserName() called on collector '{}' returning username '{}'", collectorName, username);
+                    return username;
+                },
                 authoritiesCollector,
                 cookieName
         );
