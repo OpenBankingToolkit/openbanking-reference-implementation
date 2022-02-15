@@ -24,7 +24,8 @@ FOLDER_MONITORING=monitoring
 FOLDER_DEV_PORTAL=devportal
 FOLDER_DOCS=devportal/docs
 FOLDER_REGISTER=devportal/register
-
+FOLDER_ANALYTICS=analytics
+FOLDER_UI=ui
 #Default key parameters
 
 TRANSPORT_KEY_ALGO=RSA
@@ -36,6 +37,7 @@ SIGNING_KEY_SIZE=2048
 SIGNING_KEY_SIGNING_ALGO=SHA256withRSA
 
 VALIDITY=825
+
 #OB directory
 OB_ORGANISATION_ID=OpenBanking
 OB_ROOT_CA_PATH=obOfficialCertificates/OB_SandBox_PP_Root_CA.cer
@@ -81,6 +83,8 @@ JVM_TRUSTSTORE=${JAVA_HOME}/jre/lib/security/cacerts
 #
 # micro-services application names
 #
+#Auth
+APP_AUTH=auth-ui
 #ASPSP
 APP_AS_API=as-api
 APP_RS_UI=rs-ui
@@ -88,8 +92,9 @@ APP_RS_API=rs-api
 APP_RS_RCS=rs-rcs
 APP_RS_SIMULATOR=rs-simulator
 APP_RS_STORE=rs-store
-
+APP_BANK=bank-ui
 #Directory
+APP_DIRECTORY=directory-ui
 APP_DIRECTORY_SERVICES=directory-services
 APP_JWKMS=jwkms
 
@@ -114,6 +119,9 @@ APP_REGISTER=register
 #openam
 APP_OPENAM=openam
 
+#analytics
+APP_ANALYTICS=analytics-ui
+APP_ANALYTICS_NODE=analytics-node
 #
 # HOSTNAME
 #
@@ -151,12 +159,15 @@ HOSTNAME_SWAGGER=swagger.${DOMAIN}
 HOSTNAME_ADMIN=admin.${DOMAIN}
 HOSTNAME_METRICS_SERVICE=service.metrics.${DOMAIN}
 HOSTNAME_MONITORING=monitoring.${DOMAIN}
+# tpp apps
 HOSTNAME_TPP_UI=tpp.${DOMAIN}
 HOSTNAME_TPP_NODE=node.tpp.${DOMAIN}
+# analytics
 HOSTNAME_ANALYTICS_UI=analytics.${DOMAIN}
 HOSTNAME_ANALYTICS_SERVICE=service.analytics.${DOMAIN}
 HOSTNAME_ANALYTICS_NODE=node.analytics.${DOMAIN}
 HOSTNAME_ANALYTICS_PDF=pdf.analytics.${DOMAIN}
+#config
 HOSTNAME_CONFIG=config.${DOMAIN}
 
 #devportal
@@ -204,6 +215,9 @@ DNAME_SWAGGER='CN=$(HOSTNAME_SWAGGER),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FO
 DNAME_ADMIN='CN=$(HOSTNAME_ADMIN),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
 DNAME_MONITORING='CN=$(HOSTNAME_MONITORING),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
 DNAME_ANALYTICS='CN=$(HOSTNAME_ANALYTICS_UI),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
+DNAME_ANALYTICS_SERVICE='CN=$(HOSTNAME_ANALYTICS_SERVICE),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
+DNAME_ANALYTICS_NODE='CN=$(HOSTNAME_ANALYTICS_NODE),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
+DNAME_ANALYTICS_PDF='CN=$(HOSTNAME_ANALYTICS_PDF),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
 DNAME_TPP='CN=$(HOSTNAME_TPP_UI),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
 DNAME_CONFIG='CN=$(HOSTNAME_CONFIG),OU=$(FORGEROCK_OU),O=$(FORGEROCK_O),L=$(FORGEROCK_L),ST=$(FORGEROCK_ST),C=$(FORGEROCK_C)'
 
@@ -232,6 +246,7 @@ KEYSTORE_METRICS="${FOLDER_METRICS}/keystore.jks"
 KEYSTORE_DOCS="${FOLDER_DOCS}/keystore.jks"
 KEYSTORE_REGISTER="${FOLDER_REGISTER}/keystore.jks"
 KEYSTORE_MONITORING="${FOLDER_MONITORING}/keystore.jks"
+KEYSTORE_ANALYTICS="${FOLDER_ANALYTICS}/keystore.jks"
 #
 # Keystore
 #
@@ -277,7 +292,8 @@ all:	clean \
 common: clean-common \
         init-folder-common \
         create-common-keystore \
-        create-common-key
+        create-common-key \
+        move-wilcard-to-ui-folder
 
 aspsp: clean-aspsp clean-common \
         init-folder-aspsp init-folder-common \
@@ -336,10 +352,16 @@ monitoring: clean-monitoring \
         create-monitoring-key \
         deploy-monitoring
 
+analytics: clean-analytics \
+		init-folder-analytics \
+		create-analytics-keystore \
+		create-analytics-key
+
 jwkms-store: clean-jwkstore init-folder-jwkstore create-jwkstore deploy-jwkms-store
 
 init-folder: init-folder-aspsp init-folder-common init-folder-jwkms init-folder-ob \
-init-folder-scgw init-folder-admin init-folder-directory init-folder-metrics init-folder-devportal init-folder-monitoring
+init-folder-scgw init-folder-admin init-folder-directory init-folder-metrics init-folder-devportal init-folder-monitoring \
+init-folder-analytics
 
 init-folder-ca:
 	# Generate ca folder
@@ -407,6 +429,10 @@ init-folder-register:
 init-folder-monitoring:
 	# Generate monitoring folder
 	mkdir ${FOLDER_MONITORING}
+
+init-folder-analytics:
+	# Generate monitoring folder
+	mkdir ${FOLDER_ANALYTICS}
 #
 # Create CA
 #
@@ -451,7 +477,7 @@ create-obri-external-authority:
 
 create-keystores: create-common-keystore create-aspsp-keystore \
 create-jwkms-keystore create-ob-keystore create-scgw-keystore create-admin-keystore create-directory-keystore \
-create-metrics-keystore create-devportal-keystore create-monitoring-keystore
+create-metrics-keystore create-devportal-keystore create-monitoring-keystore create-analytics-keystore
 
 create-common-keystore:
 	# Import CA into common keystore
@@ -571,6 +597,14 @@ create-monitoring-keystore:
 	# Import External CA
 	keytool -import -trustcacerts -noprompt -alias $(OBRI_EXTERNAL_CA_ALIAS) -file $(OBRI_EXTERNAL_CA_CRT) \
 		-keystore $(KEYSTORE_MONITORING) -storepass $(PASSWORD)
+create-analytics-keystore:
+	# Import CA into monitoring keystore
+	keytool -importkeystore \
+	-deststorepass $(PASSWORD) -destkeystore $(KEYSTORE_ANALYTICS) \
+	-srckeystore $(OBRI_INTERNAL_CA_P12) -srcstoretype PKCS12 -srcstorepass $(PASSWORD)
+	# Import External CA
+	keytool -import -trustcacerts -noprompt -alias $(OBRI_EXTERNAL_CA_ALIAS) -file $(OBRI_EXTERNAL_CA_CRT) \
+		-keystore $(KEYSTORE_ANALYTICS) -storepass $(PASSWORD)
 #
 # Create Truststores
 #
@@ -771,7 +805,8 @@ endef
 # Create Keys
 #
 create-keys: create-common-key create-aspsp-key create-jwkms-key create-OB-key \
-create-scgw-key create-admin-key create-directory-key create-metrics-key create-devportal-key create-monitoring-key
+create-scgw-key create-admin-key create-directory-key create-metrics-key create-devportal-key create-monitoring-key \
+create-analytics-key
 
 create-common-key:
 	$(eval SAN=dns:$(HOSTNAME_ASPSP_RS))
@@ -815,6 +850,8 @@ create-common-key:
 	$(eval SAN=$(SAN),dns:$(APP_RS_SIMULATOR))
 	$(eval SAN=$(SAN),dns:$(APP_RS_API))
 	$(eval SAN=$(SAN),dns:$(APP_AS_API))
+	$(eval SAN=$(SAN),dns:$(APP_ANALYTICS))
+	$(eval SAN=$(SAN),dns:$(APP_ANALYTICS_NODE))
 
 	$(call generate_transport_key,$(HOSTNAME_COMMON),$(DNAME_COMMON),\
 	$(SAN),\
@@ -950,6 +987,30 @@ create-monitoring-key:
 	$(SAN),\
 	$(KEYSTORE_MONITORING),$(PASSWORD),$(FOLDER_MONITORING))
 
+create-analytics-key:
+	$(eval SAN=dns:$(HOSTNAME_ANALYTICS_UI))
+	$(eval SAN=$(SAN),dns:$(HOSTNAME_ANALYTICS_SERVICE))
+	$(eval SAN=$(SAN),dns:$(HOSTNAME_ANALYTICS_NODE))
+	$(eval SAN=$(SAN),dns:$(HOSTNAME_ANALYTICS_PDF))
+	$(eval SAN=$(SAN),dns:$(APP_ANALYTICS))
+	$(eval SAN=$(SAN),dns:$(APP_ANALYTICS_NODE))
+
+	$(call generate_transport_key,$(HOSTNAME_ANALYTICS_UI),$(DNAME_ANALYTICS),\
+	$(SAN),\
+	$(KEYSTORE_ANALYTICS),$(PASSWORD),$(FOLDER_ANALYTICS))
+
+	$(call generate_transport_key,$(HOSTNAME_ANALYTICS_SERVICE),$(DNAME_ANALYTICS_SERVICE),\
+	$(SAN),\
+	$(KEYSTORE_ANALYTICS),$(PASSWORD),$(FOLDER_ANALYTICS))
+
+	$(call generate_transport_key,$(HOSTNAME_ANALYTICS_SERVICE),$(DNAME_ANALYTICS_NODE),\
+	$(SAN),\
+	$(KEYSTORE_ANALYTICS),$(PASSWORD),$(FOLDER_ANALYTICS))
+
+	$(call generate_transport_key,$(HOSTNAME_ANALYTICS_SERVICE),$(DNAME_ANALYTICS_PDF),\
+	$(SAN),\
+	$(KEYSTORE_ANALYTICS),$(PASSWORD),$(FOLDER_ANALYTICS))
+
 create-aspsp-csr:
 	$(eval SAN=dns:$(HOSTNAME_SCGW))
 	$(eval SAN=$(SAN),dns:$(HOSTNAME_ASPSP_RS_MATLS))
@@ -1071,6 +1132,10 @@ deploy-jwkms-store:
 	# copy jwkms store
 	cp $(JWKS_STORE) ${JWKMS_KEYSTORE_FOLDER}
 
+move-wilcard-to-ui-folder:
+	# copy wilcard to ui folder
+	cp ${FOLDER_COMMON}/*.key ${FOLDER_UI}
+	cp ${FOLDER_COMMON}/*.crt ${FOLDER_UI}
 #
 # Add CA to JVM truststore
 #
@@ -1085,7 +1150,7 @@ add-jvm-truststore:
 # Clean
 #
 clean: clean-aspsp clean-common clean-jwkms clean-ob clean-scgw clean-admin clean-metrics \
-clean-directory clean-devportal clean-monitoring
+clean-directory clean-devportal clean-monitoring clean-analytics
 
 clean-ca:
 	# Remove ca
@@ -1128,6 +1193,10 @@ clean-devportal:
 clean-monitoring:
 	# Remove monitoring
 	rm -rf ${FOLDER_MONITORING}
+
+clean-analytics:
+	# Remove analytics
+	rm -rf ${FOLDER_ANALYTICS}
 
 clean-ca-from-jvm-truststore:
 	# Remove internal CA

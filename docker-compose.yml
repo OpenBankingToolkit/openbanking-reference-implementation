@@ -357,8 +357,8 @@ services:
       AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
       DIRECTORY_BACKEND_URL: https://service.directory.dev-ob.forgerock.financial:8074/directory-services
     volumes:
-      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
-      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/k-wildcard.dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/wildcard.dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
   directory-ui:
@@ -372,8 +372,8 @@ services:
       AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
       ACCOUNT_REQUEST_BACKEND_URL: https://rs.aspsp.dev-ob.forgerock.financial:8074/api/account-requests
     volumes:
-      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
-      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/k-wildcard.dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/wildcard.dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
   register:
@@ -414,8 +414,8 @@ services:
       AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
       REGISTER_BACKEND_URL: https://service.register.dev-ob.forgerock.financial:8074
     volumes:
-      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
-      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/k-wildcard.dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/wildcard.dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
 
@@ -430,8 +430,8 @@ services:
       AUTHENTICATION_URL: https://am.dev-ob.forgerock.financial:8074
       REMOVE_CONSENT_URL: https://rcs.aspsp.dev-ob.forgerock.financial:8074
     volumes:
-      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
-      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/k-wildcard.dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/wildcard.dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
   analytics-ui:
@@ -446,8 +446,8 @@ services:
       NODE_BACKEND_URL: https://analytics.dev-ob.forgerock.financial:5000/api # "https://node.analytics.DOMAIN"
       METRICS_BACKEND_URL: https://service.metrics.dev-ob.forgerock.financial:8074
     volumes:
-      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
-      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/k-wildcard.dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/wildcard.dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
 
   analytics-node:
@@ -463,6 +463,6 @@ services:
       APP_URL: https://analytics-ui:443
       CORS_ORIGIN: https://analytics.dev-ob.forgerock.financial:4206
     volumes:
-      - ./keystore/ui/dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
-      - ./keystore/ui/dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
+      - ./keystore/ui/k-wildcard.dev-ob.forgerock.financial.key:/etc/nginx/certs/dev-ob.forgerock.financial.key
+      - ./keystore/ui/wildcard.dev-ob.forgerock.financial.crt:/etc/nginx/certs/dev-ob.forgerock.financial.crt
       - ./keystore/ui/dev-ob.forgerock.financial.conf:/etc/nginx/conf.d/default.conf
