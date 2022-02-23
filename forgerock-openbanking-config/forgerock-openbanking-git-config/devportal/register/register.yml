@@ -44,3 +44,4 @@ session:
 
 manual-onboarding:
   aspspManualOnboardingEndpoint: https://matls.as.aspsp.${dns.hosts.root}/open-banking/manual-onboarding/registerApplication/
+  registration-request-base: classpath:registrationrequest.json
