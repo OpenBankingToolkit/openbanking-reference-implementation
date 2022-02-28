@@ -396,7 +396,7 @@ services:
     networks:
       obref:
     healthcheck:
-      test: ["CMD", "curl", "-f", "-k", "https://localhost:8066/actuator/health"]
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8100/actuator/health"]
       interval: 1m30s
       timeout: 10s
       retries: 3
