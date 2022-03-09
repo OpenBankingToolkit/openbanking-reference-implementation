@@ -27,7 +27,7 @@
     <name>ForgeRock OpenBanking Reference Implementation</name>
     <groupId>com.forgerock.openbanking</groupId>
     <artifactId>forgerock-openbanking-reference-implementation</artifactId>
-    <version>4.6.0-SNAPSHOT</version>
+    <version>4.6.0</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -184,7 +184,7 @@
         <developerConnection>scm:git:git@github.com:OpenBankingToolkit/openbanking-reference-implementation.git
         </developerConnection>
         <url>https://github.com/OpenBankingToolkit/openbanking-reference-implementation.git</url>
-        <tag>HEAD</tag>
+        <tag>4.6.0</tag>
     </scm>
 
     <distributionManagement>
