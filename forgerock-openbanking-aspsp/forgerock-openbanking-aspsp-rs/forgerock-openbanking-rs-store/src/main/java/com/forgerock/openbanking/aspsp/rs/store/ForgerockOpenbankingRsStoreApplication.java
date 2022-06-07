@@ -21,11 +21,12 @@
 package com.forgerock.openbanking.aspsp.rs.store;
 
 import com.forgerock.openbanking.aspsp.rs.store.repository.ManualRegistrationApplicationRepository;
-import com.forgerock.openbanking.repositories.TppRepository;
 import com.forgerock.openbanking.common.CookieWebSecurityConfiguration;
 import com.forgerock.openbanking.common.EnableSslClient;
+import com.forgerock.openbanking.common.JacksonWebMvcConfigurer;
 import com.forgerock.openbanking.common.model.onboarding.ManualRegistrationApplication;
 import com.forgerock.openbanking.model.Tpp;
+import com.forgerock.openbanking.repositories.TppRepository;
 import com.github.mongobee.Mongobee;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -54,6 +55,11 @@ public class ForgerockOpenbankingRsStoreApplication{
     }
 
     @Bean
+    public JacksonWebMvcConfigurer jacksonWebMvcConfigurer() {
+        return new JacksonWebMvcConfigurer();
+    }
+
+    @Bean
     public RepositoryRestConfigurer repositoryRestConfigurer() {
 
         return new RepositoryRestConfigurerAdapter() {
@@ -74,5 +80,4 @@ public class ForgerockOpenbankingRsStoreApplication{
         mongobee.setMongoTemplate(mongoTemplate);
         return mongobee;
     }
-
 }
