@@ -90,6 +90,12 @@ rs:
   financial_id: 0015800001041REAAY
   jwks_uri: https://matls.rs.aspsp.${dns.hosts.root}:${rcs.port}/api/jwk/jwk_uri
 
+  # Switch to enable extended validation to VRP, see: https://github.com/ForgeCloud/ob-deploy/issues/883
+  vrp:
+    extended:
+      validation:
+        enable: true
+
 rs-simulator:
   port: 443
   internal-port: 8443
