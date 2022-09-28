@@ -31,3 +31,4 @@ mongodata/
 mongobackups/
 /release.properties
 *.releaseBackup
+/.java-version

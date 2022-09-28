@@ -11,14 +11,18 @@ cd openbanking-reference-implementation
 gsutil rsync gs://ob-forgerock-binaries/openam-local-binaries forgerock-am/_binaries
 ```
 ### Current AM war version files
-- OpenAM-6.5.1-9f4e82458a.war
-- Amster-6.5.1.zip
+Source: [patches/6.5.5.1/openbanking](https://stash.forgerock.org/projects/OPENAM/repos/openam-customers/browse?at=refs%2Fheads%2Fpatches%2F6.5.5.1%2Fopenbanking)
+- OpenAM-6.5.5-a7dd57885e7.war
+- Amster-6.5.5-a7dd57885e7.zip
 
-## Current Customer Patch
-> The customer patch is not needed anymore because 
-> the AM.war builds for Open Banking is from the customer branch with all patches integrated
-- openbanking-1-2-tpatch.zip
+> The AM.war builds for Open Banking is from the customer branch with all patches integrated
 
+**How to when AM version changed**
+- Update ./forgerock-am/amster/config/global/Platform.json
+- Update ./forgerock-am/Dockerfile (`com.iplanet.am.buildVersion` value)
+- Update ./forgerock-am/README.md file
+- Update kube configuration [ob-kube-am-config am](https://github.com/ForgeCloud/ob-kube-am-config/blob/master/docker/am/Dockerfile)
+- Update kube configuration [ob-kube-am-config amster](https://github.com/ForgeCloud/ob-kube-am-config/blob/master/docker/amster/Dockerfile)
 ## Docker compose
 Edit `docker-compose.yml` if necessary to change the arguments:
 - **AM_WAR_NAME**: "*OpenAM-X.X.X.war*"
