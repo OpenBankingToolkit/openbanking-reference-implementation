@@ -350,8 +350,8 @@ services:
       dockerfile: forgerock-am/Dockerfile
       args:
         # @see README file to get the binaries
-        AM_WAR_NAME: "OpenAM-6.5.5-a7dd57885e7.war"
-        AMSTER_ZIP: "Amster-6.5.5-a7dd57885e7.zip"
+        AM_WAR_NAME: "OpenAM-6.5.1-68f2815add.war"
+        AMSTER_ZIP: "Amster-6.5.1.zip"
     image: openam:local
     container_name: openam
     ports:

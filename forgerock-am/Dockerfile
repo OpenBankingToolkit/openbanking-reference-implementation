@@ -12,8 +12,8 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y unzip && \
     mkdir -p /var/tmp/openam && \
     unzip -q /am.war -d /var/tmp/openam && \
-    if ! grep -q "com.iplanet.am.buildVersion=ForgeRock Access Management 6.5.5" /var/tmp/openam/WEB-INF/classes/serverdefaults.properties; then \
-    echo "ERROR: Provided war file is not AM version 6.5.5" && \
+    if ! grep -q "com.iplanet.am.buildVersion=ForgeRock Access Management 6.5.1" /var/tmp/openam/WEB-INF/classes/serverdefaults.properties; then \
+    echo "ERROR: Provided war file is not AM version 6.5.1" && \
     echo "VERSION FOUND: $(grep 'com.iplanet.am.buildVersion=' /var/tmp/openam/WEB-INF/classes/serverdefaults.properties)" && \
     exit 10; \
     fi && \
