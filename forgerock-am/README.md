@@ -11,9 +11,9 @@ cd openbanking-reference-implementation
 gsutil rsync gs://ob-forgerock-binaries/openam-local-binaries forgerock-am/_binaries
 ```
 ### Current AM war version files
-Source: [patches/6.5.5.1/openbanking](https://stash.forgerock.org/projects/OPENAM/repos/openam-customers/browse?at=refs%2Fheads%2Fpatches%2F6.5.5.1%2Fopenbanking)
-- OpenAM-6.5.5-a7dd57885e7.war
-- Amster-6.5.5-a7dd57885e7.zip
+Source: [patches/6.5.1.0/openbanking](https://stash.forgerock.org/projects/OPENAM/repos/openam-customers/browse?at=refs%2Fheads%2Fpatches%2F6.5.1.0%2Fopenbanking)
+- OpenAM-6.5.1-68f2815add.war
+- Amster-6.5.1.zip
 
 > The AM.war builds for Open Banking is from the customer branch with all patches integrated
 
