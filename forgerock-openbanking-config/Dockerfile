@@ -4,6 +4,8 @@ ARG JAR_FILE
 ARG VERSION_FILE
 ARG SERVICE_FILE
 
+RUN if [ -z ${JAR_FILE} ]; then exit 1; else echo ${JAR_FILE}; fi
+
 COPY ${JAR_FILE} ${VERSION_FILE} ${SERVICE_FILE} /opt/ob/
 
 RUN rm -rf /var/lib/apt/lists/*  && \
